@@ -1,0 +1,203 @@
+.reg_window {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  width: 480px;
+  align-items: center;
+}
+
+.reg_window__logo {
+  width: 64px;
+  height: 64px;
+  margin-bottom: 10px;
+}
+
+.reg_window__title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #FFFFFF;
+  margin: 0;
+  text-align: center;
+}
+
+.reg_window input {
+  width: 100%;
+  border: 1px solid #242424;
+  background-color: #161616;
+  height: 56px;
+  border-radius: 16px;
+  padding: 16px 20px 16px 20px;
+  font-size: 16px;
+  color: white;
+}
+
+.reg_window input:focus {
+  outline: none;
+  border-color: #D9F743;
+}
+
+.reg_window_form {
+  position: relative;
+  width: 100%;
+}
+
+.reg_window_form__field {
+  position: relative;
+  margin-bottom: 10px;
+}
+
+.reg_window_form__field--password {
+  position: relative;
+}
+
+.text-info__reg_window {
+  margin: 10px 0 10px 0;
+  font-size: 13px;
+}
+
+.reg_window_passwordLogo {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-top: 10px;
+  cursor: pointer;
+  background-color: rgba(0, 0, 0, 0);
+  width: 20px;
+  height: 20px;
+}
+.reg_window__links {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin: 0;
+  width: 100%;
+}
+
+.reg_window__tab {
+  text-decoration: none;
+  margin: 0;
+  width: 50%;
+  text-align: center;
+  padding: 16px 20px;
+  border-radius: 16px;
+  color: #7C7C7C;
+  border: 1px solid #7C7C7C;
+  background-color: transparent;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.2s ease;
+}
+
+.reg_window__tab:hover {
+  transition: 0.2s;
+  background-color: #242424;
+  color: #FFFFFF;
+  border: 1px solid #242424;
+}
+
+.reg_window__tab.active {
+  background-color: #D9F743;
+  color: #111111;
+  border: 1px solid #D9F743;
+}
+
+.reg_window__tab.active:hover {
+  background-color: #D9F743;
+  color: #111111;
+  border: 1px solid #D9F743;
+}
+.reg_window_form__submit {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+}
+.reg_window_form__submit button {
+  height: 50px;
+  width: 100%;
+  border: none;
+  background-color: #D9F743;
+  padding: 16px 20px 16px 20px;
+  border-radius: 16px;
+  color: #111111;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  transition: all 0.2s ease;
+}
+
+.reg_window_form__submit button:hover:not(:disabled) {
+  background-color: #2B310D;
+  color: #D9F743;
+}
+
+.reg_window_form__submit .google-button {
+  background-color: #161616;
+  color: #FFFFFF;
+  border: 1px solid #242424;
+}
+
+.reg_window_form__submit .google-button:hover:not(:disabled) {
+  background-color: #242424;
+  border-color: #D9F743;
+}
+.reg_window_form__submit button img {
+  background-color: rgba(0, 0, 0, 0);
+  margin: 0;
+}
+.reg_window__forgot-password {
+  text-align: right;
+  margin-top: -10px;
+  margin-bottom: 10px;
+}
+
+.reg_window__forgot-password a {
+  color: #7C7C7C;
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.2s ease;
+}
+
+.reg_window__forgot-password a:hover {
+  color: #D9F743;
+}
+
+.reg_window__additional_agreements {
+  font-size: 13px;
+  color: #7C7C7C;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.reg_window__additional_agreements a {
+  color: #D9F743;
+  text-decoration: underline;
+  transition: color 0.2s ease;
+}
+
+.reg_window__additional_agreements a:hover {
+  color: #FFFFFF;
+}
+
+.error-message {
+  color: #ff4444;
+  font-size: 12px;
+  margin-top: 5px;
+  display: block;
+}
+
+.reg_window_form__field input:invalid {
+  border-color: #ff4444;
+}
+
+.reg_window_form__submit button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
