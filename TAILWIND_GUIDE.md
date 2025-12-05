@@ -159,3 +159,4 @@ Siz ikkala usulni ham ishlatishingiz mumkin:
 
 
 
+
