@@ -377,3 +377,4 @@ Kodingiz **yaxshi darajada**, lekin quyidagi sohalarda yaxshilash kerak:
 
 
 
+

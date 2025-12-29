@@ -1,7 +1,7 @@
 import { Outlet, useLocation } from "react-router-dom";
 import Header from "@/components/Header";
 import NavLinks from "@/components/NavLinks";
-import AuthPrompt from "@/components/AuthPrompt";
+// import AuthPrompt from "@/components/AuthPrompt";
 
 const Layout = () => {
   const location = useLocation();
@@ -13,7 +13,7 @@ const Layout = () => {
       <Header />
       {!isSubscriptionPage && !isDetailPage && <NavLinks />}
       <Outlet />
-      <AuthPrompt />
+      {/* <AuthPrompt /> */}
     </>
   );
 };
