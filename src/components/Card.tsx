@@ -1,8 +1,12 @@
-import '@/styles/header-search.css';
+import { useState } from 'react';
 import type { CardProps } from '@/types';
 
 const Card = ({ item, onClick, variant = 'default' }: CardProps) => {
   const isPattern = variant === 'pattern';
+  
+  // Use images array if available, otherwise use img1
+  const images = item.images && item.images.length > 0 ? item.images : [item.img1];
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (onClick && (e.key === 'Enter' || e.key === ' ')) {
@@ -11,81 +15,76 @@ const Card = ({ item, onClick, variant = 'default' }: CardProps) => {
     }
   };
 
-  // Debug: log image path
-  if (typeof window !== 'undefined') {
-    console.log('Card image path:', item.img1, 'Type:', typeof item.img1);
-  }
+  const handlePrevious = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    setCurrentIndex((prev) => (prev > 0 ? prev - 1 : images.length - 1));
+  };
+
+  const handleNext = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    setCurrentIndex((prev) => (prev < images.length - 1 ? prev + 1 : 0));
+  };
 
   return (
     <article
-      className="key-block"
+      className={`card ${isPattern ? 'card--pattern' : ''}`}
       onClick={() => onClick?.(item)}
       role={onClick ? "button" : undefined}
       tabIndex={onClick ? 0 : undefined}
       onKeyDown={handleKeyDown}
       aria-label={`${item.app_name} - ${item.text_info || 'View details'}`}
     >
-      <div className={isPattern ? "patterns-list-content" : "list-content"}>
+      {/* Header section with logo and app name */}
+      <div className="card__header">
         <img
-          className={isPattern ? "P_unitrip-img" : "unitrip-img"}
-          src={item.img1}
-          alt={item.app_name}
-          loading="lazy"
-          decoding="async"
-          style={{ 
-            width: '200px',
-            height: 'auto',
-            maxWidth: '100%',
-            display: 'block',
-            visibility: 'visible',
-            opacity: 1,
-            flexShrink: 0
-          }}
-          onError={(e) => {
-            const target = e.target as HTMLImageElement;
-            console.error('❌ Image failed to load:', {
-              src: item.img1,
-              type: typeof item.img1,
-              currentSrc: target.currentSrc,
-              naturalWidth: target.naturalWidth,
-              naturalHeight: target.naturalHeight
-            });
-            target.style.border = '2px solid red';
-            target.style.backgroundColor = '#ff000020';
-            target.style.minHeight = '100px';
-            target.style.minWidth = '100px';
-          }}
-          onLoad={(e) => {
-            const target = e.target as HTMLImageElement;
-            console.log('✅ Image loaded successfully:', {
-              src: item.img1,
-              naturalWidth: target.naturalWidth,
-              naturalHeight: target.naturalHeight
-            });
-          }}
-        />
-      </div>
-      <div className={isPattern ? "P_main-content-view-title" : "main-content-view-title"}>
-        <img
-          className={isPattern ? "P_MainLogoMini" : "MainLogoMini"}
+          className="card__logo"
           src={item.img2}
           alt={`${item.app_name} logo`}
           loading="lazy"
           decoding="async"
-          fetchPriority="low"
-          onError={(e) => {
-            console.error('Logo failed to load:', item.img2);
-            (e.target as HTMLImageElement).style.display = 'none';
-          }}
         />
-        <div className="content-view-title">
-          <h3>{item.app_name}</h3>
-          {!isPattern && item.text_info && <p>{item.text_info}</p>}
+        <div className="card__info">
+          <h3 className="card__title">{item.app_name}</h3>
+          {item.text_info && <p className="card__subtitle">{item.text_info}</p>}
         </div>
+      </div>
+
+      {/* Phone screenshot with navigation arrows */}
+      <div className="card__phone-wrapper">
+        {/* Left arrow */}
+        <button 
+          className="card__nav card__nav--left" 
+          aria-label="Previous"
+          onClick={handlePrevious}
+        >
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </button>
+
+        <img
+          className="card__phone-image"
+          src={images[currentIndex]}
+          alt={`${item.app_name} app screenshot`}
+          loading="lazy"
+          decoding="async"
+        />
+
+        {/* Right arrow */}
+        <button 
+          className="card__nav card__nav--right" 
+          aria-label="Next"
+          onClick={handleNext}
+        >
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </button>
       </div>
     </article>
   );
 };
 
 export default Card;
-

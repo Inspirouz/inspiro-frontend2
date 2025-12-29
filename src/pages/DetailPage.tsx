@@ -293,17 +293,7 @@ const DetailPage = () => {
         ))}
       </nav>
 
-      {/* Section Header for Scenarios */}
-      {activeTab === 'scenarios' && activeSubCategory !== 'all' && (
-        <div className="detail-page__section-header">
-          <h2 className="detail-page__section-title">
-            {subCategories.find(cat => cat.id === activeSubCategory)?.label || 'Сценарии'}
-          </h2>
-          <span className="detail-page__section-count">
-            {subCategories.find(cat => cat.id === activeSubCategory)?.count || 0} экранов
-          </span>
-        </div>
-      )}
+
 
       <div className="detail-page__content">
         {/* Left Sidebar */}
@@ -467,6 +457,7 @@ const DetailPage = () => {
                           >
                             <div className="detail-page__scenario-section-header">
                               <h3 className="detail-page__scenario-section-title">{child.label}</h3>
+                              <span className="detail-page__scenario-section-count">{screens.length}  экранов</span>
                             </div>
                             <div className="detail-page__scenario-section-grid">
                               {screens.map((screen, index) => (
@@ -510,6 +501,7 @@ const DetailPage = () => {
                                   >
                                     <div className="detail-page__scenario-section-header">
                                       <h4 className="detail-page__scenario-section-title">{nested.label}</h4>
+                                      
                                     </div>
                                     <div className="detail-page__scenario-section-grid">
                                       {screens.map((screen, index) => (

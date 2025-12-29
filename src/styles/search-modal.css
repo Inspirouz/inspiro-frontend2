@@ -5,9 +5,9 @@
   width: 800px;
   max-width: 90vw;
   max-height: 80vh;
-  background-color: #161616;
+  /* background-color: #161616; */
   border-radius: 20px;
-  padding: 24px;
+  /* padding: 24px; */
   overflow: hidden;
   box-sizing: border-box;
 }
@@ -16,6 +16,7 @@
   position: relative;
   margin-bottom: 20px;
   width: 100%;
+  border-radius: 60px !important;
 }
 
 .search-modal__search-icon {
@@ -33,7 +34,7 @@
   padding: 16px 16px 16px 48px;
   background-color: #242424;
   border: 1px solid #242424;
-  border-radius: 16px;
+  border-radius: 50px;
   color: #FFFFFF;
   font-size: 16px;
   transition: all 0.2s ease;
@@ -63,12 +64,12 @@
   align-items: center;
   gap: 8px;
   padding: 12px 20px;
-  background-color: #242424;
+  /* background-color: #242424; */
   border: 1px solid #242424;
-  border-radius: 50px;
-  color: #7C7C7C;
+  border-radius: 12px;
+  color: #505050;
   font-size: 16px;
-  font-weight: 400;
+  font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
@@ -117,11 +118,15 @@
   align-items: center;
   gap: 16px;
   padding: 16px;
-  background-color: #242424;
+  /* background-color: #242424; */
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.2s ease;
   width: 100%;
+}
+
+.search-modal__item:hover {
+  background-color: #161616;
 }
 
 
@@ -145,11 +150,12 @@
   gap: 4px;
   background: transparent;
 
-  *{
-    background: transparent;
-  }
+ 
 }
 
+.search-modal__item-content *{
+  background: transparent;
+}
 .search-modal__item-name {
   font-size: 16px;
   font-weight: 600;

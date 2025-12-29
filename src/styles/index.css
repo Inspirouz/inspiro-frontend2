@@ -1,5 +1,6 @@
 /* Import existing CSS files FIRST - they work together with Tailwind! */
 @import './header-search.css';
+@import './card.css';
 @import './modal.css';
 @import './reg.css';
 @import './subscription.css';
@@ -11,6 +12,7 @@
 @import './search-modal.css';
 @import './detail-page.css';
 @import './image-preview-modal.css';
+@import './auth-prompt.css';
 
 /* Tailwind directives */
 @tailwind base;

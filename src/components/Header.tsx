@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import MainLogo from "@/assets/MainLogo.svg";
 import langIcon from "@/assets/langIcon.svg";
@@ -17,6 +17,18 @@ const Header = () => {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const profileButtonRef = useRef<HTMLButtonElement>(null);
+
+  // Listen for custom event to open login modal
+  useEffect(() => {
+    const handleOpenLoginModal = () => {
+      setIsLoginModalOpen(true);
+    };
+
+    window.addEventListener('openLoginModal', handleOpenLoginModal);
+    return () => {
+      window.removeEventListener('openLoginModal', handleOpenLoginModal);
+    };
+  }, []);
 
   const handleSearchClick = () => {
     setIsSearchModalOpen(true);

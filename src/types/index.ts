@@ -2,6 +2,7 @@
 export interface ContentItem {
   img1: string;
   img2: string;
+  images?: string[]; // Multiple screenshots for swiper
   app_name: string;
   text_info?: string;
   id: number;

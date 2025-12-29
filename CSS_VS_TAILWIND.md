@@ -221,3 +221,7 @@ CSS va Tailwind birga ishlaydi. Siz ikkalasini ham qo'llab-quvvatlashingiz mumki
 
 
 
+
+
+
+
