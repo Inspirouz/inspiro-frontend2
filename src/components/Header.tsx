@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import MainLogo from "@/assets/MainLogo.svg";
 import langIcon from "@/assets/langIcon.svg";
 import logIcon from "@/assets/logIcon.svg";
@@ -57,15 +57,17 @@ const Header = () => {
   return (
     <>
       <header className="header-search">
-        <img 
-          className="MainLogo" 
-          src={MainLogo} 
-          alt="Inspiro Logo" 
-          loading="eager"
-          fetchPriority="high"
-          width="64"
-          height="64"
-        />
+        <Link to="/" aria-label="Go to home page">
+          <img 
+            className="MainLogo" 
+            src={MainLogo} 
+            alt="Inspiro Logo" 
+            loading="eager"
+            fetchPriority="high"
+            width="64"
+            height="64"
+          />
+        </Link>
         <button className="header-input" onClick={handleSearchClick}>
           Поиск...
         </button>

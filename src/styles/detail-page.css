@@ -254,14 +254,18 @@
   position: relative !important;
   width: 100% !important;
   min-height: 0 !important;
-  height: calc(100vh - 200px) !important;
-  overflow: hidden !important;
 }
 
 /* Sidebar */
 .detail-page__sidebar {
   width: 280px;
   flex-shrink: 0;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 20px;
+  align-self: flex-start;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
 }
 
 /* Tree Sidebar for Scenarios */
@@ -583,10 +587,7 @@
 .detail-page__main {
   flex: 1 !important;
   min-width: 0 !important;
-  height: 100% !important;
-  max-height: calc(100vh - 200px) !important;
-  overflow-y: auto !important;
-  overflow-x: hidden !important;
+
 }
 
 .detail-page__main.with-sidebar {
@@ -822,6 +823,9 @@
 
   .detail-page__sidebar {
     width: 100%;
+    position: static;
+    max-height: none;
+    overflow-y: visible;
   }
 
   .detail-page__tabs {

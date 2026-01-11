@@ -1,4 +1,7 @@
-/* Import existing CSS files FIRST - they work together with Tailwind! */
+/* Import fonts FIRST */
+@import './fonts.css';
+
+/* Import existing CSS files - they work together with Tailwind! */
 @import './header-search.css';
 @import './card.css';
 @import './modal.css';
@@ -45,12 +48,12 @@
 
   html {
     @apply bg-background text-text-primary;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: "Helvetica Neue", sans-serif;
   }
 
   body {
     @apply bg-background;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: "Helvetica Neue", sans-serif;
   }
 }
 
