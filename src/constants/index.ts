@@ -31,6 +31,14 @@ export const PATTERN_CATEGORIES: PatternCategory[] = [
   { path: '/cart', label: 'Корзина' },
 ];
 
+export const SCENARIO_CATEGORIES: PatternCategory[] = [
+  { path: '', label: 'Все' },
+  { path: '/search', label: 'Поиск' },
+  { path: '/login', label: 'Вход в аккаунт' },
+  { path: '/cancel', label: 'Отмена подписки' },
+  { path: '/order', label: 'Оформление заказа' },
+];
+
 export const COLORS = {
   primary: '#D9F743',
   background: '#111111',

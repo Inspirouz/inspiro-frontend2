@@ -437,10 +437,7 @@ const DetailPage = () => {
                 
                 return (
                   <div key={parent.id} className="detail-page__scenarios-parent-section">
-                    {/* Parent section header */}
-                    <div className="detail-page__scenarios-parent-header">
-                      <h2 className="detail-page__scenarios-parent-title">{parent.label}</h2>
-                    </div>
+           
                     
                     {/* Child sections */}
                     {parent.children.map((child: any) => {

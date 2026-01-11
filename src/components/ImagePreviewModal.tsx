@@ -58,6 +58,7 @@ const ImagePreviewModal = ({ isOpen, onClose, images, initialIndex = 0 }: ImageP
   if (!isOpen || images.length === 0) return null;
 
   const currentImage = images[currentIndex];
+  if (!currentImage) return null;
 
   return (
     <div className="image-preview-modal" onClick={onClose}>

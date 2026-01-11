@@ -24,7 +24,7 @@
 
 .promo-banner__title {
   font-size: 36px;
-  font-weight: 700;
+  font-weight: 500;
   color: #2B310D;
   margin: 0 0 8px 0;
   line-height: 1.2;
@@ -32,7 +32,7 @@
 
 .promo-banner__subtitle {
   font-size: 18px;
-  font-weight: 600;
+  font-weight: 500;
   color: #57631B;
   opacity: 0.7;
   margin: 0;

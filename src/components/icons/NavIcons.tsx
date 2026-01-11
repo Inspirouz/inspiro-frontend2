@@ -2,120 +2,140 @@ import React from 'react';
 
 export const NavIcons: Record<string, React.ReactNode> = {
   app: (
-    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path opacity="0.4" d="M27.068 3.33334H12.9346C8.33464 3.33334 6.66797 5.00001 6.66797 9.68334V30.3167C6.66797 35 8.33464 36.6667 12.9346 36.6667H27.0513C31.668 36.6667 33.3346 35 33.3346 30.3167V9.68334C33.3346 5.00001 31.668 3.33334 27.068 3.33334Z" fill="url(#paint0_linear_997_10672)"/>
-    <path d="M23.3346 10.4167H16.668C15.9846 10.4167 15.418 9.84999 15.418 9.16666C15.418 8.48332 15.9846 7.91666 16.668 7.91666H23.3346C24.018 7.91666 24.5846 8.48332 24.5846 9.16666C24.5846 9.84999 24.018 10.4167 23.3346 10.4167Z" fill="url(#paint1_linear_997_10672)"/>
-    <path d="M19.9987 32.1667C21.6095 32.1667 22.9154 30.8609 22.9154 29.2501C22.9154 27.6392 21.6095 26.3334 19.9987 26.3334C18.3879 26.3334 17.082 27.6392 17.082 29.2501C17.082 30.8609 18.3879 32.1667 19.9987 32.1667Z" fill="url(#paint2_linear_997_10672)"/>
-    <defs>
-    <linearGradient id="paint0_linear_997_10672" x1="20.0013" y1="3.33334" x2="20.0013" y2="36.6667" gradientUnits="userSpaceOnUse">
-    <stop stopColor="#D9F743"/>
-    <stop offset="1" stopColor="#7F9127"/>
-    </linearGradient>
-    <linearGradient id="paint1_linear_997_10672" x1="20.0013" y1="7.91666" x2="20.0013" y2="10.4167" gradientUnits="userSpaceOnUse">
-    <stop stopColor="#D9F743"/>
-    <stop offset="1" stopColor="#7F9127"/>
-    </linearGradient>
-    <linearGradient id="paint2_linear_997_10672" x1="19.9987" y1="26.3334" x2="19.9987" y2="32.1667" gradientUnits="userSpaceOnUse">
-    <stop stopColor="#D9F743"/>
-    <stop offset="1" stopColor="#7F9127"/>
-    </linearGradient>
-    </defs>
+    <svg className="nav-svg-icon" width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path className="icon-bg" opacity="0.4" d="M27.068 3.3335H12.9346C8.33464 3.3335 6.66797 5.00016 6.66797 9.6835V30.3168C6.66797 35.0002 8.33464 36.6668 12.9346 36.6668H27.0513C31.668 36.6668 33.3346 35.0002 33.3346 30.3168V9.6835C33.3346 5.00016 31.668 3.3335 27.068 3.3335Z" fill="url(#grad_app_bg)"/>
+      <path className="icon-fg" d="M23.3346 10.4165H16.668C15.9846 10.4165 15.418 9.84984 15.418 9.1665C15.418 8.48317 15.9846 7.9165 16.668 7.9165H23.3346C24.018 7.9165 24.5846 8.48317 24.5846 9.1665C24.5846 9.84984 24.018 10.4165 23.3346 10.4165Z" fill="url(#grad_app_fg)"/>
+      <path className="icon-fg" d="M19.9987 32.1668C21.6095 32.1668 22.9154 30.861 22.9154 29.2502C22.9154 27.6393 21.6095 26.3335 19.9987 26.3335C18.3879 26.3335 17.082 27.6393 17.082 29.2502C17.082 30.861 18.3879 32.1668 19.9987 32.1668Z" fill="url(#grad_app_fg)"/>
+      <defs>
+        <linearGradient id="grad_app_bg" x1="20" y1="0" x2="20" y2="40" gradientUnits="userSpaceOnUse">
+          <stop className="stop-start" stopColor="var(--icon-gradient-start, #FFFFFF)"/>
+          <stop className="stop-end" offset="1" stopColor="var(--icon-gradient-end, #999999)"/>
+        </linearGradient>
+        <linearGradient id="grad_app_fg" x1="20" y1="0" x2="20" y2="40" gradientUnits="userSpaceOnUse">
+          <stop className="stop-start" stopColor="var(--icon-gradient-start, #FFFFFF)"/>
+          <stop className="stop-end" offset="1" stopColor="var(--icon-gradient-end, #999999)"/>
+        </linearGradient>
+      </defs>
     </svg>
   ),
   patterns: (
-    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path opacity="0.4" d="M33.9351 21.2167C33.3184 21.2167 32.8018 20.75 32.7351 20.1333C32.3351 16.4667 30.3684 13.1667 27.3351 11.0667C26.7851 10.6833 26.6518 9.93333 27.0351 9.38333C27.4184 8.83333 28.1684 8.7 28.7184 9.08333C32.3351 11.6 34.6684 15.5333 35.1518 19.8833C35.2184 20.55 34.7351 21.15 34.0684 21.2167C34.0184 21.2167 33.9851 21.2167 33.9351 21.2167Z" fill="#7C7C7C"/>
-    <path opacity="0.4" d="M6.23349 21.3C6.20016 21.3 6.15016 21.3 6.11682 21.3C5.45016 21.2333 4.96682 20.6333 5.03349 19.9667C5.48349 15.6167 7.78349 11.6833 11.3668 9.15C11.9002 8.76667 12.6668 8.9 13.0502 9.43333C13.4335 9.98333 13.3002 10.7333 12.7668 11.1167C9.76682 13.25 7.81682 16.55 7.45015 20.2C7.38349 20.8333 6.85016 21.3 6.23349 21.3Z" fill="#7C7C7C"/>
-    <path opacity="0.4" d="M26.6516 35.1667C24.6016 36.15 22.4016 36.65 20.1016 36.65C17.7016 36.65 15.4183 36.1167 13.285 35.0333C12.685 34.75 12.4516 34.0167 12.7516 33.4167C13.035 32.8167 13.7683 32.5833 14.3683 32.8667C15.4183 33.4 16.535 33.7667 17.6683 33.9833C19.2016 34.2833 20.7683 34.3 22.3016 34.0333C23.435 33.8333 24.5516 33.4833 25.585 32.9833C26.2016 32.7 26.935 32.9333 27.2016 33.55C27.5016 34.15 27.2683 34.8833 26.6516 35.1667Z" fill="#7C7C7C"/>
-    <path d="M20.0828 3.35001C17.4995 3.35001 15.3828 5.45001 15.3828 8.05001C15.3828 10.65 17.4828 12.75 20.0828 12.75C22.6828 12.75 24.7828 10.65 24.7828 8.05001C24.7828 5.45001 22.6828 3.35001 20.0828 3.35001Z" fill="url(#paint0_linear_997_5716)"/>
-    <path d="M8.41484 23.1167C5.83151 23.1167 3.71484 25.2167 3.71484 27.8167C3.71484 30.4167 5.81484 32.5167 8.41484 32.5167C11.0148 32.5167 13.1148 30.4167 13.1148 27.8167C13.1148 25.2167 10.9982 23.1167 8.41484 23.1167Z" fill="url(#paint1_linear_997_5716)"/>
-    <path d="M31.5828 23.1167C28.9995 23.1167 26.8828 25.2167 26.8828 27.8167C26.8828 30.4167 28.9828 32.5167 31.5828 32.5167C34.1828 32.5167 36.2828 30.4167 36.2828 27.8167C36.2828 25.2167 34.1828 23.1167 31.5828 23.1167Z" fill="url(#paint2_linear_997_5716)"/>
-    <defs>
-    <linearGradient id="paint0_linear_997_5716" x1="20.0828" y1="3.35001" x2="20.0828" y2="12.75" gradientUnits="userSpaceOnUse">
-    <stop stopColor="#7C7C7C"/>
-    <stop offset="1" stopColor="#E2E2E2"/>
-    </linearGradient>
-    <linearGradient id="paint1_linear_997_5716" x1="8.41484" y1="23.1167" x2="8.41484" y2="32.5167" gradientUnits="userSpaceOnUse">
-    <stop stopColor="#7C7C7C"/>
-    <stop offset="1" stopColor="#E2E2E2"/>
-    </linearGradient>
-    <linearGradient id="paint2_linear_997_5716" x1="31.5828" y1="23.1167" x2="31.5828" y2="32.5167" gradientUnits="userSpaceOnUse">
-    <stop stopColor="#7C7C7C"/>
-    <stop offset="1" stopColor="#E2E2E2"/>
-    </linearGradient>
-    </defs>
+    <svg className="nav-svg-icon" width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path className="icon-secondary" opacity="0.4" d="M33.9351 21.2167C33.3184 21.2167 32.8018 20.75 32.7351 20.1333C32.3351 16.4667 30.3684 13.1667 27.3351 11.0667C26.7851 10.6833 26.6518 9.93333 27.0351 9.38333C27.4184 8.83333 28.1684 8.7 28.7184 9.08333C32.3351 11.6 34.6684 15.5333 35.1518 19.8833C35.2184 20.55 34.7351 21.15 34.0684 21.2167C34.0184 21.2167 33.9851 21.2167 33.9351 21.2167Z" fill="var(--icon-secondary-color, #7C7C7C)"/>
+      <path className="icon-secondary" opacity="0.4" d="M6.23349 21.3C6.20016 21.3 6.15016 21.3 6.11682 21.3C5.45016 21.2333 4.96682 20.6333 5.03349 19.9667C5.48349 15.6167 7.78349 11.6833 11.3668 9.15C11.9002 8.76667 12.6668 8.9 13.0502 9.43333C13.4335 9.98333 13.3002 10.7333 12.7668 11.1167C9.76682 13.25 7.81682 16.55 7.45015 20.2C7.38349 20.8333 6.85016 21.3 6.23349 21.3Z" fill="var(--icon-secondary-color, #7C7C7C)"/>
+      <path className="icon-secondary" opacity="0.4" d="M26.6516 35.1667C24.6016 36.15 22.4016 36.65 20.1016 36.65C17.7016 36.65 15.4183 36.1167 13.285 35.0333C12.685 34.75 12.4516 34.0167 12.7516 33.4167C13.035 32.8167 13.7683 32.5833 14.3683 32.8667C15.4183 33.4 16.535 33.7667 17.6683 33.9833C19.2016 34.2833 20.7683 34.3 22.3016 34.0333C23.435 33.8333 24.5516 33.4833 25.585 32.9833C26.2016 32.7 26.935 32.9333 27.2016 33.55C27.5016 34.15 27.2683 34.8833 26.6516 35.1667Z" fill="var(--icon-secondary-color, #7C7C7C)"/>
+      <path className="icon-fg" d="M20.0828 3.35001C17.4995 3.35001 15.3828 5.45001 15.3828 8.05001C15.3828 10.65 17.4828 12.75 20.0828 12.75C22.6828 12.75 24.7828 10.65 24.7828 8.05001C24.7828 5.45001 22.6828 3.35001 20.0828 3.35001Z" fill="url(#grad_patterns_1)"/>
+      <path className="icon-fg" d="M8.41484 23.1167C5.83151 23.1167 3.71484 25.2167 3.71484 27.8167C3.71484 30.4167 5.81484 32.5167 8.41484 32.5167C11.0148 32.5167 13.1148 30.4167 13.1148 27.8167C13.1148 25.2167 10.9982 23.1167 8.41484 23.1167Z" fill="url(#grad_patterns_2)"/>
+      <path className="icon-fg" d="M31.5828 23.1167C28.9995 23.1167 26.8828 25.2167 26.8828 27.8167C26.8828 30.4167 28.9828 32.5167 31.5828 32.5167C34.1828 32.5167 36.2828 30.4167 36.2828 27.8167C36.2828 25.2167 34.1828 23.1167 31.5828 23.1167Z" fill="url(#grad_patterns_3)"/>
+      <defs>
+        <linearGradient id="grad_patterns_1" x1="20" y1="0" x2="20" y2="40" gradientUnits="userSpaceOnUse">
+          <stop className="stop-start" stopColor="var(--icon-gradient-start, #7C7C7C)"/>
+          <stop className="stop-end" offset="1" stopColor="var(--icon-gradient-end, #E2E2E2)"/>
+        </linearGradient>
+        <linearGradient id="grad_patterns_2" x1="8" y1="0" x2="8" y2="40" gradientUnits="userSpaceOnUse">
+          <stop className="stop-start" stopColor="var(--icon-gradient-start, #7C7C7C)"/>
+          <stop className="stop-end" offset="1" stopColor="var(--icon-gradient-end, #E2E2E2)"/>
+        </linearGradient>
+        <linearGradient id="grad_patterns_3" x1="32" y1="0" x2="32" y2="40" gradientUnits="userSpaceOnUse">
+          <stop className="stop-start" stopColor="var(--icon-gradient-start, #7C7C7C)"/>
+          <stop className="stop-end" offset="1" stopColor="var(--icon-gradient-end, #E2E2E2)"/>
+        </linearGradient>
+      </defs>
     </svg>
   ),
   scenarios: (
-    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path opacity="0.4" d="M35.0669 11.9833L20.0003 20.7L4.93359 11.9833C5.60026 10.75 6.56693 9.66668 7.65026 9.06668L16.5503 4.13334C18.4503 3.06668 21.5503 3.06668 23.4503 4.13334L32.3503 9.06668C33.4336 9.66668 34.4003 10.75 35.0669 11.9833Z" fill="#7C7C7C"/>
-    <path opacity="0.6" d="M20.001 20.7V36.6667C18.751 36.6667 17.501 36.4 16.551 35.8667L7.65104 30.9333C5.63438 29.8167 3.98438 27.0167 3.98438 24.7167V15.2833C3.98438 14.2167 4.35104 13.05 4.93437 11.9833L20.001 20.7Z" fill="url(#paint0_linear_997_6608)"/>
-    <path d="M36.0167 15.2833V24.7167C36.0167 27.0167 34.3667 29.8167 32.35 30.9333L23.45 35.8667C22.5 36.4 21.25 36.6667 20 36.6667V20.7L35.0667 11.9833C35.65 13.05 36.0167 14.2167 36.0167 15.2833Z" fill="url(#paint1_linear_997_6608)"/>
-    <defs>
-    <linearGradient id="paint0_linear_997_6608" x1="11.9927" y1="11.9833" x2="11.9927" y2="36.6667" gradientUnits="userSpaceOnUse">
-    <stop stopColor="#7C7C7C"/>
-    <stop offset="1" stopColor="#E2E2E2"/>
-    </linearGradient>
-    <linearGradient id="paint1_linear_997_6608" x1="28.0083" y1="11.9833" x2="28.0083" y2="36.6667" gradientUnits="userSpaceOnUse">
-    <stop stopColor="#7C7C7C"/>
-    <stop offset="1" stopColor="#E2E2E2"/>
-    </linearGradient>
-    </defs>
+    <svg className="nav-svg-icon" width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path className="icon-secondary" opacity="0.4" d="M35.0669 11.9833L20.0003 20.7L4.93359 11.9833C5.60026 10.75 6.56693 9.66668 7.65026 9.06668L16.5503 4.13334C18.4503 3.06668 21.5503 3.06668 23.4503 4.13334L32.3503 9.06668C33.4336 9.66668 34.4003 10.75 35.0669 11.9833Z" fill="var(--icon-secondary-color, #7C7C7C)"/>
+      <path className="icon-fg" opacity="0.6" d="M20.001 20.7V36.6667C18.751 36.6667 17.501 36.4 16.551 35.8667L7.65104 30.9333C5.63438 29.8167 3.98438 27.0167 3.98438 24.7167V15.2833C3.98438 14.2167 4.35104 13.05 4.93437 11.9833L20.001 20.7Z" fill="url(#grad_scenarios_1)"/>
+      <path className="icon-fg" d="M36.0167 15.2833V24.7167C36.0167 27.0167 34.3667 29.8167 32.35 30.9333L23.45 35.8667C22.5 36.4 21.25 36.6667 20 36.6667V20.7L35.0667 11.9833C35.65 13.05 36.0167 14.2167 36.0167 15.2833Z" fill="url(#grad_scenarios_2)"/>
+      <defs>
+        <linearGradient id="grad_scenarios_1" x1="12" y1="0" x2="12" y2="40" gradientUnits="userSpaceOnUse">
+          <stop className="stop-start" stopColor="var(--icon-gradient-start, #7C7C7C)"/>
+          <stop className="stop-end" offset="1" stopColor="var(--icon-gradient-end, #E2E2E2)"/>
+        </linearGradient>
+        <linearGradient id="grad_scenarios_2" x1="28" y1="0" x2="28" y2="40" gradientUnits="userSpaceOnUse">
+          <stop className="stop-start" stopColor="var(--icon-gradient-start, #7C7C7C)"/>
+          <stop className="stop-end" offset="1" stopColor="var(--icon-gradient-end, #E2E2E2)"/>
+        </linearGradient>
+      </defs>
     </svg>
   ),
   ui: (
-    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path opacity="0.4" d="M19.9987 28.3333V32.3C19.9987 35.4167 18.7487 36.6667 15.6154 36.6667H7.6987C4.58203 36.6667 3.33203 35.4167 3.33203 32.3V24.3833C3.33203 21.25 4.58203 20 7.6987 20H11.6654V23.95C11.6654 27.0833 12.9154 28.3333 16.032 28.3333H19.9987Z" fill="url(#paint0_linear_997_533)"/>
-    <path opacity="0.6" d="M28.3346 20V23.95C28.3346 27.0833 27.0846 28.3333 23.9513 28.3333H16.0346C12.918 28.3333 11.668 27.0833 11.668 23.95V16.0333C11.668 12.9167 12.918 11.6667 16.0346 11.6667H20.0013V15.6167C20.0013 18.75 21.2513 20 24.368 20H28.3346Z" fill="url(#paint1_linear_997_533)"/>
-    <path d="M36.6667 7.70001V15.6167C36.6667 18.75 35.4167 20 32.2833 20H24.3667C21.25 20 20 18.75 20 15.6167V7.70001C20 4.58334 21.25 3.33334 24.3667 3.33334H32.2833C35.4167 3.33334 36.6667 4.58334 36.6667 7.70001Z" fill="url(#paint2_linear_997_533)"/>
-    <defs>
-    <linearGradient id="paint0_linear_997_533" x1="11.6654" y1="20" x2="11.6654" y2="36.6667" gradientUnits="userSpaceOnUse">
-    <stop stopColor="#7C7C7C"/>
-    <stop offset="1" stopColor="#E2E2E2"/>
-    </linearGradient>
-    <linearGradient id="paint1_linear_997_533" x1="20.0013" y1="11.6667" x2="20.0013" y2="28.3333" gradientUnits="userSpaceOnUse">
-    <stop stopColor="#7C7C7C"/>
-    <stop offset="1" stopColor="#E2E2E2"/>
-    </linearGradient>
-    <linearGradient id="paint2_linear_997_533" x1="28.3333" y1="3.33334" x2="28.3333" y2="20" gradientUnits="userSpaceOnUse">
-    <stop stopColor="#7C7C7C"/>
-    <stop offset="1" stopColor="#E2E2E2"/>
-    </linearGradient>
-    </defs>
+    <svg className="nav-svg-icon" width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path className="icon-fg" opacity="0.4" d="M19.9987 28.3333V32.3C19.9987 35.4167 18.7487 36.6667 15.6154 36.6667H7.6987C4.58203 36.6667 3.33203 35.4167 3.33203 32.3V24.3833C3.33203 21.25 4.58203 20 7.6987 20H11.6654V23.95C11.6654 27.0833 12.9154 28.3333 16.032 28.3333H19.9987Z" fill="url(#grad_ui_1)"/>
+      <path className="icon-fg" opacity="0.6" d="M28.3346 20V23.95C28.3346 27.0833 27.0846 28.3333 23.9513 28.3333H16.0346C12.918 28.3333 11.668 27.0833 11.668 23.95V16.0333C11.668 12.9167 12.918 11.6667 16.0346 11.6667H20.0013V15.6167C20.0013 18.75 21.2513 20 24.368 20H28.3346Z" fill="url(#grad_ui_2)"/>
+      <path className="icon-fg" d="M36.6667 7.70001V15.6167C36.6667 18.75 35.4167 20 32.2833 20H24.3667C21.25 20 20 18.75 20 15.6167V7.70001C20 4.58334 21.25 3.33334 24.3667 3.33334H32.2833C35.4167 3.33334 36.6667 4.58334 36.6667 7.70001Z" fill="url(#grad_ui_3)"/>
+      <defs>
+        <linearGradient id="grad_ui_1" x1="12" y1="0" x2="12" y2="40" gradientUnits="userSpaceOnUse">
+          <stop className="stop-start" stopColor="var(--icon-gradient-start, #7C7C7C)"/>
+          <stop className="stop-end" offset="1" stopColor="var(--icon-gradient-end, #E2E2E2)"/>
+        </linearGradient>
+        <linearGradient id="grad_ui_2" x1="20" y1="0" x2="20" y2="40" gradientUnits="userSpaceOnUse">
+          <stop className="stop-start" stopColor="var(--icon-gradient-start, #7C7C7C)"/>
+          <stop className="stop-end" offset="1" stopColor="var(--icon-gradient-end, #E2E2E2)"/>
+        </linearGradient>
+        <linearGradient id="grad_ui_3" x1="28" y1="0" x2="28" y2="40" gradientUnits="userSpaceOnUse">
+          <stop className="stop-start" stopColor="var(--icon-gradient-start, #7C7C7C)"/>
+          <stop className="stop-end" offset="1" stopColor="var(--icon-gradient-end, #E2E2E2)"/>
+        </linearGradient>
+      </defs>
     </svg>
   ),
   fonts: (
-    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path opacity="0.4" d="M36.6654 13.0167V26.9833C36.6654 33.05 33.0487 36.6667 26.982 36.6667H13.0154C12.682 36.6667 12.3487 36.65 12.032 36.6333C9.98203 36.5 8.2487 35.9167 6.88203 34.9167C6.18203 34.4333 5.56536 33.8167 5.08203 33.1167C3.93203 31.5333 3.33203 29.4667 3.33203 26.9833V13.0167C3.33203 7.28334 6.56536 3.73334 12.032 3.38334C12.3487 3.35001 12.682 3.33334 13.0154 3.33334H26.982C29.4654 3.33334 31.532 3.93334 33.1154 5.08334C33.8154 5.56668 34.432 6.18334 34.9154 6.88334C36.0654 8.46668 36.6654 10.5333 36.6654 13.0167Z" fill="url(#paint0_linear_997_10681)"/>
-    <path d="M18.9833 23.9667H18.3667V13.1833H22.65C22.8333 13.1833 22.9833 13.3333 22.9833 13.5167V14.8167C22.9833 15.5 23.55 16.0667 24.2333 16.0667C24.9167 16.0667 25.4833 15.5 25.4833 14.8167V13.5C25.4833 11.9333 24.2167 10.6667 22.65 10.6667H11.5833C10.0167 10.6667 8.75 11.9333 8.75 13.5V14.8C8.75 15.5 9.31667 16.05 10 16.05C10.6833 16.05 11.25 15.5 11.25 14.8V13.5C11.25 13.3167 11.4 13.1667 11.5833 13.1667H15.8667V23.9667H14.2C13.5167 23.9667 12.95 24.5333 12.95 25.2167C12.95 25.9 13.5167 26.4667 14.2 26.4667H18.9667C19.65 26.4667 20.2167 25.9 20.2167 25.2167C20.2167 24.5333 19.6667 23.9667 18.9833 23.9667Z" fill="url(#paint1_linear_997_10681)"/>
-    <path d="M28.8672 17.3333H22.8672C22.1839 17.3333 21.6172 17.9 21.6172 18.5833C21.6172 19.2667 22.1839 19.8333 22.8672 19.8333H23.6672V26.8333H23.0839C22.4005 26.8333 21.8339 27.4 21.8339 28.0833C21.8339 28.7667 22.4005 29.3333 23.0839 29.3333H26.7505C27.4339 29.3333 28.0005 28.7667 28.0005 28.0833C28.0005 27.4 27.4339 26.8333 26.7505 26.8333H26.1672V19.8333H28.7505V20.4C28.7505 21.0833 29.3172 21.65 30.0005 21.65C30.6839 21.65 31.2505 21.0833 31.2505 20.4V19.7167C31.2505 18.4 30.1839 17.3333 28.8672 17.3333Z" fill="url(#paint2_linear_997_10681)"/>
-    <defs>
-    <linearGradient id="paint0_linear_997_10681" x1="19.9987" y1="3.33334" x2="19.9987" y2="36.6667" gradientUnits="userSpaceOnUse">
-    <stop stopColor="#7C7C7C"/>
-    <stop offset="1" stopColor="#E2E2E2"/>
-    </linearGradient>
-    <linearGradient id="paint1_linear_997_10681" x1="17.1167" y1="10.6667" x2="17.1167" y2="26.4667" gradientUnits="userSpaceOnUse">
-    <stop stopColor="#7C7C7C"/>
-    <stop offset="1" stopColor="#E2E2E2"/>
-    </linearGradient>
-    <linearGradient id="paint2_linear_997_10681" x1="26.4339" y1="17.3333" x2="26.4339" y2="29.3333" gradientUnits="userSpaceOnUse">
-    <stop stopColor="#7C7C7C"/>
-    <stop offset="1" stopColor="#E2E2E2"/>
-    </linearGradient>
-    </defs>
+    <svg className="nav-svg-icon" width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path className="icon-fg" opacity="0.4" d="M36.6654 13.0167V26.9833C36.6654 33.05 33.0487 36.6667 26.982 36.6667H13.0154C12.682 36.6667 12.3487 36.65 12.032 36.6333C9.98203 36.5 8.2487 35.9167 6.88203 34.9167C6.18203 34.4333 5.56536 33.8167 5.08203 33.1167C3.93203 31.5333 3.33203 29.4667 3.33203 26.9833V13.0167C3.33203 7.28334 6.56536 3.73334 12.032 3.38334C12.3487 3.35001 12.682 3.33334 13.0154 3.33334H26.982C29.4654 3.33334 31.532 3.93334 33.1154 5.08334C33.8154 5.56668 34.432 6.18334 34.9154 6.88334C36.0654 8.46668 36.6654 10.5333 36.6654 13.0167Z" fill="url(#grad_fonts_bg)"/>
+      <path className="icon-fg" d="M18.9833 23.9667H18.3667V13.1833H22.65C22.8333 13.1833 22.9833 13.3333 22.9833 13.5167V14.8167C22.9833 15.5 23.55 16.0667 24.2333 16.0667C24.9167 16.0667 25.4833 15.5 25.4833 14.8167V13.5C25.4833 11.9333 24.2167 10.6667 22.65 10.6667H11.5833C10.0167 10.6667 8.75 11.9333 8.75 13.5V14.8C8.75 15.5 9.31667 16.05 10 16.05C10.6833 16.05 11.25 15.5 11.25 14.8V13.5C11.25 13.3167 11.4 13.1667 11.5833 13.1667H15.8667V23.9667H14.2C13.5167 23.9667 12.95 24.5333 12.95 25.2167C12.95 25.9 13.5167 26.4667 14.2 26.4667H18.9667C19.65 26.4667 20.2167 25.9 20.2167 25.2167C20.2167 24.5333 19.6667 23.9667 18.9833 23.9667Z" fill="url(#grad_fonts_fg1)"/>
+      <path className="icon-fg" d="M28.8672 17.3333H22.8672C22.1839 17.3333 21.6172 17.9 21.6172 18.5833C21.6172 19.2667 22.1839 19.8333 22.8672 19.8333H23.6672V26.8333H23.0839C22.4005 26.8333 21.8339 27.4 21.8339 28.0833C21.8339 28.7667 22.4005 29.3333 23.0839 29.3333H26.7505C27.4339 29.3333 28.0005 28.7667 28.0005 28.0833C28.0005 27.4 27.4339 26.8333 26.7505 26.8333H26.1672V19.8333H28.7505V20.4C28.7505 21.0833 29.3172 21.65 30.0005 21.65C30.6839 21.65 31.2505 21.0833 31.2505 20.4V19.7167C31.2505 18.4 30.1839 17.3333 28.8672 17.3333Z" fill="url(#grad_fonts_fg2)"/>
+      <defs>
+        <linearGradient id="grad_fonts_bg" x1="20" y1="0" x2="20" y2="40" gradientUnits="userSpaceOnUse">
+          <stop className="stop-start" stopColor="var(--icon-gradient-start, #7C7C7C)"/>
+          <stop className="stop-end" offset="1" stopColor="var(--icon-gradient-end, #E2E2E2)"/>
+        </linearGradient>
+        <linearGradient id="grad_fonts_fg1" x1="17" y1="0" x2="17" y2="40" gradientUnits="userSpaceOnUse">
+          <stop className="stop-start" stopColor="var(--icon-gradient-start, #7C7C7C)"/>
+          <stop className="stop-end" offset="1" stopColor="var(--icon-gradient-end, #E2E2E2)"/>
+        </linearGradient>
+        <linearGradient id="grad_fonts_fg2" x1="26" y1="0" x2="26" y2="40" gradientUnits="userSpaceOnUse">
+          <stop className="stop-start" stopColor="var(--icon-gradient-start, #7C7C7C)"/>
+          <stop className="stop-end" offset="1" stopColor="var(--icon-gradient-end, #E2E2E2)"/>
+        </linearGradient>
+      </defs>
     </svg>
   ),
   screens: (
-    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path opacity="0.4" d="M27.068 3.33334H12.9346C8.33464 3.33334 6.66797 5.00001 6.66797 9.68334V30.3167C6.66797 35 8.33464 36.6667 12.9346 36.6667H27.0513C31.668 36.6667 33.3346 35 33.3346 30.3167V9.68334C33.3346 5.00001 31.668 3.33334 27.068 3.33334Z" fill="currentColor"/>
-    <path d="M23.3346 10.4167H16.668C15.9846 10.4167 15.418 9.84999 15.418 9.16666C15.418 8.48332 15.9846 7.91666 16.668 7.91666H23.3346C24.018 7.91666 24.5846 8.48332 24.5846 9.16666C24.5846 9.84999 24.018 10.4167 23.3346 10.4167Z" fill="currentColor"/>
-    <path d="M19.9987 32.1667C21.6095 32.1667 22.9154 30.8609 22.9154 29.2501C22.9154 27.6392 21.6095 26.3334 19.9987 26.3334C18.3879 26.3334 17.082 27.6392 17.082 29.2501C17.082 30.8609 18.3879 32.1667 19.9987 32.1667Z" fill="currentColor"/>
+    <svg className="nav-svg-icon" width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path className="icon-fg" opacity="0.4" d="M27.068 3.33334H12.9346C8.33464 3.33334 6.66797 5.00001 6.66797 9.68334V30.3167C6.66797 35 8.33464 36.6667 12.9346 36.6667H27.0513C31.668 36.6667 33.3346 35 33.3346 30.3167V9.68334C33.3346 5.00001 31.668 3.33334 27.068 3.33334Z" fill="url(#grad_screens_bg)"/>
+      <path className="icon-fg" d="M23.3346 10.4167H16.668C15.9846 10.4167 15.418 9.84999 15.418 9.16666C15.418 8.48332 15.9846 7.91666 16.668 7.91666H23.3346C24.018 7.91666 24.5846 8.48332 24.5846 9.16666C24.5846 9.84999 24.018 10.4167 23.3346 10.4167Z" fill="url(#grad_screens_fg1)"/>
+      <path className="icon-fg" d="M19.9987 32.1667C21.6095 32.1667 22.9154 30.8609 22.9154 29.2501C22.9154 27.6392 21.6095 26.3334 19.9987 26.3334C18.3879 26.3334 17.082 27.6392 17.082 29.2501C17.082 30.8609 18.3879 32.1667 19.9987 32.1667Z" fill="url(#grad_screens_fg2)"/>
+      <defs>
+        <linearGradient id="grad_screens_bg" x1="20" y1="0" x2="20" y2="40" gradientUnits="userSpaceOnUse">
+          <stop className="stop-start" stopColor="var(--icon-gradient-start, #7C7C7C)"/>
+          <stop className="stop-end" offset="1" stopColor="var(--icon-gradient-end, #E2E2E2)"/>
+        </linearGradient>
+        <linearGradient id="grad_screens_fg1" x1="20" y1="0" x2="20" y2="40" gradientUnits="userSpaceOnUse">
+          <stop className="stop-start" stopColor="var(--icon-gradient-start, #7C7C7C)"/>
+          <stop className="stop-end" offset="1" stopColor="var(--icon-gradient-end, #E2E2E2)"/>
+        </linearGradient>
+        <linearGradient id="grad_screens_fg2" x1="20" y1="0" x2="20" y2="40" gradientUnits="userSpaceOnUse">
+          <stop className="stop-start" stopColor="var(--icon-gradient-start, #7C7C7C)"/>
+          <stop className="stop-end" offset="1" stopColor="var(--icon-gradient-end, #E2E2E2)"/>
+        </linearGradient>
+      </defs>
     </svg>
   ),
   videos: (
-    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path opacity="0.4" d="M36.6667 15V25C36.6667 31.6667 33.3333 35 26.6667 35H13.3333C6.66667 35 3.33334 31.6667 3.33334 25V15C3.33334 8.33334 6.66667 5 13.3333 5H26.6667C33.3333 5 36.6667 8.33334 36.6667 15Z" fill="currentColor"/>
-    <path d="M18.3333 15.8333V24.1667C18.3333 25.65 19.9833 26.55 21.2333 25.75L24.8167 23.5833L28.4 21.4167C29.65 20.6167 29.65 19.3833 28.4 18.5833L24.8167 16.4167L21.2333 14.25C19.9833 13.45 18.3333 14.35 18.3333 15.8333Z" fill="currentColor"/>
+    <svg className="nav-svg-icon" width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path className="icon-fg" opacity="0.4" d="M36.6667 15V25C36.6667 31.6667 33.3333 35 26.6667 35H13.3333C6.66667 35 3.33334 31.6667 3.33334 25V15C3.33334 8.33334 6.66667 5 13.3333 5H26.6667C33.3333 5 36.6667 8.33334 36.6667 15Z" fill="url(#grad_videos_bg)"/>
+      <path className="icon-fg" d="M18.3333 15.8333V24.1667C18.3333 25.65 19.9833 26.55 21.2333 25.75L24.8167 23.5833L28.4 21.4167C29.65 20.6167 29.65 19.3833 28.4 18.5833L24.8167 16.4167L21.2333 14.25C19.9833 13.45 18.3333 14.35 18.3333 15.8333Z" fill="url(#grad_videos_fg)"/>
+      <defs>
+        <linearGradient id="grad_videos_bg" x1="20" y1="0" x2="20" y2="40" gradientUnits="userSpaceOnUse">
+          <stop className="stop-start" stopColor="var(--icon-gradient-start, #7C7C7C)"/>
+          <stop className="stop-end" offset="1" stopColor="var(--icon-gradient-end, #E2E2E2)"/>
+        </linearGradient>
+        <linearGradient id="grad_videos_fg" x1="20" y1="0" x2="20" y2="40" gradientUnits="userSpaceOnUse">
+          <stop className="stop-start" stopColor="var(--icon-gradient-start, #7C7C7C)"/>
+          <stop className="stop-end" offset="1" stopColor="var(--icon-gradient-end, #E2E2E2)"/>
+        </linearGradient>
+      </defs>
     </svg>
   ),
 };

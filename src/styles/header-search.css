@@ -154,6 +154,14 @@ html::-webkit-scrollbar-thumb {
   stroke: currentColor;
 }
 
+/* Nav icon gradient CSS variables */
+.nav-icon .nav-svg-icon {
+  --icon-gradient-start: #7C7C7C;
+  --icon-gradient-end: #E2E2E2;
+  --icon-secondary-color: #7C7C7C;
+  transition: all 0.3s ease;
+}
+
 .nav-label {
   white-space: nowrap;
 }
@@ -167,6 +175,13 @@ html::-webkit-scrollbar-thumb {
   color: #D9F743;
 }
 
+/* Hover effect for nav icons - lime gradient */
+.nav_links:hover .nav-icon .nav-svg-icon {
+  --icon-gradient-start: #D9F743;
+  --icon-gradient-end: #7F9127;
+  --icon-secondary-color: #D9F743;
+}
+
 .nav_links.active {
   color: #D9F743 !important;
 }
@@ -174,6 +189,13 @@ html::-webkit-scrollbar-thumb {
 .nav_links.active .nav-icon,
 .nav_links.active .nav-label {
   color: #D9F743;
+}
+
+/* Active state for nav icons - lime gradient */
+.nav_links.active .nav-icon .nav-svg-icon {
+  --icon-gradient-start: #D9F743;
+  --icon-gradient-end: #7F9127;
+  --icon-secondary-color: #D9F743;
 }
 
 

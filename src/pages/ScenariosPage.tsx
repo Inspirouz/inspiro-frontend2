@@ -1,32 +1,34 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import contentData from "@/data/content";
-import { PATTERN_CATEGORIES } from "@/constants";
+import { SCENARIO_CATEGORIES, CATEGORIES } from "@/constants";
 import ImagePreviewModal from "@/components/ImagePreviewModal";
 import { useSEO } from "@/hooks/useSEO";
 import '@/styles/header-search.css';
 import '@/styles/detail-page.css';
 
 // Category counts based on the design
-const CATEGORY_COUNTS: Record<string, number> = {
+const SCENARIO_COUNTS: Record<string, number> = {
   '': 12,
-  '/account': 2,
-  '/home': 3,
-  '/description': 5,
-  '/cart': 2,
+  '/search': 2,
+  '/login': 3,
+  '/cancel': 5,
+  '/order': 2,
 };
 
-const PatternsPage = () => {
+const ScenariosPage = () => {
   // SEO optimization
   useSEO({
-    title: 'Patterns - UI/UX Design Patterns',
-    description: 'UI/UX dizayn patternlar to\'plami. Zamonaviy dizayn yechimlari va best practices.',
-    keywords: 'UI patterns, UX patterns, design patterns, interface patterns, user experience patterns',
-    ogUrl: 'https://inspiro.com/patterns',
+    title: 'Сценарии - UI/UX Design Scenarios',
+    description: 'UI/UX dizayn scenariylar to\'plami. User flow va interaction patternlari.',
+    keywords: 'UI scenarios, UX scenarios, user flows, interaction patterns, mobile app scenarios',
+    ogUrl: 'https://inspiro.com/scenarios',
   });
   
   const [activeCategory, setActiveCategory] = useState<string>('');
+  const [activeFilter, setActiveFilter] = useState<string>('Все');
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [previewIndex, setPreviewIndex] = useState(0);
+  const filtersRef = useRef<HTMLUListElement>(null);
 
   // Create screens array for the modal
   const screens = contentData.map((item) => ({
@@ -40,13 +42,24 @@ const PatternsPage = () => {
     setIsPreviewOpen(true);
   };
 
+  // Scroll filters
+  const scrollFilters = (direction: 'left' | 'right') => {
+    if (filtersRef.current) {
+      const scrollAmount = 200;
+      filtersRef.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth'
+      });
+    }
+  };
+
   return (
     <>
       <div className="detail-page__content">
         {/* Left Sidebar */}
         <aside className="detail-page__sidebar">
           <div className="detail-page__subcategories">
-            {PATTERN_CATEGORIES.map((category) => (
+            {SCENARIO_CATEGORIES.map((category) => (
               <button
                 key={category.path}
                 className={`detail-page__subcategory ${activeCategory === category.path ? 'active' : ''}`}
@@ -54,7 +67,7 @@ const PatternsPage = () => {
               >
                 {category.label}
                 <span className="detail-page__subcategory-count">
-                  {CATEGORY_COUNTS[category.path] || 0}
+                  {SCENARIO_COUNTS[category.path] || 0}
                 </span>
               </button>
             ))}
@@ -63,6 +76,36 @@ const PatternsPage = () => {
 
         {/* Main Content */}
         <main className="detail-page__main with-sidebar">
+          {/* Horizontal Category Filters - Same as HomePage */}
+          <section className="category-filter-section" aria-label="Category filters">
+            <div className="category-filter-wrapper">
+              <ul className="category-list" ref={filtersRef} role="list">
+                {CATEGORIES.map((category) => (
+                  <li 
+                    key={category} 
+                    className={`category-item ${activeFilter === category ? 'active' : ''}`}
+                    role="listitem"
+                    aria-label={`Filter by ${category}`}
+                    onClick={() => setActiveFilter(category)}
+                  >
+                    {category}
+                  </li>
+                ))}
+              </ul>
+              <button 
+                className="category-scroll-btn"
+                onClick={() => scrollFilters('right')}
+                aria-label="Scroll right"
+              >
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M0.9375 7.9375L14.9375 7.9375" stroke="#D9F743" strokeWidth="1.875" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M7.9375 0.9375L14.9375 7.9375L7.9375 14.9375" stroke="#D9F743" strokeWidth="1.875" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+            </div>
+          </section>
+
+          {/* Cards Grid - Same as Patterns Page */}
           <div className="detail-page__grid">
             {contentData.map((item, index) => (
               <div 
@@ -105,5 +148,5 @@ const PatternsPage = () => {
   );
 };
 
-export default PatternsPage;
+export default ScenariosPage;
 
