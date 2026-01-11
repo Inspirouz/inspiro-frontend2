@@ -3,6 +3,7 @@ import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import contentData from '@/data/content';
 import { useSEO } from '@/hooks/useSEO';
 import ImagePreviewModal from '@/components/ImagePreviewModal';
+import { NavIcons } from '@/components/icons';
 import '@/styles/detail-page.css';
 
 type TabType = 'screens' | 'scenarios' | 'videos';
@@ -278,9 +279,7 @@ const DetailPage = () => {
             disabled={tab.disabled}
           >
             <span className="detail-page__nav-icon">
-              {tab.id === 'screens' && '📱'}
-              {tab.id === 'scenarios' && '📄'}
-              {tab.id === 'videos' && '🎥'}
+              {NavIcons[tab.id]}
             </span>
             {tab.label}
             {tab.count !== null && (
