@@ -56,45 +56,50 @@ const DetailPage = () => {
       id: 'entry',
       label: 'Вход',
       type: 'top-level' as const,
+      count: 5,
       children: [],
     },
     {
       id: 'main',
       label: 'Главная',
       type: 'parent' as const,
+      count: 24,
       children: [
-        { id: 'main-1', label: 'Пополнить с другого банка', sectionId: 'section-main-1' },
-        { id: 'main-2', label: 'Оплата по QR', sectionId: 'section-main-2' },
-        { id: 'main-3', label: 'Перевод между счетами', sectionId: 'section-main-3' },
-        { id: 'main-4', label: 'Перевод по номеру телефо...', sectionId: 'section-main-4' },
-        { id: 'main-5', label: 'Кэшбэк', sectionId: 'section-main-5' },
-        { id: 'main-6', label: 'Уведомления', sectionId: 'section-main-6' },
+        { id: 'main-1', label: 'Пополнить с другого банка', sectionId: 'section-main-1', count: 4 },
+        { id: 'main-2', label: 'Оплата по QR', sectionId: 'section-main-2', count: 3 },
+        { id: 'main-3', label: 'Перевод между счетами', sectionId: 'section-main-3', count: 5 },
+        { id: 'main-4', label: 'Перевод по номеру телефо...', sectionId: 'section-main-4', count: 6 },
+        { id: 'main-5', label: 'Кэшбэк', sectionId: 'section-main-5', count: 3 },
+        { id: 'main-6', label: 'Уведомления', sectionId: 'section-main-6', count: 3 },
       ],
     },
     {
       id: 'products',
       label: 'Все продукты',
       type: 'parent' as const,
+      count: 18,
       children: [
         {
           id: 'products-1',
           label: 'Счет',
           type: 'nested' as const,
+          count: 8,
           children: [
-            { id: 'products-1-1', label: 'Заказать справку', sectionId: 'section-products-1-1' },
+            { id: 'products-1-1', label: 'Заказать справку', sectionId: 'section-products-1-1', count: 8 },
           ],
         },
-        { id: 'products-2', label: 'Изменить порядок', sectionId: 'section-products-2' },
-        { id: 'products-3', label: 'Настроить баланс', sectionId: 'section-products-3' },
+        { id: 'products-2', label: 'Изменить порядок', sectionId: 'section-products-2', count: 5 },
+        { id: 'products-3', label: 'Настроить баланс', sectionId: 'section-products-3', count: 5 },
       ],
     },
     {
       id: 'history',
       label: 'Просмотр историй',
       type: 'parent' as const,
+      count: 12,
       children: [
-        { id: 'history-1', label: 'Найти банкомат', sectionId: 'section-history-1' },
-        { id: 'history-2', label: 'Раздел «Игры»', sectionId: 'section-history-2' },
+        { id: 'history-1', label: 'Найти банкомат', sectionId: 'section-history-1', count: 6 },
+        { id: 'history-2', label: 'Раздел «Игры»', sectionId: 'section-history-2', count: 6 },
       ],
     },
   ];
@@ -324,7 +329,8 @@ const DetailPage = () => {
                   {/* Top-level or Parent item */}
                   {parent.type === 'top-level' ? (
                     <button className="detail-page__tree-top-level">
-                      {parent.label}
+                      <span className="detail-page__tree-label">{parent.label}</span>
+                      <span className="detail-page__tree-count">{parent.count}</span>
                     </button>
                   ) : (
                     <>
@@ -333,7 +339,8 @@ const DetailPage = () => {
                           <div className="detail-page__tree-parent-line"></div>
                         )}
                         <button className="detail-page__tree-parent-button">
-                          {parent.label}
+                          <span className="detail-page__tree-label">{parent.label}</span>
+                          <span className="detail-page__tree-count">{parent.count}</span>
                         </button>
                       </div>
                       
@@ -359,7 +366,8 @@ const DetailPage = () => {
                                         <div className="detail-page__tree-nested-line"></div>
                                       )}
                                       <button className="detail-page__tree-nested-button">
-                                        {child.label}
+                                        <span className="detail-page__tree-label">{child.label}</span>
+                                        <span className="detail-page__tree-count">{child.count}</span>
                                       </button>
                                     </div>
                                     
@@ -378,6 +386,7 @@ const DetailPage = () => {
                                                 onClick={() => nested.sectionId && handleTreeItemClick(nested.sectionId, nested.id)}
                                               >
                                                 <span className="detail-page__tree-label">{nested.label}</span>
+                                                <span className="detail-page__tree-count">{nested.count}</span>
                                               </button>
                                             </div>
                                           );
@@ -391,6 +400,7 @@ const DetailPage = () => {
                                     onClick={() => child.sectionId && handleTreeItemClick(child.sectionId, child.id)}
                                   >
                                     <span className="detail-page__tree-label">{child.label}</span>
+                                    <span className="detail-page__tree-count">{child.count}</span>
                                   </button>
                                 )}
                               </div>

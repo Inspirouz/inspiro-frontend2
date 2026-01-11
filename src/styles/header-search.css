@@ -32,9 +32,10 @@ html::-webkit-scrollbar-thumb {
 /* Header Section */
 .header-search {
   width: 100% !important;
-  display: flex !important;
-  justify-content: space-between !important;
+  display: grid !important;
+  grid-template-columns: auto 1fr auto !important;
   align-items: center !important;
+  gap: 24px !important;
   height: min-content !important;
   position: sticky !important;
   top: 0 !important;
@@ -48,8 +49,10 @@ html::-webkit-scrollbar-thumb {
   border: none;
   display: flex;
   align-items: center;
+  justify-self: center;
   border-radius: 50px;
-  width: 680px;
+  width: 100%;
+  max-width: 680px;
   height: 64px;
   padding-left: 60px;
   font-size: 17px;

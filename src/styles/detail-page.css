@@ -9,8 +9,6 @@
   max-width: 100% !important;
   margin: 0 !important;
   position: relative !important;
-  overflow-x: hidden !important;
-  overflow-y: visible !important;
 }
 
 .detail-page * {
@@ -23,8 +21,6 @@
   max-width: 100% !important;
   margin: 0 !important;
   padding: 0 !important;
-  overflow-x: hidden !important;
-  overflow-y: visible !important;
   position: relative !important;
 }
 
@@ -279,7 +275,7 @@
   align-items: flex-start !important;
   position: relative !important;
   width: 100% !important;
-  min-height: 0 !important;
+  min-height: 100vh !important;
 }
 
 /* Sidebar */
@@ -290,8 +286,9 @@
   position: sticky;
   top: 130px;
   align-self: flex-start;
-  max-height: calc(100vh - 40px);
+  max-height: calc(100vh - 160px);
   overflow-y: auto;
+  z-index: 10;
 }
 
 /* Tree Sidebar for Scenarios */
@@ -299,10 +296,10 @@
   width: 320px !important;
   position: -webkit-sticky !important;
   position: sticky !important;
-  top: 0 !important;
+  top: 130px !important;
   align-self: flex-start !important;
-  height: 100% !important;
-  max-height: calc(100vh - 200px) !important;
+  height: auto !important;
+  max-height: calc(100vh - 160px) !important;
   overflow-y: auto !important;
   overflow-x: hidden !important;
   z-index: 10 !important;
@@ -310,7 +307,6 @@
   padding-top: 24px !important;
   padding-bottom: 24px !important;
   flex-shrink: 0 !important;
-  will-change: transform !important;
 }
 
 .detail-page__tree {
@@ -328,6 +324,7 @@
 .detail-page__tree-top-level {
   display: flex !important;
   align-items: center !important;
+  justify-content: space-between !important;
   padding: 8px 0 !important;
   background: none !important;
   border: none !important;
@@ -364,6 +361,7 @@
 .detail-page__tree-parent-button {
   display: flex !important;
   align-items: center !important;
+  justify-content: space-between !important;
   padding: 8px 0 !important;
   background: none !important;
   border: none !important;
@@ -394,7 +392,6 @@
   display: flex !important;
   align-items: center !important;
   min-height: 32px !important;
-  margin-bottom: 2px !important;
 }
 
 .detail-page__tree-connector {
@@ -406,6 +403,7 @@
   display: flex !important;
   align-items: center !important;
   justify-content: flex-start !important;
+
 }
 
 .detail-page__tree-vertical-line {
@@ -468,8 +466,9 @@
 
 .detail-page__tree-count {
   font-size: 14px !important;
-  color: #FFFFFF !important;
+  color: rgba(255, 255, 255, 0.5) !important;
   margin-left: 8px !important;
+  flex-shrink: 0 !important;
 }
 
 /* Nested tree items */
@@ -495,6 +494,7 @@
 .detail-page__tree-nested-button {
   display: flex !important;
   align-items: center !important;
+  justify-content: space-between !important;
   padding: 6px 0 !important;
   background: none !important;
   border: none !important;
@@ -617,9 +617,7 @@
 
 }
 
-.detail-page__main.with-sidebar {
-  /* When sidebar is visible, adjust layout */
-}
+/* .detail-page__main.with-sidebar - reserved for sidebar adjustments */
 
 .detail-page__grid {
   display: grid;
@@ -756,7 +754,7 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  scroll-margin-top: 100px;
+  scroll-margin-top: 110px;
   margin-bottom: 32px;
 }
 
