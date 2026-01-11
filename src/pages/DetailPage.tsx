@@ -309,7 +309,7 @@ const DetailPage = () => {
                   onClick={() => setActiveSubCategory(subCat.id)}
                 >
                   {subCat.label}
-                  <span className="detail-page__subcategory-count">({subCat.count})</span>
+                  <span className="detail-page__subcategory-count">{subCat.count}</span>
                 </button>
               ))}
             </div>

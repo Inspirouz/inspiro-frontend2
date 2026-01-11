@@ -10,13 +10,18 @@ const Modal = ({ active, setActive, children }: ModalProps) => {
     e.stopPropagation();
   };
 
+  // Don't render anything if modal is not active
+  if (!active) {
+    return null;
+  }
+
   return (
     <div
-      className={active ? "modal active" : "modal"}
+      className="modal active"
       onClick={handleOverlayClick}
     >
       <div
-        className={active ? "modal-content active" : "modal-content"}
+        className="modal-content active"
         onClick={handleContentClick}
       >
         {children}

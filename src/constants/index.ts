@@ -12,13 +12,15 @@ export const CATEGORIES: Category[] = [
   'Путешествие',
   'AI',
   'Карты',
+  
 ];
 
 export const NAV_ITEMS: NavItem[] = [
-  { path: '/', label: 'Приложение' },
-  { path: '/patterns', label: 'Паттерны' },
-  { path: '/scenarios', label: 'Сценарии' },
-  { path: '/ui_elements', label: 'UI Элементы' },
+  { path: '/', label: 'Приложение', icon: 'app' },
+  { path: '/patterns', label: 'Паттерны', icon: 'patterns' },
+  { path: '/scenarios', label: 'Сценарии', icon: 'scenarios' },
+  { path: '/ui_elements', label: 'UI Элементы', icon: 'ui' },
+  // { path: '/fonts', label: 'Шрифты', icon: 'fonts' },
 ];
 
 export const PATTERN_CATEGORIES: PatternCategory[] = [

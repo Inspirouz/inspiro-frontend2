@@ -1,6 +1,7 @@
 import { Outlet, useLocation } from "react-router-dom";
 import Header from "@/components/Header";
 import NavLinks from "@/components/NavLinks";
+import PromoBanner from "@/components/PromoBanner";
 // import AuthPrompt from "@/components/AuthPrompt";
 
 const Layout = () => {
@@ -11,6 +12,7 @@ const Layout = () => {
   return (
     <>
       <Header />
+      {!isSubscriptionPage && !isDetailPage && <PromoBanner />}
       {!isSubscriptionPage && !isDetailPage && <NavLinks />}
       <Outlet />
       {/* <AuthPrompt /> */}

@@ -6,6 +6,9 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['"Helvetica Neue"', 'Helvetica', 'Arial', 'sans-serif'],
+      },
       colors: {
         primary: '#D9F743',
         background: {
@@ -28,6 +31,7 @@ export default {
   },
   plugins: [],
 }
+
 
 
 

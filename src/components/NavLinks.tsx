@@ -1,5 +1,6 @@
 import { NavLink } from 'react-router-dom';
 import { NAV_ITEMS } from '@/constants';
+import { NavIcons } from '@/components/icons';
 // CSS fayllar index.css orqali import qilinadi
 
 const NavLinks = () => {
@@ -9,11 +10,15 @@ const NavLinks = () => {
         {NAV_ITEMS.map((item) => (
           <li key={item.path} className="nav-item">
             <NavLink 
-              className="nav_links" 
+              className={({ isActive }) => `nav_links ${isActive ? 'active' : ''}`}
               to={item.path}
+              end={item.path === '/'}
               aria-label={`Navigate to ${item.label}`}
             >
-              {item.label}
+              {item.icon && NavIcons[item.icon] && (
+                <span className="nav-icon">{NavIcons[item.icon]}</span>
+              )}
+              <span className="nav-label">{item.label}</span>
             </NavLink>
           </li>
         ))}

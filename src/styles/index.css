@@ -13,6 +13,7 @@
 @import './detail-page.css';
 @import './image-preview-modal.css';
 @import './auth-prompt.css';
+@import './promo-banner.css';
 
 /* Tailwind directives */
 @tailwind base;
@@ -44,11 +45,12 @@
 
   html {
     @apply bg-background text-text-primary;
-    font-family: sans-serif;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   }
 
   body {
     @apply bg-background;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   }
 }
 

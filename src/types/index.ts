@@ -12,6 +12,7 @@ export interface ContentItem {
 export interface NavItem {
   path: string;
   label: string;
+  icon?: string;
 }
 
 export interface PatternCategory extends NavItem {}

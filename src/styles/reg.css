@@ -193,7 +193,8 @@
   display: block;
 }
 
-.reg_window_form__field input:invalid {
+/* Only show error border when user has interacted with the field */
+.reg_window_form__field input[aria-invalid="true"] {
   border-color: #ff4444;
 }
 
