@@ -181,7 +181,11 @@ const SearchModal = () => {
             className={`search-modal__filter ${activeFilter === filter.id ? 'active' : ''}`}
             onClick={() => setActiveFilter(filter.id)}
           >
-            <span className="search-modal__filter-icon">{filter.icon}</span>
+            <span className="search-modal__filter-icon">
+              <span className="search-modal__filter-icon-wrapper nav-svg-icon">
+                {filter.icon}
+              </span>
+            </span>
             {filter.label}
           </button>
         ))}

@@ -50,58 +50,15 @@ const DetailPage = () => {
     { id: 'cart' as SubCategoryType, label: 'Корзина', count: 2 },
   ];
 
-  // Tree structure data - matching the image
+  // Tree structure data - flat list with nesting levels
   const treeStructure = [
-    {
-      id: 'entry',
-      label: 'Вход',
-      type: 'top-level' as const,
-      count: 5,
-      children: [],
-    },
-    {
-      id: 'main',
-      label: 'Главная',
-      type: 'parent' as const,
-      count: 24,
-      children: [
-        { id: 'main-1', label: 'Пополнить с другого банка', sectionId: 'section-main-1', count: 4 },
-        { id: 'main-2', label: 'Оплата по QR', sectionId: 'section-main-2', count: 3 },
-        { id: 'main-3', label: 'Перевод между счетами', sectionId: 'section-main-3', count: 5 },
-        { id: 'main-4', label: 'Перевод по номеру телефо...', sectionId: 'section-main-4', count: 6 },
-        { id: 'main-5', label: 'Кэшбэк', sectionId: 'section-main-5', count: 3 },
-        { id: 'main-6', label: 'Уведомления', sectionId: 'section-main-6', count: 3 },
-      ],
-    },
-    {
-      id: 'products',
-      label: 'Все продукты',
-      type: 'parent' as const,
-      count: 18,
-      children: [
-        {
-          id: 'products-1',
-          label: 'Счет',
-          type: 'nested' as const,
-          count: 8,
-          children: [
-            { id: 'products-1-1', label: 'Заказать справку', sectionId: 'section-products-1-1', count: 8 },
-          ],
-        },
-        { id: 'products-2', label: 'Изменить порядок', sectionId: 'section-products-2', count: 5 },
-        { id: 'products-3', label: 'Настроить баланс', sectionId: 'section-products-3', count: 5 },
-      ],
-    },
-    {
-      id: 'history',
-      label: 'Просмотр историй',
-      type: 'parent' as const,
-      count: 12,
-      children: [
-        { id: 'history-1', label: 'Найти банкомат', sectionId: 'section-history-1', count: 6 },
-        { id: 'history-2', label: 'Раздел «Игры»', sectionId: 'section-history-2', count: 6 },
-      ],
-    },
+    { id: 'item-1', label: 'Онбординг', sectionId: 'section-1', count: 12, level: 0 },
+    { id: 'item-2', label: 'Онбординг', sectionId: 'section-2', count: 12, level: 1 },
+    { id: 'item-3', label: 'Онбординг', sectionId: 'section-3', count: 12, level: 2 },
+    { id: 'item-4', label: 'Онбординг', sectionId: 'section-4', count: 12, level: 3 },
+    { id: 'item-5', label: 'Онбординг', sectionId: 'section-5', count: 12, level: 3 },
+    { id: 'item-6', label: 'Онбординг', sectionId: 'section-6', count: 12, level: 2 },
+    { id: 'item-7', label: 'Онбординг', sectionId: 'section-7', count: 12, level: 0 },
   ];
 
   const [activeTreeItem, setActiveTreeItem] = useState<string | null>(null);
@@ -127,24 +84,8 @@ const DetailPage = () => {
   useEffect(() => {
     if (activeTab !== 'scenarios') return;
 
-    // Get all section IDs from tree structure
-    const allSectionIds: string[] = [];
-    treeStructure.forEach((parent) => {
-      if (parent.type === 'parent') {
-        parent.children.forEach((child: any) => {
-          if (child.sectionId) {
-            allSectionIds.push(child.sectionId);
-          }
-          if (child.children) {
-            child.children.forEach((nested: any) => {
-              if (nested.sectionId) {
-                allSectionIds.push(nested.sectionId);
-              }
-            });
-          }
-        });
-      }
-    });
+    // Get all section IDs from flat tree structure
+    const allSectionIds = treeStructure.map(item => item.sectionId).filter(Boolean);
 
     // Create Intersection Observer
     const mainContent = document.querySelector('.detail-page__main');
@@ -167,23 +108,11 @@ const DetailPage = () => {
           const target = mostVisibleEntry.target as HTMLElement;
           if (!target || !target.id) return;
           const sectionId = target.id;
-          // Find the corresponding item ID from tree structure
-          treeStructure.forEach((parent) => {
-            if (parent.type === 'parent') {
-              parent.children.forEach((child: any) => {
-                if (child.sectionId === sectionId) {
-                  setActiveTreeItem(child.id);
-                }
-                if (child.children) {
-                  child.children.forEach((nested: any) => {
-                    if (nested.sectionId === sectionId) {
-                      setActiveTreeItem(nested.id);
-                    }
-                  });
-                }
-              });
-            }
-          });
+          // Find the corresponding item ID from flat tree structure
+          const item = treeStructure.find(item => item.sectionId === sectionId);
+          if (item) {
+            setActiveTreeItem(item.id);
+          }
         }
       },
       {
@@ -324,94 +253,40 @@ const DetailPage = () => {
         {activeTab === 'scenarios' && (
           <aside className="detail-page__sidebar detail-page__sidebar--tree">
             <div className="detail-page__tree">
-              {treeStructure.map((parent) => (
-                <div key={parent.id} className="detail-page__tree-section">
-                  {/* Top-level or Parent item */}
-                  {parent.type === 'top-level' ? (
-                    <button className="detail-page__tree-top-level">
-                      <span className="detail-page__tree-label">{parent.label}</span>
-                      <span className="detail-page__tree-count">{parent.count}</span>
-                    </button>
-                  ) : (
-                    <>
-                      <div className="detail-page__tree-parent">
-                        {parent.children.length > 0 && (
-                          <div className="detail-page__tree-parent-line"></div>
-                        )}
-                        <button className="detail-page__tree-parent-button">
-                          <span className="detail-page__tree-label">{parent.label}</span>
-                          <span className="detail-page__tree-count">{parent.count}</span>
-                        </button>
+              {treeStructure.map((item, index) => {
+                const nextItem = treeStructure[index + 1];
+                const hasChildBelow = nextItem && nextItem.level > item.level;
+                const isLastAtLevel = !nextItem || nextItem.level <= item.level;
+                
+                return (
+                  <div 
+                    key={item.id} 
+                    className="detail-page__tree-row"
+                    style={{ paddingLeft: `${item.level * 24}px` }}
+                  >
+                    {/* Tree connector lines */}
+                    {item.level > 0 && (
+                      <div className="detail-page__tree-connector">
+                        <div className={`detail-page__tree-vertical-line ${isLastAtLevel ? 'last' : ''}`}></div>
+                        <div className="detail-page__tree-horizontal-line"></div>
                       </div>
-                      
-                      {/* Child items */}
-                      {parent.children.length > 0 && (
-                        <div className="detail-page__tree-items">
-                          {parent.children.map((child: any, childIndex: number) => {
-                            // Check if child has nested children
-                            const hasNested = child.children && child.children.length > 0;
-                            const isLast = childIndex === parent.children.length - 1;
-                            
-                            return (
-                              <div key={child.id} className="detail-page__tree-item">
-                                <div className="detail-page__tree-connector">
-                                  <div className={`detail-page__tree-vertical-line ${isLast ? 'last' : ''}`}></div>
-                                  <div className="detail-page__tree-horizontal-line"></div>
-                                </div>
-                                
-                                {hasNested ? (
-                                  <div className="detail-page__tree-nested">
-                                    <div className="detail-page__tree-nested-parent">
-                                      {child.children.length > 0 && (
-                                        <div className="detail-page__tree-nested-line"></div>
-                                      )}
-                                      <button className="detail-page__tree-nested-button">
-                                        <span className="detail-page__tree-label">{child.label}</span>
-                                        <span className="detail-page__tree-count">{child.count}</span>
-                                      </button>
-                                    </div>
-                                    
-                                    {child.children && child.children.length > 0 && (
-                                      <div className="detail-page__tree-nested-items">
-                                        {child.children.map((nested: any, nestedIndex: number) => {
-                                          const isNestedLast = nestedIndex === child.children.length - 1;
-                                          return (
-                                            <div key={nested.id} className="detail-page__tree-nested-item">
-                                              <div className="detail-page__tree-nested-connector">
-                                                <div className={`detail-page__tree-nested-vertical-line ${isNestedLast ? 'last' : ''}`}></div>
-                                                <div className="detail-page__tree-nested-horizontal-line"></div>
-                                              </div>
-                                              <button 
-                                                className={`detail-page__tree-button ${activeTreeItem === nested.id ? 'active' : ''}`}
-                                                onClick={() => nested.sectionId && handleTreeItemClick(nested.sectionId, nested.id)}
-                                              >
-                                                <span className="detail-page__tree-label">{nested.label}</span>
-                                                <span className="detail-page__tree-count">{nested.count}</span>
-                                              </button>
-                                            </div>
-                                          );
-                                        })}
-                                      </div>
-                                    )}
-                                  </div>
-                                ) : (
-                                  <button 
-                                    className={`detail-page__tree-button ${activeTreeItem === child.id ? 'active' : ''}`}
-                                    onClick={() => child.sectionId && handleTreeItemClick(child.sectionId, child.id)}
-                                  >
-                                    <span className="detail-page__tree-label">{child.label}</span>
-                                    <span className="detail-page__tree-count">{child.count}</span>
-                                  </button>
-                                )}
-                              </div>
-                            );
-                          })}
-                        </div>
-                      )}
-                    </>
-                  )}
-                </div>
-              ))}
+                    )}
+                    
+                    {/* Vertical line for items that have children */}
+                    {hasChildBelow && (
+                      <div className="detail-page__tree-parent-line"></div>
+                    )}
+                    
+                    <button 
+                      className={`detail-page__tree-button ${activeTreeItem === item.id ? 'active' : ''}`}
+                      onClick={() => item.sectionId && handleTreeItemClick(item.sectionId, item.id)}
+                    >
+                      <span className="detail-page__tree-label">{item.label}</span>
+                      <span className="detail-page__tree-count">{item.count}</span>
+                    </button>
+                  </div>
+                );
+              })}
             </div>
           </aside>
         )}
@@ -442,105 +317,39 @@ const DetailPage = () => {
 
           {activeTab === 'scenarios' && (
             <div className="detail-page__scenarios-content">
-              {treeStructure.map((parent) => {
-                if (parent.type === 'top-level') return null;
-                
-                return (
-                  <div key={parent.id} className="detail-page__scenarios-parent-section">
-           
-                    
-                    {/* Child sections */}
-                    {parent.children.map((child: any) => {
-                      if (child.sectionId) {
-                        return (
-                          <div 
-                            key={child.id}
-                            id={child.sectionId}
-                            ref={(el) => {
-                              sectionRefs.current[child.sectionId] = el;
-                            }}
-                            className="detail-page__scenario-section"
-                          >
-                            <div className="detail-page__scenario-section-header">
-                              <h3 className="detail-page__scenario-section-title">{child.label}</h3>
-                              <span className="detail-page__scenario-section-count">{screens.length}  экранов</span>
-                            </div>
-                            <div className="detail-page__scenario-section-grid">
-                              {screens.map((screen, index) => (
-                                <div 
-                                  key={`${child.sectionId}-${screen.id}`} 
-                                  className="detail-page__screen-card"
-                                  onClick={() => handleImageClick(index)}
-                                  style={{ cursor: 'pointer' }}
-                                >
-                                  <div className="detail-page__phone-screen">
-                                    <img 
-                                      src={screen.image} 
-                                      alt={screen.title}
-                                      className="detail-page__phone-image"
-                                    />
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        );
-                      }
-                      
-                      // Nested child (like "Счет")
-                      if (child.children && child.children.length > 0) {
-                        return (
-                          <div key={child.id} className="detail-page__scenario-nested-parent">
-                            <div className="detail-page__scenario-nested-header">
-                              <h3 className="detail-page__scenario-nested-title">{child.label}</h3>
-                            </div>
-                            {child.children.map((nested: any) => {
-                              if (nested.sectionId) {
-                                return (
-                                  <div 
-                                    key={nested.id}
-                                    id={nested.sectionId}
-                                    ref={(el) => {
-                                      sectionRefs.current[nested.sectionId] = el;
-                                    }}
-                                    className="detail-page__scenario-section"
-                                  >
-                                    <div className="detail-page__scenario-section-header">
-                                      <h4 className="detail-page__scenario-section-title">{nested.label}</h4>
-                                      
-                                    </div>
-                                    <div className="detail-page__scenario-section-grid">
-                                      {screens.map((screen, index) => (
-                                        <div 
-                                          key={`${nested.sectionId}-${screen.id}`} 
-                                          className="detail-page__screen-card"
-                                          onClick={() => handleImageClick(index)}
-                                          style={{ cursor: 'pointer' }}
-                                        >
-                                          <div className="detail-page__phone-screen">
-                                            <img 
-                                              src={screen.image} 
-                                              alt={screen.title}
-                                              className="detail-page__phone-image"
-                                            />
-                                          </div>
-                                        </div>
-                                      ))}
-                                    </div>
-                                  </div>
-                                );
-                              }
-                              return null;
-                            })}
-                          </div>
-                        );
-                      }
-                      
-                      return null;
-                    })}
+              {treeStructure.map((item) => (
+                <div 
+                  key={item.id}
+                  id={item.sectionId}
+                  ref={(el) => {
+                    sectionRefs.current[item.sectionId] = el;
+                  }}
+                  className="detail-page__scenario-section"
+                >
+                  <div className="detail-page__scenario-section-header">
+                    <h3 className="detail-page__scenario-section-title">{item.label}</h3>
+                    <span className="detail-page__scenario-section-count">{item.count} экранов</span>
                   </div>
-                );
-              })}
+                  <div className="detail-page__scenario-section-grid">
+                    {screens.map((screen, index) => (
+                      <div 
+                        key={`${item.sectionId}-${screen.id}`} 
+                        className="detail-page__screen-card"
+                        onClick={() => handleImageClick(index)}
+                        style={{ cursor: 'pointer' }}
+                      >
+                        <div className="detail-page__phone-screen">
+                          <img 
+                            src={screen.image} 
+                            alt={screen.title}
+                            className="detail-page__phone-image"
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
             </div>
           )}
 
