@@ -9,6 +9,54 @@ import '@/styles/detail-page.css';
 type TabType = 'screens' | 'scenarios' | 'videos';
 type SubCategoryType = 'all' | 'onboarding' | 'registration' | 'main' | 'cart';
 
+type TreeNode = {
+  id: string;
+  label: string;
+  sectionId: string;
+  count: number;
+  children?: TreeNode[];
+};
+
+// Recursive component for rendering tree nodes
+const TreeNodeComponent = ({
+  node,
+  activeTreeItem,
+  onItemClick,
+  className='',
+  level = 0,
+}: {
+  node: TreeNode;
+  activeTreeItem: string | null;
+  onItemClick: (sectionId: string, itemId: string) => void;
+  level?: number;
+  className?: string;
+}) => {
+  return (
+    <div className={`detail-page__tree-row ${className}`}>
+      <button
+        className={`detail-page__tree-button ${activeTreeItem === node.id ? 'active' : ''}`}
+        onClick={() => node.sectionId && onItemClick(node.sectionId, node.id)}
+      >
+        <span className="detail-page__tree-label">{node.label}</span>
+        <span className="detail-page__tree-count">{node.count}</span>
+      </button>
+      {node.children && node.children.length > 0 && (
+        <div className="detail-page__tree-children">
+          {node.children.map((child) => (
+            <TreeNodeComponent
+              key={child.id}
+              node={child}
+              activeTreeItem={activeTreeItem}
+              onItemClick={onItemClick}
+              level={level + 1}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
 const DetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -50,16 +98,57 @@ const DetailPage = () => {
     { id: 'cart' as SubCategoryType, label: 'Корзина', count: 2 },
   ];
 
-  // Tree structure data - flat list with nesting levels
-  const treeStructure = [
-    { id: 'item-1', label: 'Онбординг', sectionId: 'section-1', count: 12, level: 0 },
-    { id: 'item-2', label: 'Онбординг', sectionId: 'section-2', count: 12, level: 1 },
-    { id: 'item-3', label: 'Онбординг', sectionId: 'section-3', count: 12, level: 2 },
-    { id: 'item-4', label: 'Онбординг', sectionId: 'section-4', count: 12, level: 3 },
-    { id: 'item-5', label: 'Онбординг', sectionId: 'section-5', count: 12, level: 3 },
-    { id: 'item-6', label: 'Онбординг', sectionId: 'section-6', count: 12, level: 2 },
-    { id: 'item-7', label: 'Онбординг', sectionId: 'section-7', count: 12, level: 0 },
+  // Tree structure data - nested structure with parent and children
+  const treeStructure: TreeNode[] = [
+    {
+      id: 'item-1',
+      label: 'Онбординг',
+      sectionId: 'section-1',
+      count: 12,
+      children: [
+        {
+          id: 'item-2',
+          label: 'Онбординг',
+          sectionId: 'section-2',
+          count: 12,
+          children: [
+            {
+              id: 'item-3',
+              label: 'Онбординг',
+              sectionId: 'section-3',
+              count: 12,
+              children: [
+                { id: 'item-4', label: 'Онбординг', sectionId: 'section-4', count: 12 },
+              ],
+            },
+            { id: 'item-6', label: 'Онбординг', sectionId: 'section-6', count: 12 },
+          ],
+        },
+        {
+        id: 'item-2',
+        label: 'Онбординг',
+        sectionId: 'section-2',
+        count: 12,
+        children: []
+      }
+      ],
+    },
+    { id: 'item-7', label: 'Онбординг', sectionId: 'section-7', count: 12 },
   ];
+
+  // Helper function to flatten tree structure for IntersectionObserver and scenarios content
+  const flattenTree = (nodes: TreeNode[], level: number = 0): Array<TreeNode & { level: number }> => {
+    const result: Array<TreeNode & { level: number }> = [];
+    nodes.forEach((node) => {
+      result.push({ ...node, level });
+      if (node.children) {
+        result.push(...flattenTree(node.children, level + 1));
+      }
+    });
+    return result;
+  };
+
+  const flatTreeStructure = flattenTree(treeStructure);
 
   const [activeTreeItem, setActiveTreeItem] = useState<string | null>(null);
   const sectionRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
@@ -84,8 +173,8 @@ const DetailPage = () => {
   useEffect(() => {
     if (activeTab !== 'scenarios') return;
 
-    // Get all section IDs from flat tree structure
-    const allSectionIds = treeStructure.map(item => item.sectionId).filter(Boolean);
+    // Get all section IDs from flattened tree structure
+    const allSectionIds = flatTreeStructure.map(item => item.sectionId).filter(Boolean);
 
     // Create Intersection Observer
     const mainContent = document.querySelector('.detail-page__main');
@@ -108,8 +197,8 @@ const DetailPage = () => {
           const target = mostVisibleEntry.target as HTMLElement;
           if (!target || !target.id) return;
           const sectionId = target.id;
-          // Find the corresponding item ID from flat tree structure
-          const item = treeStructure.find(item => item.sectionId === sectionId);
+          // Find the corresponding item ID from flattened tree structure
+          const item = flatTreeStructure.find(item => item.sectionId === sectionId);
           if (item) {
             setActiveTreeItem(item.id);
           }
@@ -134,7 +223,7 @@ const DetailPage = () => {
     return () => {
       observer.disconnect();
     };
-  }, [activeTab, treeStructure]);
+  }, [activeTab, flatTreeStructure]);
 
   // Use actual content data for screens
   const screens = contentData.map((contentItem) => ({
@@ -248,34 +337,20 @@ const DetailPage = () => {
             </div>
           </aside>
         )}
-
         {/* Tree Sidebar for Scenarios */}
         {activeTab === 'scenarios' && (
           <aside className="detail-page__sidebar detail-page__sidebar--tree">
             <div className="detail-page__tree">
-              {treeStructure.map((item, index) => {
-                const nextItem = treeStructure[index + 1];
-            
-                return (
-                  <div 
-                    key={item.id} 
-                    className="detail-page__tree-row"
-                    style={{ paddingLeft: `${item.level * 24}px` }}
-                  >
-               
-                    
-                
-                    
-                    <button 
-                      className={`detail-page__tree-button ${activeTreeItem === item.id ? 'active' : ''}`}
-                      onClick={() => item.sectionId && handleTreeItemClick(item.sectionId, item.id)}
-                    >
-                      <span className="detail-page__tree-label">{item.label}</span>
-                      <span className="detail-page__tree-count">{item.count}</span>
-                    </button>
-                  </div>
-                );
-              })}
+              {treeStructure.map((item) => (
+                <TreeNodeComponent
+                  key={item.id}
+                  node={item}
+                  activeTreeItem={activeTreeItem}
+                  onItemClick={handleTreeItemClick}
+                  level={0}
+                  className='parent-tree-row'
+                />
+              ))}
             </div>
           </aside>
         )}
@@ -306,7 +381,7 @@ const DetailPage = () => {
 
           {activeTab === 'scenarios' && (
             <div className="detail-page__scenarios-content">
-              {treeStructure.map((item) => (
+              {flatTreeStructure.map((item) => (
                 <div 
                   key={item.id}
                   id={item.sectionId}

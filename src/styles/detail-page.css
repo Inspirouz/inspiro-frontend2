@@ -310,13 +310,27 @@
   flex-shrink: 0 !important;
 }
 
-.detail-page__tree-row, .detail-page__tree-button {
-  border-left: 1px solid #FFFFFF;
+
+
+.detail-page__tree-children{
+  border-left: 1px solid #FFFFFF !important;
+  padding-left: 20px !important;
 }
 
-.detail-page__tree-row:last-child, .detail-page__tree-row:first-child{
-  border-left: none;
+.detail-page__tree-children .detail-page__tree-button {
+ position: relative !important;
 }
+
+.detail-page__tree-children .detail-page__tree-button::before{
+  position: absolute !important;
+  content: '' !important;
+  width: 17px !important;
+  height: 1px !important;
+  background-color: #FFFFFF !important;
+  left: -20px !important;
+  top: 46% !important;
+  transform: translateY(-50%) !important;
+ }
 
 .detail-page__tree {
   display: flex !important;
@@ -327,6 +341,11 @@
 /* Tree Section */
 .detail-page__tree-section {
   margin-bottom: 16px !important;
+}
+
+.parent-tree-row{
+  border-left: none !important;
+  padding-left: 0 !important;
 }
 
 /* Top-level item (like "Вход") */
