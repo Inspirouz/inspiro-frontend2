@@ -62,6 +62,7 @@
 .search-modal__filter {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   padding: 6px;
   /* background-color: #242424; */
