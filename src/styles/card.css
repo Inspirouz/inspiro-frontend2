@@ -8,8 +8,11 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 440px;
-  height: 680px;
+  width: 100%;
+  height: auto;
+  max-height: 680px;
+  aspect-ratio: 500 / 680;
+  width: 100%;
   margin: 0;
   overflow: hidden;
   position: relative;
@@ -198,11 +201,34 @@
 }
 
 /* Responsive adjustments */
+@media (max-width: 1400px) {
+  .card {
+    min-height: 600px;
+    aspect-ratio: 360 / 600;
+    padding: 20px;
+  }
+
+  .card__header {
+    padding: 0 40px;
+    margin-bottom: 20px;
+  }
+
+  .card__phone-wrapper {
+    padding: 0 40px;
+  }
+}
+
 @media (max-width: 900px) {
   .card {
-    width: 360px;
-    height: 560px;
-    padding: 20px;
+    width: 100%;
+    min-height: 560px;
+    aspect-ratio: 360 / 560;
+    padding: 18px;
+  }
+
+  .card__header {
+    padding: 0 36px;
+    margin-bottom: 18px;
   }
 
   .card__logo {
@@ -220,7 +246,7 @@
   }
 
   .card__phone-wrapper {
-    padding: 0 40px;
+    padding: 0 36px;
   }
 
   .card__phone-image {
@@ -245,14 +271,15 @@
 @media (max-width: 480px) {
   .card {
     width: 100%;
-    max-width: 320px;
-    height: 500px;
-    padding: 16px;
+    min-height: 500px;
+    aspect-ratio: 320 / 500;
+    padding: 14px;
   }
 
   .card__header {
+    padding: 0 32px;
     gap: 12px;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
   }
 
   .card__logo {
@@ -270,7 +297,7 @@
   }
 
   .card__phone-wrapper {
-    padding: 0 36px;
+    padding: 0 32px;
   }
 
   .card__phone-image {

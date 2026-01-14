@@ -10,7 +10,7 @@
 .container {
   margin: 0 auto;
   padding: 0px 50px 0 50px;
-  max-width: 1820px;
+  max-width: 1920px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -116,6 +116,7 @@ html::-webkit-scrollbar-thumb {
   z-index: 99 !important;
   background-color: #111111 !important;
   margin-bottom: 0 !important;
+  overflow-x: auto;
 }
 
 .link-ul {
@@ -420,12 +421,37 @@ html::-webkit-scrollbar-thumb {
 
 /* Application Cards */
 .main-content-view {
-  display: flex;
-  flex-wrap: wrap;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
   padding-top: 30px;
   padding-bottom: 30px;
-gap: 20px;
-  justify-content: flex-start;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1920px) {
+  .main-content-view {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 1400px) {
+  .main-content-view {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .main-content-view {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .main-content-view {
+    grid-template-columns: 1fr;
+  }
 }
 .list-content {
   width: min-content;

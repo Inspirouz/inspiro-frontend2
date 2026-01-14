@@ -46,19 +46,19 @@ const PatternsPage = () => {
         {/* Left Sidebar */}
         <aside className="detail-page__sidebar">
           <div className="detail-page__subcategories">
-            {PATTERN_CATEGORIES.map((category) => (
+          {PATTERN_CATEGORIES.map((category) => (
               <button
-                key={category.path}
+              key={category.path}
                 className={`detail-page__subcategory ${activeCategory === category.path ? 'active' : ''}`}
                 onClick={() => setActiveCategory(category.path)}
-              >
-                {category.label}
+            >
+              {category.label}
                 <span className="detail-page__subcategory-count">
                   {CATEGORY_COUNTS[category.path] || 0}
                 </span>
               </button>
-            ))}
-          </div>
+          ))}
+        </div>
         </aside>
 
         {/* Main Content */}
@@ -66,7 +66,7 @@ const PatternsPage = () => {
           <div className="detail-page__grid">
             {contentData.map((item, index) => (
               <div 
-                key={item.id} 
+              key={item.id}
                 className="patterns-card"
                 onClick={() => handleImageClick(index)}
               >
@@ -85,12 +85,12 @@ const PatternsPage = () => {
                     src={item.img2} 
                     alt={item.app_name}
                     className="patterns-card__app-logo"
-                  />
+            />
                   <span className="patterns-card__app-name">{item.app_name}</span>
                 </div>
               </div>
-            ))}
-          </div>
+          ))}
+        </div>
         </main>
       </div>
 
