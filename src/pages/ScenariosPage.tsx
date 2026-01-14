@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import contentData from "@/data/content";
 import { SCENARIO_CATEGORIES, CATEGORIES } from "@/constants";
 import ImagePreviewModal from "@/components/ImagePreviewModal";
@@ -28,6 +28,8 @@ const ScenariosPage = () => {
   const [activeFilter, setActiveFilter] = useState<string>('Все');
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [previewIndex, setPreviewIndex] = useState(0);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
   const filtersRef = useRef<HTMLUListElement>(null);
 
   // Create screens array for the modal
@@ -42,6 +44,16 @@ const ScenariosPage = () => {
     setIsPreviewOpen(true);
   };
 
+  // Check scroll position
+  const checkScroll = useCallback(() => {
+    const container = filtersRef.current;
+    if (!container) return;
+    const canScrollRight = container.scrollLeft < container.scrollWidth - container.clientWidth - 10;
+    const canScrollLeft = container.scrollLeft > 10;
+    setCanScrollRight(canScrollRight);
+    setCanScrollLeft(canScrollLeft);
+  }, []);
+
   // Scroll filters
   const scrollFilters = (direction: 'left' | 'right') => {
     if (filtersRef.current) {
@@ -52,6 +64,19 @@ const ScenariosPage = () => {
       });
     }
   };
+
+  // Set up scroll listeners
+  useEffect(() => {
+    const container = filtersRef.current;
+    if (!container) return;
+
+    container.addEventListener('scroll', checkScroll);
+    checkScroll();
+    
+    return () => {
+      container.removeEventListener('scroll', checkScroll);
+    };
+  }, [checkScroll]);
 
   return (
     <>
@@ -79,6 +104,18 @@ const ScenariosPage = () => {
           {/* Horizontal Category Filters - Same as HomePage */}
           <section className="category-filter-section" aria-label="Category filters">
             <div className="category-filter-wrapper">
+              {canScrollLeft && (
+                <button 
+                  className="category-scroll-btn category-scroll-btn--left"
+                  onClick={() => scrollFilters('left')}
+                  aria-label="Scroll left"
+                >
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15.0625 7.9375L1.0625 7.9375" stroke="#D9F743" strokeWidth="1.875" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M8.0625 0.9375L1.0625 7.9375L8.0625 14.9375" stroke="#D9F743" strokeWidth="1.875" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+              )}
               <ul className="category-list" ref={filtersRef} role="list">
                 {CATEGORIES.map((category) => (
                   <li 
@@ -92,16 +129,18 @@ const ScenariosPage = () => {
                   </li>
                 ))}
               </ul>
-              <button 
-                className="category-scroll-btn"
-                onClick={() => scrollFilters('right')}
-                aria-label="Scroll right"
-              >
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M0.9375 7.9375L14.9375 7.9375" stroke="#D9F743" strokeWidth="1.875" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M7.9375 0.9375L14.9375 7.9375L7.9375 14.9375" stroke="#D9F743" strokeWidth="1.875" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </button>
+              {canScrollRight && (
+                <button 
+                  className="category-scroll-btn category-scroll-btn--right"
+                  onClick={() => scrollFilters('right')}
+                  aria-label="Scroll right"
+                >
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0.9375 7.9375L14.9375 7.9375" stroke="#D9F743" strokeWidth="1.875" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M7.9375 0.9375L14.9375 7.9375L7.9375 14.9375" stroke="#D9F743" strokeWidth="1.875" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+              )}
             </div>
           </section>
 

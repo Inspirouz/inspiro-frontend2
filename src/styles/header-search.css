@@ -354,7 +354,6 @@ html::-webkit-scrollbar-thumb {
 
 .category-scroll-btn {
   position: absolute;
-  right: 0;
   width: 64px;
   height: 64px;
   min-width: 44px;
@@ -369,7 +368,14 @@ html::-webkit-scrollbar-thumb {
   flex-shrink: 0;
   z-index: 2;
   box-shadow: 0px 1px 4px 0px #00000040;
+}
 
+.category-scroll-btn--left {
+  left: 0;
+}
+
+.category-scroll-btn--right {
+  right: 0;
 }
 
 .category-scroll-btn:hover {
@@ -381,8 +387,21 @@ html::-webkit-scrollbar-thumb {
   height: 20px;
 }
 
-/* Gradient fade effect on the right */
-.category-filter-wrapper::after {
+/* Gradient fade effect on the left - only when left button exists */
+.category-filter-wrapper:has(.category-scroll-btn--left)::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 110px;
+  background: linear-gradient(to left, transparent, #111111);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Gradient fade effect on the right - only when right button exists */
+.category-filter-wrapper:has(.category-scroll-btn--right)::after {
   content: '';
   position: absolute;
   right: 0;
@@ -391,6 +410,7 @@ html::-webkit-scrollbar-thumb {
   width: 110px;
   background: linear-gradient(to right, transparent, #111111);
   pointer-events: none;
+  z-index: 1;
 }
 
 .scenarios-page__main .category-filter-section{

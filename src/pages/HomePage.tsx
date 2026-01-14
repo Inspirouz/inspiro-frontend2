@@ -15,18 +15,27 @@ const HomePage = () => {
   const containerRef = useRef<HTMLUListElement>(null);
   const [activeCategory, setActiveCategory] = useState<string>(CATEGORIES[0] || '');
   const [canScrollRight, setCanScrollRight] = useState(true);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
 
   const checkScroll = useCallback(() => {
     const container = containerRef.current;
     if (!container) return;
-    const canScroll = container.scrollLeft < container.scrollWidth - container.clientWidth - 10;
-    setCanScrollRight(canScroll);
+    const canScrollRight = container.scrollLeft < container.scrollWidth - container.clientWidth - 10;
+    const canScrollLeft = container.scrollLeft > 10;
+    setCanScrollRight(canScrollRight);
+    setCanScrollLeft(canScrollLeft);
   }, []);
 
   const scrollRight = useCallback(() => {
     const container = containerRef.current;
     if (!container) return;
     container.scrollBy({ left: 200, behavior: 'smooth' });
+  }, []);
+
+  const scrollLeft = useCallback(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    container.scrollBy({ left: -200, behavior: 'smooth' });
   }, []);
 
   useEffect(() => {
@@ -54,6 +63,18 @@ const HomePage = () => {
     <>
       <section className="category-filter-section" aria-label="Category filters">
         <div className="category-filter-wrapper">
+          {canScrollLeft && (
+            <button 
+              className="category-scroll-btn category-scroll-btn--left"
+              onClick={scrollLeft}
+              aria-label="Scroll left"
+            >
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15.0625 7.9375L1.0625 7.9375" stroke="#D9F743" strokeWidth="1.875" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M8.0625 0.9375L1.0625 7.9375L8.0625 14.9375" stroke="#D9F743" strokeWidth="1.875" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+          )}
           <ul className="category-list" ref={containerRef} role="list">
             {CATEGORIES.map((category) => (
               <li 
@@ -69,15 +90,14 @@ const HomePage = () => {
           </ul>
           {canScrollRight && (
             <button 
-              className="category-scroll-btn"
+              className="category-scroll-btn category-scroll-btn--right"
               onClick={scrollRight}
               aria-label="Scroll right"
             >
-             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M0.9375 7.9375L14.9375 7.9375" stroke="#D9F743" stroke-width="1.875" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M7.9375 0.9375L14.9375 7.9375L7.9375 14.9375" stroke="#D9F743" stroke-width="1.875" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>
-
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0.9375 7.9375L14.9375 7.9375" stroke="#D9F743" strokeWidth="1.875" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M7.9375 0.9375L14.9375 7.9375L7.9375 14.9375" stroke="#D9F743" strokeWidth="1.875" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
             </button>
           )}
         </div>
