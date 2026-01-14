@@ -432,6 +432,18 @@ const DetailPage = () => {
         onClose={handleModalClose}
         images={screens}
         initialIndex={selectedImageIndex}
+        appInfo={{
+          logo: item.img2,
+          name: item.app_name,
+          description: item.text_info || 'Description of the company',
+        }}
+        treeStructure={treeStructure}
+        activeTreeItem={activeTreeItem}
+        onTreeItemClick={handleTreeItemClick}
+        activeTab={activeTab}
+        subCategories={subCategories}
+        activeSubCategory={activeSubCategory}
+        onSubCategoryClick={(categoryId) => setActiveSubCategory(categoryId as SubCategoryType)}
       />
     </div>
     </>

@@ -39,6 +39,61 @@ const ScenariosPage = () => {
     title: item.app_name,
   }));
 
+  // Get first item for app info (or use selected item)
+  const firstItem = contentData[0] || null;
+
+  // Convert SCENARIO_CATEGORIES to subCategories format
+  const subCategories = SCENARIO_CATEGORIES.map((category) => ({
+    id: category.path,
+    label: category.label,
+    count: SCENARIO_COUNTS[category.path] || 0,
+  }));
+
+  // Tree structure for scenarios (similar to DetailPage)
+  const treeStructure = [
+    {
+      id: 'item-1',
+      label: 'Онбординг',
+      sectionId: 'section-1',
+      count: 12,
+      children: [
+        {
+          id: 'item-2',
+          label: 'Онбординг',
+          sectionId: 'section-2',
+          count: 12,
+          children: [
+            {
+              id: 'item-3',
+              label: 'Онбординг',
+              sectionId: 'section-3',
+              count: 12,
+              children: [
+                { id: 'item-4', label: 'Онбординг', sectionId: 'section-4', count: 12 },
+              ],
+            },
+            { id: 'item-6', label: 'Онбординг', sectionId: 'section-6', count: 12 },
+          ],
+        },
+        {
+          id: 'item-8',
+          label: 'Онбординг',
+          sectionId: 'section-8',
+          count: 12,
+          children: []
+        }
+      ],
+    },
+    { id: 'item-7', label: 'Онбординг', sectionId: 'section-7', count: 12 },
+  ];
+
+  const [activeTreeItem, setActiveTreeItem] = useState<string | null>(null);
+
+  const handleTreeItemClick = (sectionId: string, itemId: string) => {
+    setActiveTreeItem(itemId);
+    // You can add scroll to section logic here if needed
+  };
+
   const handleImageClick = (index: number) => {
     setPreviewIndex(index);
     setIsPreviewOpen(true);
@@ -177,12 +232,26 @@ const ScenariosPage = () => {
       </div>
 
       {/* Image Preview Modal */}
-      <ImagePreviewModal
-        isOpen={isPreviewOpen}
-        onClose={() => setIsPreviewOpen(false)}
-        images={screens}
-        initialIndex={previewIndex}
-      />
+      {firstItem && (
+        <ImagePreviewModal
+          isOpen={isPreviewOpen}
+          onClose={() => setIsPreviewOpen(false)}
+          images={screens}
+          initialIndex={previewIndex}
+          appInfo={{
+            logo: firstItem.img2,
+            name: firstItem.app_name,
+            description: firstItem.text_info || 'Description of the company',
+          }}
+          activeTab="scenarios"
+          treeStructure={treeStructure}
+          activeTreeItem={activeTreeItem}
+          onTreeItemClick={handleTreeItemClick}
+          subCategories={subCategories}
+          activeSubCategory={activeCategory}
+          onSubCategoryClick={(categoryId) => setActiveCategory(categoryId)}
+        />
+      )}
     </>
   );
 };

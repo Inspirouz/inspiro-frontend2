@@ -35,6 +35,16 @@ const PatternsPage = () => {
     title: item.app_name,
   }));
 
+  // Get first item for app info (or use selected item)
+  const firstItem = contentData[0] || null;
+
+  // Convert PATTERN_CATEGORIES to subCategories format
+  const subCategories = PATTERN_CATEGORIES.map((category) => ({
+    id: category.path,
+    label: category.label,
+    count: CATEGORY_COUNTS[category.path] || 0,
+  }));
+
   const handleImageClick = (index: number) => {
     setPreviewIndex(index);
     setIsPreviewOpen(true);
@@ -95,12 +105,23 @@ const PatternsPage = () => {
       </div>
 
       {/* Image Preview Modal */}
-      <ImagePreviewModal
-        isOpen={isPreviewOpen}
-        onClose={() => setIsPreviewOpen(false)}
-        images={screens}
-        initialIndex={previewIndex}
-      />
+      {firstItem && (
+        <ImagePreviewModal
+          isOpen={isPreviewOpen}
+          onClose={() => setIsPreviewOpen(false)}
+          images={screens}
+          initialIndex={previewIndex}
+          appInfo={{
+            logo: firstItem.img2,
+            name: firstItem.app_name,
+            description: firstItem.text_info || 'Description of the company',
+          }}
+          activeTab="screens"
+          subCategories={subCategories}
+          activeSubCategory={activeCategory}
+          onSubCategoryClick={(categoryId) => setActiveCategory(categoryId)}
+        />
+      )}
     </>
   );
 };
