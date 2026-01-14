@@ -6,13 +6,20 @@
   /* background-color: #111111; */
   /* color: white; */
 }
+
 .container {
   margin: 0 auto;
-  padding-top: 20px;
+  padding: 0px 50px 0 50px;
   max-width: 1820px;
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+@media only screen and (max-width: 1500px) {
+  .container {
+  margin: 0;
+  }
 }
 
 html::-webkit-scrollbar {
@@ -151,7 +158,20 @@ html::-webkit-scrollbar-thumb {
 .nav-icon svg {
   width: 40px;
   height: 40px;
-  stroke: currentColor;
+  /* stroke: currentColor; */
+}
+
+/* Default state for nav icon SVGs */
+.nav-icon .nav-svg-icon {
+  --icon-gradient-start: #7C7C7C;
+  --icon-gradient-end: #E2E2E2;
+  --icon-secondary-color: #7C7C7C;
+  transition: all 0.3s ease;
+}
+
+.nav-icon .nav-svg-icon path,
+.nav-icon .nav-svg-icon stop {
+  transition: all 0.3s ease;
 }
 
 .nav-label {
@@ -167,6 +187,29 @@ html::-webkit-scrollbar-thumb {
   color: #D9F743;
 }
 
+/* Hover effect for nav icons - lime gradient */
+.nav_links:hover .nav-icon .nav-svg-icon {
+  --icon-gradient-start: #D9F743;
+  --icon-gradient-end: #7F9127;
+  --icon-secondary-color: #D9F743;
+}
+
+.nav_links:hover .nav-icon .nav-svg-icon path.icon-secondary {
+  fill: #D9F743 !important;
+}
+
+.nav_links:hover .nav-icon .nav-svg-icon stop.stop-start,
+.nav_links:hover .nav-icon .nav-svg-icon stop[offset="0"],
+.nav_links:hover .nav-icon .nav-svg-icon stop:first-child {
+  stop-color: #D9F743 !important;
+}
+
+.nav_links:hover .nav-icon .nav-svg-icon stop.stop-end,
+.nav_links:hover .nav-icon .nav-svg-icon stop[offset="1"],
+.nav_links:hover .nav-icon .nav-svg-icon stop:last-child {
+  stop-color: #7F9127 !important;
+}
+
 .nav_links.active {
   color: #D9F743 !important;
 }
@@ -174,6 +217,29 @@ html::-webkit-scrollbar-thumb {
 .nav_links.active .nav-icon,
 .nav_links.active .nav-label {
   color: #D9F743;
+}
+
+/* Active state for nav icons - lime gradient */
+.nav_links.active .nav-icon .nav-svg-icon {
+  --icon-gradient-start: #D9F743;
+  --icon-gradient-end: #7F9127;
+  --icon-secondary-color: #D9F743;
+}
+
+.nav_links.active .nav-icon .nav-svg-icon path.icon-secondary {
+  fill: #D9F743 !important;
+}
+
+.nav_links.active .nav-icon .nav-svg-icon stop.stop-start,
+.nav_links.active .nav-icon .nav-svg-icon stop[offset="0"],
+.nav_links.active .nav-icon .nav-svg-icon stop:first-child {
+  stop-color: #D9F743 !important;
+}
+
+.nav_links.active .nav-icon .nav-svg-icon stop.stop-end,
+.nav_links.active .nav-icon .nav-svg-icon stop[offset="1"],
+.nav_links.active .nav-icon .nav-svg-icon stop:last-child {
+  stop-color: #7F9127 !important;
 }
 
 
@@ -230,7 +296,6 @@ html::-webkit-scrollbar-thumb {
 .category-filter-section {
   width: 100%;
   padding-top: 30px;
-  padding-bottom: 8px;
 }
 
 .category-filter-wrapper {
@@ -241,6 +306,8 @@ html::-webkit-scrollbar-thumb {
 }
 
 .category-list {
+  background: linear-gradient(90deg, rgba(17, 17, 17, 0) 0%, rgba(17, 17, 17, 0) 15%, rgba(17, 17, 17, 0) 80%, #111111 100%);
+
   list-style-type: none;
   display: flex;
   gap: 8px;
@@ -288,8 +355,8 @@ html::-webkit-scrollbar-thumb {
 .category-scroll-btn {
   position: absolute;
   right: 0;
-  width: 44px;
-  height: 44px;
+  width: 64px;
+  height: 64px;
   min-width: 44px;
   border-radius: 50%;
   background-color: #2A2A2A;
@@ -301,6 +368,8 @@ html::-webkit-scrollbar-thumb {
   transition: all 0.2s ease;
   flex-shrink: 0;
   z-index: 2;
+  box-shadow: 0px 1px 4px 0px #00000040;
+
 }
 
 .category-scroll-btn:hover {
@@ -316,15 +385,18 @@ html::-webkit-scrollbar-thumb {
 .category-filter-wrapper::after {
   content: '';
   position: absolute;
-  right: 52px;
+  right: 0;
   top: 0;
   bottom: 0;
-  width: 60px;
+  width: 110px;
   background: linear-gradient(to right, transparent, #111111);
   pointer-events: none;
 }
 
-
+.scenarios-page__main .category-filter-section{
+  padding-top: 0 !important;
+  padding-bottom: 30px !important;
+}
 
 /* Application Cards */
 .main-content-view {
@@ -332,8 +404,7 @@ html::-webkit-scrollbar-thumb {
   flex-wrap: wrap;
   padding-top: 30px;
   padding-bottom: 30px;
-  row-gap: 24px;
-  column-gap: 20px;
+gap: 20px;
   justify-content: flex-start;
 }
 .list-content {

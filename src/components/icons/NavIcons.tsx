@@ -2,21 +2,25 @@ import React from 'react';
 
 export const NavIcons: Record<string, React.ReactNode> = {
   app: (
-    <svg className="nav-svg-icon" width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path className="icon-bg" opacity="0.4" d="M27.068 3.3335H12.9346C8.33464 3.3335 6.66797 5.00016 6.66797 9.6835V30.3168C6.66797 35.0002 8.33464 36.6668 12.9346 36.6668H27.0513C31.668 36.6668 33.3346 35.0002 33.3346 30.3168V9.6835C33.3346 5.00016 31.668 3.3335 27.068 3.3335Z" fill="url(#grad_app_bg)"/>
-      <path className="icon-fg" d="M23.3346 10.4165H16.668C15.9846 10.4165 15.418 9.84984 15.418 9.1665C15.418 8.48317 15.9846 7.9165 16.668 7.9165H23.3346C24.018 7.9165 24.5846 8.48317 24.5846 9.1665C24.5846 9.84984 24.018 10.4165 23.3346 10.4165Z" fill="url(#grad_app_fg)"/>
-      <path className="icon-fg" d="M19.9987 32.1668C21.6095 32.1668 22.9154 30.861 22.9154 29.2502C22.9154 27.6393 21.6095 26.3335 19.9987 26.3335C18.3879 26.3335 17.082 27.6393 17.082 29.2502C17.082 30.861 18.3879 32.1668 19.9987 32.1668Z" fill="url(#grad_app_fg)"/>
-      <defs>
-        <linearGradient id="grad_app_bg" x1="20" y1="0" x2="20" y2="40" gradientUnits="userSpaceOnUse">
-          <stop className="stop-start" stopColor="var(--icon-gradient-start, #FFFFFF)"/>
-          <stop className="stop-end" offset="1" stopColor="var(--icon-gradient-end, #999999)"/>
-        </linearGradient>
-        <linearGradient id="grad_app_fg" x1="20" y1="0" x2="20" y2="40" gradientUnits="userSpaceOnUse">
-          <stop className="stop-start" stopColor="var(--icon-gradient-start, #FFFFFF)"/>
-          <stop className="stop-end" offset="1" stopColor="var(--icon-gradient-end, #999999)"/>
-        </linearGradient>
-      </defs>
-    </svg>
+<svg className="nav-svg-icon" width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path opacity="0.4" d="M27.066 3.33333H12.9327C8.33268 3.33333 6.66602 4.99999 6.66602 9.68333V30.3167C6.66602 35 8.33268 36.6667 12.9327 36.6667H27.0493C31.666 36.6667 33.3327 35 33.3327 30.3167V9.68333C33.3327 4.99999 31.666 3.33333 27.066 3.33333Z" fill="url(#paint0_linear_1052_4286)"/>
+<path d="M23.3327 10.4167H16.666C15.9827 10.4167 15.416 9.85001 15.416 9.16667C15.416 8.48334 15.9827 7.91667 16.666 7.91667H23.3327C24.016 7.91667 24.5827 8.48334 24.5827 9.16667C24.5827 9.85001 24.016 10.4167 23.3327 10.4167Z" fill="url(#paint1_linear_1052_4286)"/>
+<path d="M20.0007 32.1668C21.6115 32.1668 22.9173 30.8609 22.9173 29.2501C22.9173 27.6393 21.6115 26.3334 20.0007 26.3334C18.3898 26.3334 17.084 27.6393 17.084 29.2501C17.084 30.8609 18.3898 32.1668 20.0007 32.1668Z" fill="url(#paint2_linear_1052_4286)"/>
+<defs>
+<linearGradient id="paint0_linear_1052_4286" x1="19.9993" y1="3.33333" x2="19.9993" y2="36.6667" gradientUnits="userSpaceOnUse">
+<stop stop-color="white"/>
+<stop offset="1" stop-color="#999999"/>
+</linearGradient>
+<linearGradient id="paint1_linear_1052_4286" x1="19.9993" y1="7.50001" x2="19.9993" y2="10.8333" gradientUnits="userSpaceOnUse">
+<stop stop-color="white"/>
+<stop offset="1" stop-color="#999999"/>
+</linearGradient>
+<linearGradient id="paint2_linear_1052_4286" x1="20.0007" y1="26.3334" x2="20.0007" y2="32.1668" gradientUnits="userSpaceOnUse">
+<stop stop-color="white"/>
+<stop offset="1" stop-color="#999999"/>
+</linearGradient>
+</defs>
+</svg>
   ),
   patterns: (
     <svg className="nav-svg-icon" width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">

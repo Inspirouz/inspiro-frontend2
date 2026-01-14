@@ -172,7 +172,7 @@ const DetailPage = () => {
 
 
   return (
-    <div className='container'>
+    <>
 
     <div className="detail-page-wrapper">
       <div className="detail-page">
@@ -255,27 +255,16 @@ const DetailPage = () => {
             <div className="detail-page__tree">
               {treeStructure.map((item, index) => {
                 const nextItem = treeStructure[index + 1];
-                const hasChildBelow = nextItem && nextItem.level > item.level;
-                const isLastAtLevel = !nextItem || nextItem.level <= item.level;
-                
+            
                 return (
                   <div 
                     key={item.id} 
                     className="detail-page__tree-row"
                     style={{ paddingLeft: `${item.level * 24}px` }}
                   >
-                    {/* Tree connector lines */}
-                    {item.level > 0 && (
-                      <div className="detail-page__tree-connector">
-                        <div className={`detail-page__tree-vertical-line ${isLastAtLevel ? 'last' : ''}`}></div>
-                        <div className="detail-page__tree-horizontal-line"></div>
-                      </div>
-                    )}
+               
                     
-                    {/* Vertical line for items that have children */}
-                    {hasChildBelow && (
-                      <div className="detail-page__tree-parent-line"></div>
-                    )}
+                
                     
                     <button 
                       className={`detail-page__tree-button ${activeTreeItem === item.id ? 'active' : ''}`}
@@ -370,7 +359,7 @@ const DetailPage = () => {
         initialIndex={selectedImageIndex}
       />
     </div>
-    </div>
+    </>
   );
 };
 

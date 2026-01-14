@@ -75,7 +75,7 @@ const ScenariosPage = () => {
         </aside>
 
         {/* Main Content */}
-        <main className="detail-page__main with-sidebar">
+        <main className="scenarios-page__main detail-page__main with-sidebar">
           {/* Horizontal Category Filters - Same as HomePage */}
           <section className="category-filter-section" aria-label="Category filters">
             <div className="category-filter-wrapper">

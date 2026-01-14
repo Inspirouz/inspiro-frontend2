@@ -1,9 +1,10 @@
 /* Detail Page Styles - Override Tailwind base styles */
 .detail-page {
-  min-height: 100vh !important;
+  /* min-height: 100vh !important; */
   background-color: #111111 !important;
   color: #FFFFFF !important;
-  padding: 24px !important;
+  padding-top: 24px !important;
+  /* padding: 24px !important; */
   box-sizing: border-box !important;
   width: 100% !important;
   max-width: 100% !important;
@@ -307,6 +308,14 @@
   padding-top: 24px !important;
   padding-bottom: 24px !important;
   flex-shrink: 0 !important;
+}
+
+.detail-page__tree-row, .detail-page__tree-button {
+  border-left: 1px solid #FFFFFF;
+}
+
+.detail-page__tree-row:last-child, .detail-page__tree-row:first-child{
+  border-left: none;
 }
 
 .detail-page__tree {
