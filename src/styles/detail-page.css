@@ -467,7 +467,7 @@
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
-  padding: 6px 0 !important;
+  /* padding: 6px 0 !important; */
   background: none !important;
   border: none !important;
   color: #FFFFFF !important;
@@ -476,6 +476,7 @@
   transition: all 0.2s ease !important;
   text-align: left !important;
   width: 100% !important;
+  height: 44px !important;
   margin-left: 0 !important;
 }
 

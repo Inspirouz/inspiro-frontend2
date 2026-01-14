@@ -125,12 +125,12 @@ const DetailPage = () => {
           ],
         },
         {
-        id: 'item-2',
-        label: 'Онбординг',
-        sectionId: 'section-2',
-        count: 12,
-        children: []
-      }
+          id: 'item-8',
+          label: 'Онбординг',
+          sectionId: 'section-8',
+          count: 12,
+          children: []
+        }
       ],
     },
     { id: 'item-7', label: 'Онбординг', sectionId: 'section-7', count: 12 },
