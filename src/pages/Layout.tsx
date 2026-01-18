@@ -28,7 +28,7 @@ const scrollThreshold = 2000; // 2000px
       {!isSubscriptionPage && !isDetailPage && <PromoBanner />}
       {!isSubscriptionPage && !isDetailPage && <NavLinks />}
       <Outlet />
-      {showAuthPrompt && <AuthPrompt />}
+      {/* {showAuthPrompt && <AuthPrompt />} */}
     </>
   );
 };

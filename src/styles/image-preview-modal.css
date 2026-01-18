@@ -197,13 +197,19 @@ justify-content: space-between;
 /* Center - Image Only (No Frame) */
 .image-preview-modal__center {
   display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
   background-color: transparent !important;
   width: 100% !important;
 }
 
 .image-preview-modal__image-container {
   width: 100% !important;
-  /* max-height: 90vh !important; */
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
   position: relative !important;
 }
 
@@ -212,12 +218,13 @@ justify-content: space-between;
 max-width: 380px !important;
   display: block !important;
   object-fit: contain !important;
+  margin: 0 auto !important;
 }
 
 /* Footer Pagination */
 .image-preview-modal__pagination {
   position: absolute !important;
-  bottom: 90px !important;
+  bottom: -50px !important;
   left: 50% !important;
   transform: translateX(-50%) !important;
   color: #FFFFFF !important;
@@ -225,6 +232,8 @@ max-width: 380px !important;
   background-color: rgba(0, 0, 0, 0.5) !important;
   padding: 8px 16px !important;
   border-radius: 20px !important;
+  white-space: nowrap !important;
+  z-index: 20 !important;
 }
 
 
@@ -292,11 +301,23 @@ box-shadow: 0px 1.25px 5px 0px #00000040 !important;
 
 .image-preview-modal__image-container-wrapper{
   width: 100% !important;
-  /* height: 100vh !important; */
-  display: flex;
-  align-items: center;
-justify-content: flex-end;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
   gap: 78px !important;
+  position: relative !important;
+}
+
+.image-preview-modal__image-wrapper {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative !important;
+}
+
+.image-preview-modal__image-container-wrapper > .image-preview-modal__image {
+  position: relative !important;
 }
 
 
@@ -400,6 +421,57 @@ flex-shrink: 0 !important;
 
 
 
+@media screen and (max-width: 1600px) {
+  .image-preview-modal__content {
+    padding: 100px 40px !important;
+  }
+
+  .image-preview-modal__left {
+    width: 280px !important;
+    gap: 50px !important;
+  }
+
+  .image-preview-modal__app-logo {
+    width: 90px !important;
+    height: 90px !important;
+  }
+
+  .image-preview-modal__app-name {
+    font-size: 36px !important;
+  }
+
+  .image-preview-modal__app-description {
+    font-size: 17px !important;
+  }
+
+  .image-preview-modal__image-container-wrapper {
+    gap: 60px !important;
+  }
+
+  .image-preview-modal__info-box {
+    margin-right: 100px !important;
+    max-width: 420px !important;
+    padding: 28px !important;
+  }
+
+  .image-preview-modal__image {
+    max-width: 360px !important;
+  }
+
+  .image-preview-modal__nav-arrow {
+    width: 70px !important;
+    height: 70px !important;
+  }
+
+  .image-preview-modal__nav-arrow--left {
+    left: 15px !important;
+  }
+
+  .image-preview-modal__nav-arrow--right {
+    right: -10px !important;
+  }
+}
+
 @media screen and (max-width: 1550px) {
   .image-preview-modal__app-logo{
     width: 80px !important;
@@ -416,6 +488,7 @@ flex-shrink: 0 !important;
   }
   .image-preview-modal__image-container-wrapper {
     margin-right: 100px !important;
+    gap: 50px !important;
   }
   .image-preview-modal__info-box {
     margin-right: 80px !important;
@@ -424,5 +497,229 @@ flex-shrink: 0 !important;
   .image-preview-modal__nav-arrow {
     width: 60px !important;
     height: 60px !important;
+  }
+  .image-preview-modal__image {
+    max-width: 340px !important;
+  }
+}
+
+@media screen and (max-width: 1400px) {
+  .image-preview-modal__content {
+    padding: 90px 35px !important;
+  }
+
+  .image-preview-modal__left {
+    width: 260px !important;
+    gap: 45px !important;
+  }
+
+  .image-preview-modal__app-logo {
+    width: 75px !important;
+    height: 75px !important;
+  }
+
+  .image-preview-modal__app-name {
+    font-size: 30px !important;
+  }
+
+  .image-preview-modal__app-description {
+    font-size: 15px !important;
+  }
+
+  .image-preview-modal__tree-button {
+    font-size: 14px !important;
+    padding: 10px 16px !important;
+  }
+
+  .image-preview-modal__subcategory {
+    font-size: 15px !important;
+    padding: 10px 16px !important;
+  }
+
+  .image-preview-modal__image-container-wrapper {
+    gap: 45px !important;
+    margin-right: 80px !important;
+  }
+
+  .image-preview-modal__info-box {
+    margin-right: 60px !important;
+    max-width: 340px !important;
+    padding: 24px !important;
+  }
+
+  .image-preview-modal__info-value {
+    font-size: 19px !important;
+  }
+
+  .image-preview-modal__info-label {
+    font-size: 15px !important;
+  }
+
+  .image-preview-modal__image {
+    max-width: 320px !important;
+  }
+
+  .image-preview-modal__nav-arrow {
+    width: 55px !important;
+    height: 55px !important;
+  }
+
+  .image-preview-modal__nav-arrow--left {
+    left: 10px !important;
+  }
+
+  .image-preview-modal__nav-arrow--right {
+    right: -5px !important;
+  }
+
+  .image-preview-modal__pagination {
+    bottom: -45px !important;
+    font-size: 13px !important;
+  }
+}
+
+@media screen and (max-width: 1200px) {
+  .image-preview-modal__content {
+    padding: 80px 30px !important;
+  }
+
+  .image-preview-modal__left {
+    width: 240px !important;
+    gap: 40px !important;
+  }
+
+  .image-preview-modal__app-logo {
+    width: 70px !important;
+    height: 70px !important;
+  }
+
+  .image-preview-modal__app-name {
+    font-size: 28px !important;
+  }
+
+  .image-preview-modal__app-description {
+    font-size: 14px !important;
+  }
+
+  .image-preview-modal__tree-button {
+    font-size: 13px !important;
+    padding: 9px 14px !important;
+  }
+
+  .image-preview-modal__subcategory {
+    font-size: 14px !important;
+    padding: 9px 14px !important;
+  }
+
+  .image-preview-modal__image-container-wrapper {
+    gap: 35px !important;
+    margin-right: 60px !important;
+  }
+
+  .image-preview-modal__info-box {
+    margin-right: 40px !important;
+    max-width: 310px !important;
+    padding: 20px !important;
+  }
+
+  .image-preview-modal__info-value {
+    font-size: 18px !important;
+  }
+
+  .image-preview-modal__info-label {
+    font-size: 14px !important;
+  }
+
+  .image-preview-modal__info-section-title {
+    font-size: 15px !important;
+  }
+
+  .image-preview-modal__tag {
+    font-size: 14px !important;
+    padding: 4px 10px !important;
+  }
+
+  .image-preview-modal__image {
+    max-width: 300px !important;
+  }
+
+  .image-preview-modal__nav-arrow {
+    width: 50px !important;
+    height: 50px !important;
+  }
+
+  .image-preview-modal__nav-arrow svg {
+    width: 20px !important;
+    height: 20px !important;
+  }
+
+  .image-preview-modal__nav-arrow--left {
+    left: 5px !important;
+  }
+
+  .image-preview-modal__nav-arrow--right {
+    right: 0 !important;
+  }
+
+  .image-preview-modal__pagination {
+    bottom: -40px !important;
+    font-size: 12px !important;
+    padding: 6px 14px !important;
+  }
+}
+
+@media screen and (max-width: 1100px) {
+  .image-preview-modal__content {
+    padding: 70px 25px !important;
+  }
+
+  .image-preview-modal__layout {
+    flex-direction: column !important;
+    gap: 40px !important;
+  }
+
+  .image-preview-modal__left {
+    width: 100% !important;
+    order: 2 !important;
+    gap: 30px !important;
+  }
+
+  .image-preview-modal__center {
+    order: 1 !important;
+    width: 100% !important;
+  }
+
+  .image-preview-modal__image-container-wrapper {
+    flex-direction: column !important;
+    gap: 30px !important;
+    align-items: center !important;
+    margin-right: 0 !important;
+  }
+
+  .image-preview-modal__info-container {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .image-preview-modal__info-box {
+    max-width: 100% !important;
+    width: 100% !important;
+    margin-right: 0 !important;
+  }
+
+  .image-preview-modal__image {
+    max-width: 280px !important;
+  }
+
+  .image-preview-modal__nav-arrow--left {
+    left: 10px !important;
+  }
+
+  .image-preview-modal__nav-arrow--right {
+    right: 10px !important;
+  }
+
+  .image-preview-modal__pagination {
+    bottom: -35px !important;
   }
 }

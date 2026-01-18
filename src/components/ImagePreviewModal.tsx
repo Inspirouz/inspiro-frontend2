@@ -218,11 +218,17 @@ const ImagePreviewModal = ({
                 </svg>
               </button>
 <div className='image-preview-modal__image-container-wrapper'>
-              <img 
-                src={currentImage.image} 
-                alt={currentImage.title}
-                className="image-preview-modal__image"
-              />
+              <div className='image-preview-modal__image-wrapper'>
+                <img 
+                  src={currentImage.image} 
+                  alt={currentImage.title}
+                  className="image-preview-modal__image"
+                />
+                {/* Footer Pagination */}
+                <div className="image-preview-modal__pagination">
+                  {currentIndex + 1} из {images.length}
+                </div>
+              </div>
 
          
          <div className='image-preview-modal__info-container'>
@@ -304,12 +310,6 @@ const ImagePreviewModal = ({
                   <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </button>
-            </div>
-            
-
-            {/* Footer Pagination */}
-            <div className="image-preview-modal__pagination">
-              {currentIndex + 1} из {images.length}
             </div>
           </div>
           

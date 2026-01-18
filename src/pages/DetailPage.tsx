@@ -176,25 +176,29 @@ const DetailPage = () => {
     // Get all section IDs from flattened tree structure
     const allSectionIds = flatTreeStructure.map(item => item.sectionId).filter(Boolean);
 
-    // Create Intersection Observer
-    const mainContent = document.querySelector('.detail-page__main');
-    if (!mainContent) return;
-
     const observer = new IntersectionObserver(
       (entries: IntersectionObserverEntry[]) => {
-        // Find the section that is most visible
-        let mostVisibleEntry: IntersectionObserverEntry | null = null;
-        let maxRatio = 0;
+        // Find all intersecting entries
+        const intersectingEntries = entries.filter(entry => entry.isIntersecting);
+        
+        if (intersectingEntries.length === 0) return;
 
-        for (const entry of entries) {
-          if (entry.isIntersecting && entry.intersectionRatio > maxRatio) {
-            maxRatio = entry.intersectionRatio;
-            mostVisibleEntry = entry;
+        // Find the section that is closest to the top of the viewport
+        let closestEntry: IntersectionObserverEntry | null = null;
+        let closestDistance = Infinity;
+
+        for (const entry of intersectingEntries) {
+          const rect = entry.boundingClientRect;
+          const distance = Math.abs(rect.top);
+          
+          if (distance < closestDistance) {
+            closestDistance = distance;
+            closestEntry = entry;
           }
         }
 
-        if (mostVisibleEntry) {
-          const target = mostVisibleEntry.target as HTMLElement;
+        if (closestEntry) {
+          const target = closestEntry.target as HTMLElement;
           if (!target || !target.id) return;
           const sectionId = target.id;
           // Find the corresponding item ID from flattened tree structure
@@ -205,9 +209,9 @@ const DetailPage = () => {
         }
       },
       {
-        root: mainContent,
-        rootMargin: '-20% 0px -50% 0px',
-        threshold: [0, 0.25, 0.5, 0.75, 1],
+        root: null, // Use viewport as root
+        rootMargin: '-130px 0px -60% 0px', // Account for header + offset, and bottom 60% threshold
+        threshold: [0, 0.1, 0.25, 0.5, 0.75, 1],
       }
     );
 
