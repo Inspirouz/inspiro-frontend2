@@ -5,7 +5,7 @@ import '@/styles/image-preview-modal.css';
 interface ImagePreviewModalProps {
   isOpen: boolean;
   onClose: () => void;
-  images: Array<{ id: number; image: string; title: string }>;
+  images: Array<{ id: number | string; image: string; title: string }>;
   initialIndex?: number;
   appInfo?: {
     logo: string;
@@ -53,6 +53,36 @@ const ImagePreviewModal = ({
       setCurrentIndex(initialIndex);
     }
   }, [isOpen, initialIndex]);
+
+  const handleShare = async () => {
+    const url = window.location.href;
+    const title = appInfo?.name ?? document.title;
+    const text = appInfo?.description ?? '';
+
+    if (typeof navigator !== 'undefined' && navigator.share) {
+      try {
+        await navigator.share({
+          title,
+          text: text || title,
+          url,
+        });
+      } catch (err) {
+        if ((err as Error).name !== 'AbortError') {
+          try {
+            await navigator.clipboard.writeText(url);
+          } catch {
+            // ignore
+          }
+        }
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(url);
+      } catch {
+        // ignore
+      }
+    }
+  };
 
   useEffect(() => {
     if (!isOpen) return;
@@ -197,7 +227,7 @@ const ImagePreviewModal = ({
                   >
                     {subCat.label}
                     <span className="image-preview-modal__subcategory-count">{subCat.count}</span>
-                  </button>
+        </button>
                 ))}
               </div>
             )}
@@ -208,15 +238,15 @@ const ImagePreviewModal = ({
          
             <div className="image-preview-modal__image-container">
               {/* Navigation Arrows */}
-              <button 
-                className="image-preview-modal__nav-arrow image-preview-modal__nav-arrow--left"
-                onClick={handlePrevious}
-                aria-label="Previous image"
-              >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </button>
+            <button 
+              className="image-preview-modal__nav-arrow image-preview-modal__nav-arrow--left"
+              onClick={handlePrevious}
+              aria-label="Previous image"
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
 <div className='image-preview-modal__image-container-wrapper'>
               <div className='image-preview-modal__image-wrapper'>
                 <img 
@@ -225,15 +255,15 @@ const ImagePreviewModal = ({
                   className="image-preview-modal__image"
                 />
                 {/* Footer Pagination */}
-                <div className="image-preview-modal__pagination">
-                  {currentIndex + 1} из {images.length}
-                </div>
-              </div>
+            <div className="image-preview-modal__pagination">
+              {currentIndex + 1} из {images.length}
+            </div>
+          </div>
 
          
          <div className='image-preview-modal__info-container'>
             <div className="image-preview-modal__info-header">
-              <button className="image-preview-modal__share-btn">
+              <button type="button" className="image-preview-modal__share-btn" onClick={handleShare} aria-label="Поделиться">
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M15 6.66667C16.3807 6.66667 17.5 5.54738 17.5 4.16667C17.5 2.78595 16.3807 1.66667 15 1.66667C13.6193 1.66667 12.5 2.78595 12.5 4.16667C12.5 5.54738 13.6193 6.66667 15 6.66667Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                   <path d="M5 12.5C6.38071 12.5 7.5 11.3807 7.5 10C7.5 8.61929 6.38071 7.5 5 7.5C3.61929 7.5 2.5 8.61929 2.5 10C2.5 11.3807 3.61929 12.5 5 12.5Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -252,51 +282,51 @@ const ImagePreviewModal = ({
               </button>
             </div>
          <div className="image-preview-modal__info-box">
-              <div className="image-preview-modal__info-content">
-                {/* Upload date */}
-                <div className="image-preview-modal__info-item">
-                  <span className="image-preview-modal__info-label">Upload date</span>
-                  <span className="image-preview-modal__info-value">14 Sep, 2025</span>
-                </div>
+            <div className="image-preview-modal__info-content">
+              {/* Upload date */}
+              <div className="image-preview-modal__info-item">
+                <span className="image-preview-modal__info-label">Upload date</span>
+                <span className="image-preview-modal__info-value">14 Sep, 2025</span>
+              </div>
 
-                {/* Resolution */}
-                <div className="image-preview-modal__info-item">
-                  <span className="image-preview-modal__info-label">Resolution</span>
-                  <span className="image-preview-modal__info-value">393x852</span>
-                </div>
+              {/* Resolution */}
+              <div className="image-preview-modal__info-item">
+                <span className="image-preview-modal__info-label">Resolution</span>
+                <span className="image-preview-modal__info-value">393x852</span>
+              </div>
 
-                {/* Scenarios */}
-                <div className="image-preview-modal__info-section">
-                  <h3 className="image-preview-modal__info-section-title">Сценарии</h3>
-                  <div className="image-preview-modal__tags">
-                    <span className="image-preview-modal__tag">Регистрация</span>
-                    <span className="image-preview-modal__tag">Вход</span>
-                  </div>
-                </div>
-
-                {/* UI Elements */}
-                <div className="image-preview-modal__info-section">
-                  <h3 className="image-preview-modal__info-section-title">UI Элементы</h3>
-                  <div className="image-preview-modal__tags">
-                    <span className="image-preview-modal__tag">Форма</span>
-                    <span className="image-preview-modal__tag">Кнопка</span>
-                    <span className="image-preview-modal__tag">Tab bar</span>
-                    <span className="image-preview-modal__tag">Nav bar</span>
-                  </div>
-                </div>
-
-                {/* Patterns */}
-                <div className="image-preview-modal__info-section">
-                  <h3 className="image-preview-modal__info-section-title">Паттерны</h3>
-                  <div className="image-preview-modal__tags">
-                    <span className="image-preview-modal__tag">Регистрация</span>
-                    <span className="image-preview-modal__tag">Регистрация</span>
-                    <span className="image-preview-modal__tag">Регистрация</span>
-                    <span className="image-preview-modal__tag">Регистрация</span>
-                  </div>
+              {/* Scenarios */}
+              <div className="image-preview-modal__info-section">
+                <h3 className="image-preview-modal__info-section-title">Сценарии</h3>
+                <div className="image-preview-modal__tags">
+                  <span className="image-preview-modal__tag">Регистрация</span>
+                  <span className="image-preview-modal__tag">Вход</span>
                 </div>
               </div>
-            </div>   
+
+              {/* UI Elements */}
+              <div className="image-preview-modal__info-section">
+                <h3 className="image-preview-modal__info-section-title">UI Элементы</h3>
+                <div className="image-preview-modal__tags">
+                  <span className="image-preview-modal__tag">Форма</span>
+                  <span className="image-preview-modal__tag">Кнопка</span>
+                  <span className="image-preview-modal__tag">Tab bar</span>
+                  <span className="image-preview-modal__tag">Nav bar</span>
+                </div>
+              </div>
+
+              {/* Patterns */}
+              <div className="image-preview-modal__info-section">
+                <h3 className="image-preview-modal__info-section-title">Паттерны</h3>
+                <div className="image-preview-modal__tags">
+                  <span className="image-preview-modal__tag">Регистрация</span>
+                  <span className="image-preview-modal__tag">Регистрация</span>
+                  <span className="image-preview-modal__tag">Регистрация</span>
+                  <span className="image-preview-modal__tag">Регистрация</span>
+                </div>
+              </div>
+            </div>
+          </div>
           </div>  
 
 </div>

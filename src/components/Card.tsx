@@ -40,7 +40,7 @@ const Card = ({ item, onClick, variant = 'default' }: CardProps) => {
       <div className="card__header">
         <img
           className="card__logo"
-          src={item.img2}
+          src={item.logo}
           alt={`${item.app_name} logo`}
           loading="lazy"
           decoding="async"

@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import contentData from "@/data/content";
-import { SCENARIO_CATEGORIES, CATEGORIES } from "@/constants";
+import { SCENARIO_CATEGORIES } from "@/constants";
+import { useCategories } from "@/hooks/useCategories";
 import ImagePreviewModal from "@/components/ImagePreviewModal";
 import { useSEO } from "@/hooks/useSEO";
 import '@/styles/header-search.css';
@@ -16,6 +17,7 @@ const SCENARIO_COUNTS: Record<string, number> = {
 };
 
 const ScenariosPage = () => {
+  const { categories } = useCategories();
   // SEO optimization
   useSEO({
     title: 'Сценарии - UI/UX Design Scenarios',
@@ -25,7 +27,10 @@ const ScenariosPage = () => {
   });
   
   const [activeCategory, setActiveCategory] = useState<string>('');
-  const [activeFilter, setActiveFilter] = useState<string>('Все');
+  const [activeFilter, setActiveFilter] = useState<string>(categories[0] || 'Все');
+  useEffect(() => {
+    if (categories.length && !categories.includes(activeFilter)) setActiveFilter(categories[0] ?? 'Все');
+  }, [categories]);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [previewIndex, setPreviewIndex] = useState(0);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
@@ -172,7 +177,7 @@ const ScenariosPage = () => {
                 </button>
               )}
               <ul className="category-list" ref={filtersRef} role="list">
-                {CATEGORIES.map((category) => (
+                {categories.map((category) => (
                   <li 
                     key={category} 
                     className={`category-item ${activeFilter === category ? 'active' : ''}`}

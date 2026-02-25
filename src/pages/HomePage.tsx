@@ -1,10 +1,13 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import MainContent from "@/components/MainContent";
-import { CATEGORIES } from "@/constants";
+import { useCategories } from "@/hooks/useCategories";
 import { useSEO } from "@/hooks/useSEO";
 import '@/styles/header-search.css';
 
 const HomePage = () => {
+  const { categories } = useCategories();
+  // console.log(categories);
+  
   // SEO optimization
   useSEO({
     title: 'Inspiro - UI/UX Patterns va Design Elements',
@@ -13,9 +16,13 @@ const HomePage = () => {
     ogUrl: 'https://inspiro.com/',
   });
   const containerRef = useRef<HTMLUListElement>(null);
-  const [activeCategory, setActiveCategory] = useState<string>(CATEGORIES[0] || '');
+  const [activeCategory, setActiveCategory] = useState<string>(categories[0] || '');
   const [canScrollRight, setCanScrollRight] = useState(true);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
+
+  useEffect(() => {
+    if (categories.length && !activeCategory) setActiveCategory(categories[0] ?? '');
+  }, [categories]);
 
   const checkScroll = useCallback(() => {
     const container = containerRef.current;
@@ -76,7 +83,7 @@ const HomePage = () => {
             </button>
           )}
           <ul className="category-list" ref={containerRef} role="list">
-            {CATEGORIES.map((category) => (
+            {categories.map((category) => (
               <li 
                 key={category} 
                 className={`category-item ${activeCategory === category ? 'active' : ''}`}
@@ -102,7 +109,7 @@ const HomePage = () => {
           )}
         </div>
       </section>
-      <MainContent />
+      <MainContent category={activeCategory === 'Все' ? undefined : activeCategory} />
     </>
   );
 };

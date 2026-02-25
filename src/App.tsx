@@ -10,7 +10,8 @@ const HomePage = lazy(() => import('@/pages/HomePage'));
 const PatternsPage = lazy(() => import('@/pages/PatternsPage'));
 const ScenariosPage = lazy(() => import('@/pages/ScenariosPage'));
 const UiElementsPage = lazy(() => import('@/pages/UiElementsPage'));
-const SubscriptionPage = lazy(() => import('@/pages/SubscriptionPage'));
+// Hozircha subscription page o'chiq
+// const SubscriptionPage = lazy(() => import('@/pages/SubscriptionPage'));
 const DetailPage = lazy(() => import('@/pages/DetailPage'));
 
 const App = () => {
@@ -25,6 +26,7 @@ const App = () => {
               <Route path="scenarios" element={<ScenariosPage />} />
               <Route path="ui_elements" element={<UiElementsPage />} />
               <Route path="detail/:id" element={<DetailPage />} />
+              {/* Hozircha subscription page o'chiq
               <Route
                 path="subscription"
                 element={
@@ -33,6 +35,7 @@ const App = () => {
                   </ProtectedRoute>
                 }
               />
+              */}
             </Route>
           </Routes>
         </Suspense>

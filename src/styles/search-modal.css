@@ -214,6 +214,20 @@
   flex-shrink: 0;
 }
 
+.search-modal__item-icon img {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.search-modal__item-icon-placeholder {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background-color: #242424;
+}
+
 .search-modal__item-content {
   flex: 1;
   display: flex;

@@ -42,13 +42,14 @@ const Header = () => {
     setIsLoginModalOpen(true);
   };
 
-  const handleSubscribeClick = () => {
-    if (isAuthorized) {
-      navigate('/subscription');
-    } else {
-      setIsLoginModalOpen(true);
-    }
-  };
+  // Hozircha subscription page o'chiq
+  // const handleSubscribeClick = () => {
+  //   if (isAuthorized) {
+  //     navigate('/subscription');
+  //   } else {
+  //     setIsLoginModalOpen(true);
+  //   }
+  // };
 
   const handleLanguageClick = () => {
     // TODO: Add language switching logic
@@ -72,16 +73,18 @@ const Header = () => {
           Поиск...
         </button>
         <div className="Header-block">
+          {/* Hozircha subscription o'chiq
           <button className="sub_button" onClick={handleSubscribeClick}>
             Оформить подписку
           </button>
-          <button
+          */}
+          {/* <button
             className="Header-btn"
             onClick={handleLanguageClick}
             aria-label="Change language"
           >
             <img className="block-LangLog" src={langIcon} alt="" aria-hidden="true" />
-          </button>
+          </button> */}
           {isAuthorized ? (
             <>
               <button

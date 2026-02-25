@@ -1,25 +1,43 @@
-import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import contentData from "@/data/content";
 import Card from "@/components/Card";
+import { useProjects } from "@/hooks/useProjects";
 import type { ContentItem } from '@/types';
 import '@/styles/header-search.css';
 
-const MainContent = () => {
+interface MainContentProps {
+  category?: string;
+}
+
+const MainContent = ({ category }: MainContentProps) => {
   const navigate = useNavigate();
-  // Memoize content to prevent unnecessary re-renders
-  const memoizedContent = useMemo(() => contentData, []);
+  const { projects, loading, error } = useProjects(category);
 
   const handleCardClick = (item: ContentItem) => {
     navigate(`/detail/${item.id}`);
   };
 
+  if (loading) {
+    return (
+      <main className="main-content-view" role="main" aria-label="Main content">
+        <div className="main-content-view__loading">Загрузка...</div>
+      </main>
+    );
+  }
+
+  if (error) {
+    return (
+      <main className="main-content-view" role="main" aria-label="Main content">
+        <div className="main-content-view__error">{error}</div>
+      </main>
+    );
+  }
+
   return (
     <main className="main-content-view" role="main" aria-label="Main content">
-      {memoizedContent.map((item) => (
-        <Card 
-          key={item.id} 
-          item={item} 
+      {projects.map((item) => (
+        <Card
+          key={item.id}
+          item={item}
           variant="default"
           onClick={handleCardClick}
         />

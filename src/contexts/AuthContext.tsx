@@ -7,7 +7,13 @@ import {
   clearAuthData,
   type User,
   type AuthResponse,
+  type UserFullData,
 } from '@/utils/auth';
+
+export interface SetAuthDataOptions {
+  refreshToken?: string;
+  fullData?: UserFullData;
+}
 
 interface AuthContextType {
   isAuthorized: boolean;
@@ -16,7 +22,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, password: string) => Promise<void>;
   logout: () => void;
-  setAuthData: (token: string, user: User) => void;
+  setAuthData: (token: string, user: User, options?: SetAuthDataOptions) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -53,8 +59,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     checkAuth();
   }, []);
 
-  const setAuthData = (newToken: string, newUser: User) => {
-    saveAuthData(newToken, newUser);
+  const setAuthData = (newToken: string, newUser: User, options?: SetAuthDataOptions) => {
+    saveAuthData(newToken, newUser, options);
     setToken(newToken);
     setUser(newUser);
     setIsAuthorized(true);

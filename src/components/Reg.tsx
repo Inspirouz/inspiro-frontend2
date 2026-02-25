@@ -24,6 +24,7 @@ const Reg = ({ onClose }: RegProps) => {
   const { setAuthData } = useAuth();
   const [mode, setMode] = useState<AuthMode>('register');
   const [formData, setFormData] = useState<FormData>({
+    full_name: '',
     email: '',
     password: '',
     confirmPassword: '',
@@ -35,6 +36,10 @@ const Reg = ({ onClose }: RegProps) => {
 
   const validate = (): boolean => {
     const newErrors: FormErrors = {};
+
+    if (mode === 'register' && !formData.full_name?.trim()) {
+      newErrors.full_name = 'Имя обязателен';
+    }
 
     if (!formData.email) {
       newErrors.email = 'Email обязателен';
@@ -66,18 +71,49 @@ const Reg = ({ onClose }: RegProps) => {
     setIsSubmitting(true);
     try {
       if (mode === 'register') {
-        // Call auth service for registration
-        await authService.register(formData.email, formData.password);
-        // Show email confirmation modal
-        setShowEmailConfirmation(true);
+        const apiUrl = import.meta.env.VITE_API_URL;
+        const res = await fetch(`${apiUrl}/sign-up`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            full_name: formData.full_name.trim(),
+            email: formData.email,
+            password: formData.password,
+            confirm_password: formData.confirmPassword,
+          }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          throw new Error(data?.message || data?.error || `Ошибка ${res.status}`);
+        }
+        if (data.token && data.user) {
+          setAuthData(data.token, data.user);
+          onClose?.();
+          showSuccess('Успех!', 'Аккаунт успешно создан!');
+        } else {
+          setShowEmailConfirmation(true);
+        }
       } else {
-        // Call auth service for login
-        const response = await authService.login(formData.email, formData.password);
-        // Save auth data to context and local storage
-        setAuthData(response.token, response.user);
-        // Close modal and show success
-        onClose?.();
-        showSuccess('Успех!', 'Вы успешно вошли в систему');
+        const apiUrl = import.meta.env.VITE_API_URL;
+        const res = await fetch(`${apiUrl}/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: formData.email,
+            password: formData.password,
+          }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          throw new Error(data?.message || data?.error || `Ошибка ${res.status}`);
+        }
+        if (data.token && data.user) {
+          setAuthData(data.token, data.user);
+          onClose?.();
+          showSuccess('Успех!', 'Вы успешно вошли в систему');
+        } else {
+          throw new Error(data?.message || 'Неверный ответ сервера');
+        }
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Произошла ошибка';
@@ -93,19 +129,42 @@ const Reg = ({ onClose }: RegProps) => {
   };
 
   const handleEmailConfirm = async (code: string): Promise<void> => {
-    try {
-      // Call auth service to confirm email
-      await authService.confirmEmail(code);
-      setShowEmailConfirmation(false);
-      // If user is in register mode, show create password modal
-      if (mode === 'register') {
-        setShowCreatePassword(true);
-      } else {
-        // For login mode, show success toast
-        showSuccess('Успех!', 'Email успешно подтвержден');
-      }
-    } catch (error) {
-      throw error; // Re-throw to let EmailConfirmation component handle it
+    const apiUrl = import.meta.env.VITE_API_URL;
+    const res = await fetch(`${apiUrl}/sign-up/verify`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: formData.email,
+        otp: code,
+      }),
+    });
+    const json = await res.json().catch(() => ({}));
+    const statusCode = json?.status_code ?? res.status;
+    const data = json?.data ?? json;
+
+    if (!res.ok || (statusCode !== 200 && statusCode !== 201)) {
+      throw new Error(json?.message || json?.error || data?.message || `Ошибка ${res.status}`);
+    }
+
+    setShowEmailConfirmation(false);
+
+    if (data?.access_token) {
+      const user = {
+        id: String(data.id ?? ''),
+        email: data.email ?? formData.email,
+        name: data.full_name ?? data.email?.split('@')[0],
+      };
+      setAuthData(data.access_token, user, {
+        refreshToken: data.refresh_token ?? undefined,
+        fullData: data,
+      });
+      onClose?.();
+      showSuccess('Успех!', json?.message || 'Вы успешно зарегистрировались!');
+    } else if (mode === 'register') {
+      onClose?.();
+      showSuccess('Успех!', 'Вы успешно зарегистрировались!');
+    } else {
+      showSuccess('Успех!', json?.message || 'Email успешно подтвержден');
     }
   };
 
@@ -128,9 +187,17 @@ const Reg = ({ onClose }: RegProps) => {
   };
 
   const handleResendCode = async () => {
+    const apiUrl = import.meta.env.VITE_API_URL;
     try {
-      // Call auth service to resend code
-      await authService.resendCode(formData.email);
+      const res = await fetch(`${apiUrl}/sign-up/resend-otp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: formData.email }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error((data?.message ?? data?.error) || `Ошибка ${res.status}`);
+      }
       showSuccess('Успех!', 'Код был успешно отправлен');
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Ошибка при отправке кода';
@@ -155,7 +222,7 @@ const Reg = ({ onClose }: RegProps) => {
           onClick={() => {
             setMode('register');
             setErrors({});
-            setFormData({ email: '', password: '', confirmPassword: '' });
+            setFormData({ full_name: '', email: '', password: '', confirmPassword: '' });
           }}
         >
           Создать аккаунт
@@ -166,7 +233,7 @@ const Reg = ({ onClose }: RegProps) => {
           onClick={() => {
             setMode('login');
             setErrors({});
-            setFormData({ email: '', password: '', confirmPassword: '' });
+            setFormData({ full_name: '', email: '', password: '', confirmPassword: '' });
           }}
         >
           Войти
@@ -174,6 +241,23 @@ const Reg = ({ onClose }: RegProps) => {
       </div>
 
       <form className="reg_window_form" onSubmit={handleSubmit}>
+        {mode === 'register' && (
+          <div className="reg_window_form__field">
+            <p className="text-info__reg_window">Имя</p>
+            <input
+              type="text"
+              placeholder="John Doe"
+              value={formData.full_name}
+              onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
+              required={mode === 'register'}
+              aria-label="Имя"
+              aria-invalid={!!errors.full_name}
+            />
+            {errors.full_name && (
+              <span className="error-message" role="alert">{errors.full_name}</span>
+            )}
+          </div>
+        )}
         <div className="reg_window_form__field">
           <p className="text-info__reg_window">Email</p>
           <input

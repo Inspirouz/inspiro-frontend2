@@ -2,10 +2,17 @@
 export interface ContentItem {
   img1: string;
   img2: string;
+  /** App/project logo URL (e.g. for detail header) */
+  logo?: string;
   images?: string[]; // Multiple screenshots for swiper
   app_name: string;
   text_info?: string;
-  id: number;
+  id: number | string;
+  /** From API project: description, platforms, categories, updated_at */
+  description?: string;
+  platforms?: string[];
+  categories?: Array<{ name?: string }>;
+  updated_at?: string;
 }
 
 // Navigation types
@@ -19,12 +26,14 @@ export interface PatternCategory extends NavItem {}
 
 // Form types
 export interface FormData {
+  full_name: string;
   email: string;
   password: string;
   confirmPassword: string;
 }
 
 export interface FormErrors {
+  full_name?: string;
   email?: string;
   password?: string;
   confirmPassword?: string;

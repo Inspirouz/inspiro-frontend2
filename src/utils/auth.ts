@@ -2,6 +2,8 @@
 
 const TOKEN_KEY = 'auth_token';
 const USER_KEY = 'user_data';
+const REFRESH_TOKEN_KEY = 'refresh_token';
+const USER_FULL_KEY = 'user_full_data';
 
 export interface User {
   id: string;
@@ -14,10 +16,36 @@ export interface AuthResponse {
   user: User;
 }
 
+// Full user data from API (e.g. OTP verify response)
+export interface UserFullData {
+  id: string;
+  email: string;
+  full_name?: string;
+  role?: string;
+  subscription_status?: string;
+  image?: string | null;
+  [key: string]: unknown;
+}
+
 // Save token and user data to local storage
-export const saveAuthData = (token: string, user: User): void => {
+export const saveAuthData = (
+  token: string,
+  user: User,
+  options?: { refreshToken?: string; fullData?: UserFullData }
+): void => {
   localStorage.setItem(TOKEN_KEY, token);
   localStorage.setItem(USER_KEY, JSON.stringify(user));
+  if (options?.refreshToken) {
+    localStorage.setItem(REFRESH_TOKEN_KEY, options.refreshToken);
+  }
+  if (options?.fullData) {
+    const { password: _p, hashed_token: _h, ...safe } = options.fullData as Record<string, unknown>;
+    localStorage.setItem(USER_FULL_KEY, JSON.stringify(safe));
+  }
+};
+
+export const getRefreshToken = (): string | null => {
+  return localStorage.getItem(REFRESH_TOKEN_KEY);
 };
 
 // Get token from local storage
@@ -45,6 +73,8 @@ export const isAuthenticated = (): boolean => {
 export const clearAuthData = (): void => {
   localStorage.removeItem(TOKEN_KEY);
   localStorage.removeItem(USER_KEY);
+  localStorage.removeItem(REFRESH_TOKEN_KEY);
+  localStorage.removeItem(USER_FULL_KEY);
 };
 
 // Mock authentication service
