@@ -74,3 +74,8 @@ export interface PasswordInputProps {
 // Constants types
 export type Category = string;
 
+/** GET /categories API dan keladigan element */
+export interface CategoryItem {
+  id: string;
+  name: string;
+}

@@ -27,9 +27,10 @@ const ScenariosPage = () => {
   });
   
   const [activeCategory, setActiveCategory] = useState<string>('');
-  const [activeFilter, setActiveFilter] = useState<string>(categories[0] || 'Все');
+  const filterOptions = [{ id: '', name: 'Все' }, ...categories];
+  const [activeFilter, setActiveFilter] = useState<string>(filterOptions[0]?.id ?? '');
   useEffect(() => {
-    if (categories.length && !categories.includes(activeFilter)) setActiveFilter(categories[0] ?? 'Все');
+    if (filterOptions.length && !filterOptions.some((c) => c.id === activeFilter)) setActiveFilter(filterOptions[0]?.id ?? '');
   }, [categories]);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [previewIndex, setPreviewIndex] = useState(0);
@@ -177,15 +178,15 @@ const ScenariosPage = () => {
                 </button>
               )}
               <ul className="category-list" ref={filtersRef} role="list">
-                {categories.map((category) => (
+                {filterOptions.map((category) => (
                   <li 
-                    key={category} 
-                    className={`category-item ${activeFilter === category ? 'active' : ''}`}
+                    key={category.id || 'all'} 
+                    className={`category-item ${activeFilter === category.id ? 'active' : ''}`}
                     role="listitem"
-                    aria-label={`Filter by ${category}`}
-                    onClick={() => setActiveFilter(category)}
+                    aria-label={`Filter by ${category.name}`}
+                    onClick={() => setActiveFilter(category.id)}
                   >
-                    {category}
+                    {category.name}
                   </li>
                 ))}
               </ul>

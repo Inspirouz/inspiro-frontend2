@@ -16,12 +16,12 @@ const HomePage = () => {
     ogUrl: 'https://inspiro.com/',
   });
   const containerRef = useRef<HTMLUListElement>(null);
-  const [activeCategory, setActiveCategory] = useState<string>(categories[0] || '');
+  const [activeCategory, setActiveCategory] = useState<string>(categories[0]?.id ?? '');
   const [canScrollRight, setCanScrollRight] = useState(true);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
 
   useEffect(() => {
-    if (categories.length && !activeCategory) setActiveCategory(categories[0] ?? '');
+    if (categories.length && !activeCategory) setActiveCategory(categories[0]?.id ?? '');
   }, [categories]);
 
   const checkScroll = useCallback(() => {
@@ -85,13 +85,13 @@ const HomePage = () => {
           <ul className="category-list" ref={containerRef} role="list">
             {categories.map((category) => (
               <li 
-                key={category} 
-                className={`category-item ${activeCategory === category ? 'active' : ''}`}
+                key={category.id} 
+                className={`category-item ${activeCategory === category.id ? 'active' : ''}`}
                 role="listitem"
-                aria-label={`Filter by ${category}`}
-                onClick={() => setActiveCategory(category)}
+                aria-label={`Filter by ${category.name}`}
+                onClick={() => setActiveCategory(category.id)}
               >
-                {category}
+                {category.name}
               </li>
             ))}
           </ul>
