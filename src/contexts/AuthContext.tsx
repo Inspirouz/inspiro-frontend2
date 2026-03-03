@@ -6,7 +6,6 @@ import {
   saveAuthData,
   clearAuthData,
   type User,
-  type AuthResponse,
   type UserFullData,
 } from '@/utils/auth';
 
@@ -66,13 +65,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setIsAuthorized(true);
   };
 
-  const login = async (email: string, password: string) => {
+  const login = async (_email: string, _password: string) => {
     // This will be implemented in the component that uses it
     // For now, just a placeholder
     throw new Error('Login should be called from component');
   };
 
-  const register = async (email: string, password: string) => {
+  const register = async (_email: string, _password: string) => {
     // This will be implemented in the component that uses it
     // For now, just a placeholder
     throw new Error('Register should be called from component');

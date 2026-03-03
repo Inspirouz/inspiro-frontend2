@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import MainLogo from "@/assets/MainLogo.svg";
-import langIcon from "@/assets/langIcon.svg";
 import logIcon from "@/assets/logIcon.svg";
 import Modal from "@/components/Modal";
 import Reg from "@/components/Reg";
@@ -11,7 +10,6 @@ import { useAuth } from "@/contexts/AuthContext";
 // CSS fayllar index.css orqali import qilinadi
 
 const Header = () => {
-  const navigate = useNavigate();
   const { isAuthorized } = useAuth();
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
@@ -51,9 +49,9 @@ const Header = () => {
   //   }
   // };
 
-  const handleLanguageClick = () => {
-    // TODO: Add language switching logic
-  };
+  // const handleLanguageClick = () => {
+  //   // TODO: Add language switching logic
+  // };
 
   return (
     <>

@@ -32,7 +32,7 @@ const Profile = () => {
       <div className="profile__divider"></div>
 
       <div className="profile__menu">
-        <button
+        {/* <button
           className="profile__menu-item"
           onClick={handleSettings}
         >
@@ -62,7 +62,7 @@ const Profile = () => {
           </div>
           <span className="profile__menu-text">Настройки</span>
           <div className="profile__menu-chevron">›</div>
-        </button>
+        </button> */}
 
         <button
           className="profile__menu-item profile__menu-item--logout"

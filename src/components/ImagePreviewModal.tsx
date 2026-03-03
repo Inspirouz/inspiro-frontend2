@@ -5,7 +5,7 @@ import '@/styles/image-preview-modal.css';
 interface ImagePreviewModalProps {
   isOpen: boolean;
   onClose: () => void;
-  images: Array<{ id: number | string; image: string; title: string }>;
+  images: Array<{ id: number | string; screenId?: number | string; image: string; title: string }>;
   initialIndex?: number;
   appInfo?: {
     logo: string;
@@ -29,6 +29,25 @@ interface ImagePreviewModalProps {
   }>;
   activeSubCategory?: string;
   onSubCategoryClick?: (categoryId: string) => void;
+  screenMeta?: {
+    uploadDate?: string;
+    resolution?: string;
+    scenarios?: (string | { id?: string; name?: string; type?: string })[];
+    uiElements?: (string | { id?: string; name?: string; type?: string })[];
+    patterns?: (string | { id?: string; name?: string; type?: string })[];
+  } | null;
+  screenMetaLoading?: boolean;
+}
+
+function toTagLabel(item: string | { id?: string; name?: string; type?: string }): string {
+  if (typeof item === 'string') return item;
+  const name = item?.name ?? item?.id;
+  return name != null ? String(name) : '';
+}
+function toTagKey(item: string | { id?: string; name?: string; type?: string }, idx: number): string {
+  if (typeof item === 'string') return item;
+  const id = item?.id;
+  return id != null ? String(id) : `tag-${idx}`;
 }
 
 const ImagePreviewModal = ({ 
@@ -43,7 +62,9 @@ const ImagePreviewModal = ({
   activeTab = 'screens',
   subCategories = [],
   activeSubCategory,
-  onSubCategoryClick
+  onSubCategoryClick,
+  screenMeta,
+  screenMetaLoading = false,
 }: ImagePreviewModalProps) => {
   const [, setSearchParams] = useSearchParams();
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
@@ -113,21 +134,25 @@ const ImagePreviewModal = ({
     };
   }, [isOpen, currentIndex, images, setSearchParams, onClose]);
 
-  const handlePrevious = () => {
+  const handlePrevious = (e: React.MouseEvent) => {
+    e.stopPropagation();
     const newIndex = currentIndex > 0 ? currentIndex - 1 : images.length - 1;
     setCurrentIndex(newIndex);
-    const screenId = images[newIndex]?.id;
-    if (screenId) {
-      setSearchParams({ screen: screenId.toString() });
+    const screen = images[newIndex];
+    const screenId = screen?.screenId ?? screen?.id;
+    if (screenId != null) {
+      setSearchParams({ screen: String(screenId) });
     }
   };
 
-  const handleNext = () => {
+  const handleNext = (e: React.MouseEvent) => {
+    e.stopPropagation();
     const newIndex = currentIndex < images.length - 1 ? currentIndex + 1 : 0;
     setCurrentIndex(newIndex);
-    const screenId = images[newIndex]?.id;
-    if (screenId) {
-      setSearchParams({ screen: screenId.toString() });
+    const screen = images[newIndex];
+    const screenId = screen?.screenId ?? screen?.id;
+    if (screenId != null) {
+      setSearchParams({ screen: String(screenId) });
     }
   };
 
@@ -286,21 +311,35 @@ const ImagePreviewModal = ({
               {/* Upload date */}
               <div className="image-preview-modal__info-item">
                 <span className="image-preview-modal__info-label">Upload date</span>
-                <span className="image-preview-modal__info-value">14 Sep, 2025</span>
+                <span className="image-preview-modal__info-value">
+                  {screenMetaLoading
+                    ? '00.00.0000 00:00'
+                    : screenMeta?.uploadDate || '—'}
+                </span>
               </div>
 
               {/* Resolution */}
-              <div className="image-preview-modal__info-item">
+              {/* <div className="image-preview-modal__info-item">
                 <span className="image-preview-modal__info-label">Resolution</span>
-                <span className="image-preview-modal__info-value">393x852</span>
-              </div>
+                <span className="image-preview-modal__info-value">
+                  {screenMetaLoading
+                    ? 'Loading...'
+                    : screenMeta?.resolution || '—'}
+                </span>
+              </div> */}
 
               {/* Scenarios */}
               <div className="image-preview-modal__info-section">
                 <h3 className="image-preview-modal__info-section-title">Сценарии</h3>
                 <div className="image-preview-modal__tags">
-                  <span className="image-preview-modal__tag">Регистрация</span>
-                  <span className="image-preview-modal__tag">Вход</span>
+                  {screenMeta?.scenarios && screenMeta.scenarios.length > 0 ? screenMeta.scenarios.map((tag, idx) => {
+                    const label = toTagLabel(tag);
+                    return label ? (
+                      <span key={toTagKey(tag, idx)} className="image-preview-modal__tag">
+                        {label}
+                      </span>
+                    ) : '-';
+                  }) : '-'}
                 </div>
               </div>
 
@@ -308,10 +347,17 @@ const ImagePreviewModal = ({
               <div className="image-preview-modal__info-section">
                 <h3 className="image-preview-modal__info-section-title">UI Элементы</h3>
                 <div className="image-preview-modal__tags">
-                  <span className="image-preview-modal__tag">Форма</span>
-                  <span className="image-preview-modal__tag">Кнопка</span>
-                  <span className="image-preview-modal__tag">Tab bar</span>
-                  <span className="image-preview-modal__tag">Nav bar</span>
+                  {(screenMeta?.uiElements && screenMeta.uiElements.length > 0
+                    ? screenMeta.uiElements
+                    : []
+                  ).map((tag, idx) => {
+                    const label = toTagLabel(tag);
+                    return label ? (
+                      <span key={toTagKey(tag, idx)} className="image-preview-modal__tag">
+                        {label}
+                      </span>
+                    ) : null;
+                  })}
                 </div>
               </div>
 
@@ -319,10 +365,17 @@ const ImagePreviewModal = ({
               <div className="image-preview-modal__info-section">
                 <h3 className="image-preview-modal__info-section-title">Паттерны</h3>
                 <div className="image-preview-modal__tags">
-                  <span className="image-preview-modal__tag">Регистрация</span>
-                  <span className="image-preview-modal__tag">Регистрация</span>
-                  <span className="image-preview-modal__tag">Регистрация</span>
-                  <span className="image-preview-modal__tag">Регистрация</span>
+                  {(screenMeta?.patterns && screenMeta.patterns.length > 0
+                    ? screenMeta.patterns
+                    : []
+                  ).map((tag, idx) => {
+                    const label = toTagLabel(tag);
+                    return label ? (
+                      <span key={toTagKey(tag, idx)} className="image-preview-modal__tag">
+                        {label}
+                      </span>
+                    ) : null;
+                  })}
                 </div>
               </div>
             </div>

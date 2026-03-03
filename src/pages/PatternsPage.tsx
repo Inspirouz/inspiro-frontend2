@@ -28,13 +28,6 @@ const PatternsPage = () => {
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [previewIndex, setPreviewIndex] = useState(0);
 
-  // Create screens array for the modal
-  const screens = contentData.map((item) => ({
-    id: item.id,
-    image: item.img1,
-    title: item.app_name,
-  }));
-
   // Get first item for app info (or use selected item)
   const firstItem = contentData[0] || null;
 
@@ -83,7 +76,7 @@ const PatternsPage = () => {
                 {/* Screen Image */}
                 <div className="patterns-card__image-wrapper">
                   <img 
-                    src={item.img1} 
+                    src={item.logo} 
                     alt={item.app_name}
                     className="patterns-card__image"
                   />
@@ -92,7 +85,7 @@ const PatternsPage = () => {
                 {/* App Info */}
                 <div className="patterns-card__app-info">
                   <img 
-                    src={item.img2} 
+                    src={item.logo} 
                     alt={item.app_name}
                     className="patterns-card__app-logo"
             />
@@ -109,10 +102,15 @@ const PatternsPage = () => {
         <ImagePreviewModal
           isOpen={isPreviewOpen}
           onClose={() => setIsPreviewOpen(false)}
-          images={screens}
+            images={contentData.map((item) => ({
+              id: item.id,
+              screenId: item.screenId,
+              image: item.logo ?? item.images?.[0] ?? '',
+              title: item.app_name,
+            }))}
           initialIndex={previewIndex}
           appInfo={{
-            logo: firstItem.img2,
+            logo: firstItem.logo ?? firstItem.logo ?? firstItem.logo ?? '',
             name: firstItem.app_name,
             description: firstItem.text_info || 'Description of the company',
           }}
@@ -127,4 +125,3 @@ const PatternsPage = () => {
 };
 
 export default PatternsPage;
-

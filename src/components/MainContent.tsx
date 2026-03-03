@@ -32,6 +32,9 @@ const MainContent = ({ category }: MainContentProps) => {
     );
   }
 
+  console.log(projects);
+  
+
   return (
     <main className="main-content-view" role="main" aria-label="Main content">
       {projects.map((item) => (

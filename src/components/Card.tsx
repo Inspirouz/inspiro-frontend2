@@ -1,11 +1,20 @@
 import { useState } from 'react';
 import type { CardProps } from '@/types';
+const IMAGE_BASE_URL = 'https://dev.api.inspiro.uz/images/';
 
+function toImageUrl(image: string): string {
+  if (!image) return '';
+  if (image.startsWith('http://') || image.startsWith('https://')) return image;
+  const path = image.startsWith('/') ? image.slice(1) : image;
+  return `${IMAGE_BASE_URL}${path}`;
+}
 const Card = ({ item, onClick, variant = 'default' }: CardProps) => {
   const isPattern = variant === 'pattern';
-  
-  // Use images array if available, otherwise use img1
-  const images = item.images && item.images.length > 0 ? item.images : [item.img1];
+  // Prefer images array, then img1, then logo
+  const images =
+    item.images && item.images.length > 0
+      ? item.images
+      : [];
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -38,13 +47,15 @@ const Card = ({ item, onClick, variant = 'default' }: CardProps) => {
     >
       {/* Header section with logo and app name */}
       <div className="card__header">
-        <img
-          className="card__logo"
-          src={item.logo}
-          alt={`${item.app_name} logo`}
-          loading="lazy"
-          decoding="async"
-        />
+        {item.logo && (
+          <img
+            className="card__logo"
+            src={item.logo}
+            alt={`${item.app_name} logo`}
+            loading="lazy"
+            decoding="async"
+          />
+        )}
         <div className="card__info">
           <h3 className="card__title">{item.app_name}</h3>
           {item.text_info && <p className="card__subtitle">{item.text_info}</p>}
@@ -66,7 +77,7 @@ const Card = ({ item, onClick, variant = 'default' }: CardProps) => {
 
         <img
           className="card__phone-image"
-          src={images[currentIndex]}
+          src={toImageUrl(images[currentIndex] || '')}
           alt={`${item.app_name} app screenshot`}
           loading="lazy"
           decoding="async"

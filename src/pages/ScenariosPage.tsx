@@ -38,10 +38,11 @@ const ScenariosPage = () => {
   const [canScrollRight, setCanScrollRight] = useState(true);
   const filtersRef = useRef<HTMLUListElement>(null);
 
-  // Create screens array for the modal
+  // Create screens array for the modal (image must be string for ImagePreviewModal)
   const screens = contentData.map((item) => ({
     id: item.id,
-    image: item.img1,
+    screenId: item.screenId,
+    image: item.logo ?? item.images?.[0] ?? '',
     title: item.app_name,
   }));
 
@@ -95,7 +96,7 @@ const ScenariosPage = () => {
 
   const [activeTreeItem, setActiveTreeItem] = useState<string | null>(null);
 
-  const handleTreeItemClick = (sectionId: string, itemId: string) => {
+  const handleTreeItemClick = (_sectionId: string, itemId: string) => {
     setActiveTreeItem(itemId);
     // You can add scroll to section logic here if needed
   };
@@ -216,7 +217,7 @@ const ScenariosPage = () => {
                 {/* Screen Image */}
                 <div className="patterns-card__image-wrapper">
                   <img 
-                    src={item.img1} 
+                    src={item.logo} 
                     alt={item.app_name}
                     className="patterns-card__image"
                   />
@@ -245,7 +246,7 @@ const ScenariosPage = () => {
           images={screens}
           initialIndex={previewIndex}
           appInfo={{
-            logo: firstItem.img2,
+            logo: firstItem.logo ?? firstItem.img2 ?? '',
             name: firstItem.app_name,
             description: firstItem.text_info || 'Description of the company',
           }}

@@ -21,12 +21,22 @@ function getImagePaths(raw: Record<string, unknown>): string[] {
   return single ? [single] : [];
 }
 
+function formatDateDDMMYYYYHHMM(isoString: string | undefined): string | undefined {
+  if (!isoString) return undefined;
+  const date = new Date(isoString);
+  if (Number.isNaN(date.getTime())) return undefined;
+  const dd = String(date.getDate()).padStart(2, '0');
+  const mm = String(date.getMonth() + 1).padStart(2, '0');
+  const yyyy = date.getFullYear();
+  const hh = String(date.getHours()).padStart(2, '0');
+  const min = String(date.getMinutes()).padStart(2, '0');
+  return `${dd}.${mm}.${yyyy} ${hh}:${min}`;
+}
+
 function mapProjectToContentItem(raw: Record<string, unknown>): ContentItem {
   const id = (raw.id as string) ?? '';
   const paths = getImagePaths(raw);
-  const img1 = paths[0] ? toImageUrl(paths[0]) : '';
   const logoUrl = (raw.logo as string) ? toImageUrl(raw.logo as string) : undefined;
-  const img2 = logoUrl ?? img1;
   const app_name = (raw.app_name ?? raw.name ?? raw.title ?? '') as string;
   const description = (raw.description as string) ?? '';
   const categories = (raw.categories as Array<{ name?: string }>) ?? [];
@@ -34,15 +44,20 @@ function mapProjectToContentItem(raw: Record<string, unknown>): ContentItem {
   const platforms = raw.platforms as string[] | undefined;
   const updated_at = raw.updated_at as string | undefined;
 
-  const imagesUrls = paths.length > 1 ? paths.map(toImageUrl) : undefined;
+  const firstImageUrl = paths[0] ? toImageUrl(paths[0]) : '';
+  const imagesUrls =
+    paths.length > 1 ? paths.map(toImageUrl) : firstImageUrl ? [firstImageUrl] : [];
+
+
 
   return {
     id,
-    img1,
-    img2,
-    ...(logoUrl && { logo: logoUrl }),
-    ...(imagesUrls && imagesUrls.length > 0 && { images: imagesUrls }),
     app_name,
+    images:raw?.images as string[] | undefined,
+    // img1,
+    // img2,
+    ...(logoUrl && { logo: logoUrl }),
+    ...(imagesUrls.length > 0 && { images: imagesUrls }),
     ...(text_info && { text_info }),
     ...(description && { description }),
     ...(platforms && platforms.length > 0 && { platforms }),
@@ -131,7 +146,14 @@ export function useProject(id: string | undefined) {
   return { project, loading, error };
 }
 
-export type ScreenItem = { id: string | number; title: string; image: string };
+export type ScreenItem = {
+  /** Unique image id (for modal and keys) */
+  id: string | number;
+  /** Backend screen id used in /projects/{projectId}/screens/{id} */
+  screenId: string | number;
+  title: string;
+  image: string;
+};
 
 type ApiScreen = {
   id?: string;
@@ -149,6 +171,7 @@ function flattenScreensFromApi(list: ApiScreen[]): ScreenItem[] {
       if (path) {
         result.push({
           id: (img.id as string) ?? `${screen.id}-${result.length}`,
+          screenId: (screen.id as string) ?? `${screen.id ?? 'screen'}-${result.length}`,
           title: categoryName,
           image: toImageUrl(path),
         });
@@ -187,4 +210,72 @@ export function useProjectScreens(projectId: string | undefined) {
   }, [projectId]);
 
   return { screens, loading };
+}
+
+// Per-screen details for ImagePreviewModal side panel (API may return objects with id/name/type)
+export interface ScreenDetails {
+  uploadDate?: string;
+  resolution?: string;
+  scenarios?: (string | Record<string, unknown>)[];
+  uiElements?: (string | Record<string, unknown>)[];
+  patterns?: (string | Record<string, unknown>)[];
+}
+
+export function useScreenDetails(
+  projectId: string | undefined,
+  screenId: string | null
+) {
+  const [details, setDetails] = useState<ScreenDetails | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!projectId || !screenId) {
+      setDetails(null);
+      setLoading(false);
+      return;
+    }
+    const apiUrl = import.meta.env.VITE_API_URL;
+    setLoading(true);
+    fetch(`${apiUrl}/projects/${projectId}/screens/${screenId}`)
+      .then((res) => res.json())
+      .then((json) => {
+        const data = json?.data ?? json;
+        if (!data || typeof data !== 'object') {
+          setDetails(null);
+          return;
+        }
+        const d = data as Record<string, unknown>;
+        const rawDate =
+          (d.upload_date as string | undefined) ??
+          (d.uploadDate as string | undefined) ??
+          (d.created_at as string | undefined) ??
+          (d.updated_at as string | undefined);
+        const uploadDate = formatDateDDMMYYYYHHMM(rawDate);
+        const resolution = d.resolution as string | undefined;
+        const scenarios = Array.isArray(d.scenarios)
+          ? (d.scenarios as (string | Record<string, unknown>)[])
+          : undefined;
+        const uiElements = Array.isArray(d.ui_elements)
+          ? (d.ui_elements as (string | Record<string, unknown>)[])
+          : Array.isArray(d.uiElements)
+            ? (d.uiElements as (string | Record<string, unknown>)[])
+            : undefined;
+        const patterns = Array.isArray(d.patterns)
+          ? (d.patterns as (string | Record<string, unknown>)[])
+          : undefined;
+        setDetails({
+          uploadDate,
+          resolution,
+          scenarios,
+          uiElements,
+          patterns,
+        });
+      })
+      .catch(() => {
+        setDetails(null);
+      })
+      .finally(() => setLoading(false));
+  }, [projectId, screenId]);
+
+  return { details, loading };
 }

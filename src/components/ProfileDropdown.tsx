@@ -33,6 +33,7 @@ const ProfileDropdown = ({ isOpen, onClose, buttonRef }: ProfileDropdownProps) =
         document.removeEventListener('mousedown', handleClickOutside);
       };
     }
+    return;
   }, [isOpen, onClose, buttonRef]);
 
   useEffect(() => {
@@ -75,7 +76,7 @@ const ProfileDropdown = ({ isOpen, onClose, buttonRef }: ProfileDropdownProps) =
       <div className="profile-dropdown__divider"></div>
 
       <div className="profile-dropdown__menu">
-        <button
+        {/* <button
           className="profile-dropdown__menu-item"
           onClick={handleSettings}
         >
@@ -105,7 +106,7 @@ const ProfileDropdown = ({ isOpen, onClose, buttonRef }: ProfileDropdownProps) =
           </div>
           <span className="profile-dropdown__menu-text">Настройки</span>
           <div className="profile-dropdown__menu-chevron">›</div>
-        </button>
+        </button> */}
 
         <button
           className="profile-dropdown__menu-item profile-dropdown__menu-item--logout"

@@ -26,6 +26,7 @@ const Toast = ({
 
       return () => clearTimeout(timer);
     }
+    return;
   }, [isVisible, duration, onClose]);
 
   if (!isVisible) return null;

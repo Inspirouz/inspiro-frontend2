@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
-import { useProject, useProjectScreens } from '@/hooks/useProjects';
+import { useProject, useProjectScreens, useScreenDetails } from '@/hooks/useProjects';
 import { useScreensCategories } from '@/hooks/useScreensCategories';
 import { useSEO } from '@/hooks/useSEO';
 import ImagePreviewModal from '@/components/ImagePreviewModal';
@@ -151,10 +151,18 @@ const DetailPage = () => {
       ? (item.images && item.images.length > 0
         ? item.images.map((img, index) => ({
             id: `${item.id}-${index}`,
+            screenId: `${item.id}-${index}`,
             title: item.app_name,
-            image: img,
+            image: img || '',
           }))
-        : [{ id: item.id, title: item.app_name, image: item.img1 }])
+        : [
+            {
+              id: item.id,
+              screenId: item.id,
+              title: item.app_name,
+              image: item.logo ?? item.img1 ?? '',
+            },
+          ])
       : [];
   const screens = screensFromApi.length > 0 ? screensFromApi : screensFallback;
 
@@ -199,9 +207,16 @@ const DetailPage = () => {
     return () => observer.disconnect();
   }, [activeTab, flatTreeStructure]);
 
+  const { details: screenDetails, loading: screenDetailsLoading } = useScreenDetails(
+    id ?? undefined,
+    screenIdFromUrl
+  );
+
   useEffect(() => {
     if (!screenIdFromUrl) return;
-    const screenIndex = screens.findIndex(screen => String(screen.id) === screenIdFromUrl);
+    const screenIndex = screens.findIndex(
+      (screen) => String(screen.screenId ?? screen.id) === screenIdFromUrl
+    );
     if (screenIndex !== -1) {
       setSelectedImageIndex(screenIndex);
     } else {
@@ -217,7 +232,8 @@ const DetailPage = () => {
 
   const handleImageClick = (index: number) => {
     setSelectedImageIndex(index);
-    const screenId = screens[index]?.id;
+    const screen = screens[index];
+    const screenId = screen?.screenId ?? screen?.id;
     if (screenId) setSearchParams({ screen: String(screenId) });
   };
 
@@ -252,7 +268,7 @@ const DetailPage = () => {
       <div className="detail-page__header">
         <div className="detail-page__header-main">
           <div className="detail-page__header-icon">
-            <img src={item.logo ?? item.img2 ?? item.img1} alt={item.app_name} />
+            <img src={item.logo ?? item.logo ?? item.logo} alt={item.app_name} />
           </div>
           <div className="detail-page__header-info">
             <h1 className="detail-page__header-title">{item.app_name}</h1>
@@ -315,12 +331,16 @@ const DetailPage = () => {
         {activeTab === 'screens' && (
           <aside className="detail-page__sidebar">
             <div className="detail-page__subcategories">
-              {[
-                { id: 'all', label: 'Все', count: subCategories.reduce((sum, c) => sum + c.count, 0) },
-                ...subCategories,
-              ].map((subCat) => (
+              {(() => {
+                const totalCount = subCategories.reduce((sum, c) => sum + c.count, 0);
+                const hasAll = subCategories.some((c) => c.id === 'all');
+                const items = hasAll
+                  ? subCategories
+                  : [{ id: 'all', label: 'Все', count: totalCount }, ...subCategories];
+                return items;
+              })().map((subCat, idx) => (
                 <button
-                  key={subCat.id}
+                  key={`${subCat.id}-${idx}`}
                   className={`detail-page__subcategory ${
                     activeSubCategory === subCat.id ? 'active' : ''
                   }`}
@@ -431,9 +451,9 @@ const DetailPage = () => {
         images={screens}
         initialIndex={selectedImageIndex}
         appInfo={{
-          logo: item.img2,
+          logo: item.logo ?? item.img2 ?? item.img1 ?? '',
           name: item.app_name,
-          description: item.text_info || 'Description of the company',
+          description: item.description || item.text_info || '—',
         }}
         treeStructure={treeStructure}
         activeTreeItem={activeTreeItem}
@@ -442,6 +462,8 @@ const DetailPage = () => {
         subCategories={subCategories}
         activeSubCategory={activeSubCategory}
         onSubCategoryClick={(categoryId) => setActiveSubCategory(categoryId)}
+        screenMeta={screenDetails}
+        screenMetaLoading={screenDetailsLoading}
       />
     </div>
     </>

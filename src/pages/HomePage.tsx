@@ -16,7 +16,7 @@ const HomePage = () => {
     ogUrl: 'https://inspiro.com/',
   });
   const containerRef = useRef<HTMLUListElement>(null);
-  const [activeCategory, setActiveCategory] = useState<string>(categories[0]?.id ?? '');
+  const [activeCategory, setActiveCategory] = useState<string>('all');
   const [canScrollRight, setCanScrollRight] = useState(true);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
 
@@ -83,6 +83,15 @@ const HomePage = () => {
             </button>
           )}
           <ul className="category-list" ref={containerRef} role="list">
+            <li
+              key="all"
+              className={`category-item ${activeCategory === 'all' ? 'active' : ''}`}
+              role="listitem"
+              aria-label="Filter: All"
+              onClick={() => setActiveCategory('all')}
+            >
+              Все
+            </li>
             {categories.map((category) => (
               <li 
                 key={category.id} 
@@ -109,7 +118,7 @@ const HomePage = () => {
           )}
         </div>
       </section>
-      <MainContent category={activeCategory === 'Все' ? undefined : activeCategory} />
+      <MainContent category={activeCategory === 'all' ? undefined : activeCategory} />
     </>
   );
 };

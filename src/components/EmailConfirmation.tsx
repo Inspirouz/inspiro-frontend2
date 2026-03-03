@@ -33,6 +33,7 @@ const EmailConfirmation = ({ email, onConfirm, onResend }: EmailConfirmationProp
       }, 1000);
       return () => clearInterval(interval);
     }
+    return;
   }, [timer]);
 
   const formatTime = (seconds: number): string => {
@@ -115,14 +116,16 @@ const EmailConfirmation = ({ email, onConfirm, onResend }: EmailConfirmationProp
       <img src={MainLogo} alt="MainLogo" className="email-confirmation__logo" />
       <h2 className="email-confirmation__title">Подтвердите email</h2>
       <p className="email-confirmation__description">
-        Код был отправлен на Ваш email
+        Код был отправлен на Ваш email <strong>{email}</strong>
       </p>
 
       <div className="email-confirmation__code-inputs">
         {code.map((digit, index) => (
           <input
             key={index}
-            ref={(el) => (inputRefs.current[index] = el)}
+            ref={(el) => {
+              inputRefs.current[index] = el;
+            }}
             type="text"
             inputMode="numeric"
             maxLength={1}

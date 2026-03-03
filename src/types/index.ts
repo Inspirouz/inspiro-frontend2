@@ -1,13 +1,24 @@
 // Content types
 export interface ContentItem {
-  img1: string;
-  img2: string;
-  /** App/project logo URL (e.g. for detail header) */
+  /**
+   * Primary screenshot for legacy/static content.
+   * For API projects this is usually the first image in `images`.
+   */
+  img1?: string;
+  /**
+   * Secondary screenshot / logo for legacy content.
+   * For API projects this is often the logo or same as `img1`.
+   */
+  img2?: string;
+  /** App/project logo URL (e.g. for headers, cards) */
   logo?: string;
-  images?: string[]; // Multiple screenshots for swiper
+  /** Multiple screenshots for swiper or detail screens */
+  images?: string[];
   app_name: string;
   text_info?: string;
   id: number | string;
+  /** Screen id for modal/preview (e.g. from API screens list) */
+  screenId?: number | string;
   /** From API project: description, platforms, categories, updated_at */
   description?: string;
   platforms?: string[];
