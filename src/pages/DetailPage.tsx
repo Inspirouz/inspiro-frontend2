@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
-import { useProject, useProjectScreens, useScreenDetails } from '@/hooks/useProjects';
+import { useProject, useProjectScreens, useProjectScenarios, useScreenDetails, useScenarioDetails } from '@/hooks/useProjects';
 import { useScreensCategories } from '@/hooks/useScreensCategories';
+import { useScenariosCategories } from '@/hooks/useScenariosCategories';
 import { useSEO } from '@/hooks/useSEO';
 import ImagePreviewModal from '@/components/ImagePreviewModal';
 import { NavIcons } from '@/components/icons';
@@ -66,7 +67,9 @@ const DetailPage = () => {
 
   const { project: projectFromApi, loading: projectLoading, error: projectError } = useProject(id ?? undefined);
   const { subCategories } = useScreensCategories(id ?? null);
+  const { treeStructure: scenariosTree, loading: scenariosTreeLoading } = useScenariosCategories(id ?? null);
   const { screens: screensFromApi } = useProjectScreens(id ?? undefined);
+  const { scenariosByCategoryId, allScenarios, loading: scenariosLoading } = useProjectScenarios(id ?? undefined);
   const item = projectFromApi ??  null;
 
   const [activeTreeItem, setActiveTreeItem] = useState<string | null>(null);
@@ -93,42 +96,7 @@ const DetailPage = () => {
     { id: 'videos' as TabType, label: 'Видео', count: null, comingSoon: true, disabled: true },
   ];
 
-  const treeStructure: TreeNode[] = [
-    {
-      id: 'item-1',
-      label: 'Онбординг',
-      sectionId: 'section-1',
-      count: 12,
-      children: [
-        {
-          id: 'item-2',
-          label: 'Онбординг',
-          sectionId: 'section-2',
-          count: 12,
-          children: [
-            {
-              id: 'item-3',
-              label: 'Онбординг',
-              sectionId: 'section-3',
-              count: 12,
-              children: [
-                { id: 'item-4', label: 'Онбординг', sectionId: 'section-4', count: 12 },
-              ],
-            },
-            { id: 'item-6', label: 'Онбординг', sectionId: 'section-6', count: 12 },
-          ],
-        },
-        {
-          id: 'item-8',
-          label: 'Онбординг',
-          sectionId: 'section-8',
-          count: 12,
-          children: [],
-        },
-      ],
-    },
-    { id: 'item-7', label: 'Онбординг', sectionId: 'section-7', count: 12 },
-  ];
+  const treeStructure: TreeNode[] = scenariosTree;
 
   const flattenTree = (nodes: TreeNode[], level: number = 0): Array<TreeNode & { level: number }> => {
     const result: Array<TreeNode & { level: number }> = [];
@@ -165,6 +133,9 @@ const DetailPage = () => {
           ])
       : [];
   const screens = screensFromApi.length > 0 ? screensFromApi : screensFallback;
+
+  /** For modal and click index: scenarios tab uses allScenarios, screens tab uses screens */
+  const screensForModal = activeTab === 'scenarios' ? allScenarios : screens;
 
   const filteredScreens =
     activeSubCategory === 'all'
@@ -209,12 +180,18 @@ const DetailPage = () => {
 
   const { details: screenDetails, loading: screenDetailsLoading } = useScreenDetails(
     id ?? undefined,
-    screenIdFromUrl
+    activeTab === 'scenarios' ? null : screenIdFromUrl
   );
+  const { details: scenarioDetails, loading: scenarioDetailsLoading } = useScenarioDetails(
+    id ?? undefined,
+    activeTab === 'scenarios' ? screenIdFromUrl : null
+  );
+  const modalScreenMeta = activeTab === 'scenarios' ? scenarioDetails : screenDetails;
+  const modalScreenMetaLoading = activeTab === 'scenarios' ? scenarioDetailsLoading : screenDetailsLoading;
 
   useEffect(() => {
     if (!screenIdFromUrl) return;
-    const screenIndex = screens.findIndex(
+    const screenIndex = screensForModal.findIndex(
       (screen) => String(screen.screenId ?? screen.id) === screenIdFromUrl
     );
     if (screenIndex !== -1) {
@@ -222,7 +199,7 @@ const DetailPage = () => {
     } else {
       setSearchParams({});
     }
-  }, [screenIdFromUrl, screens]);
+  }, [screenIdFromUrl, screensForModal]);
 
   const handleTreeItemClick = (sectionId: string, itemId: string) => {
     setActiveTreeItem(itemId);
@@ -232,7 +209,7 @@ const DetailPage = () => {
 
   const handleImageClick = (index: number) => {
     setSelectedImageIndex(index);
-    const screen = screens[index];
+    const screen = screensForModal[index];
     const screenId = screen?.screenId ?? screen?.id;
     if (screenId) setSearchParams({ screen: String(screenId) });
   };
@@ -357,16 +334,20 @@ const DetailPage = () => {
         {activeTab === 'scenarios' && (
           <aside className="detail-page__sidebar detail-page__sidebar--tree">
             <div className="detail-page__tree">
-              {treeStructure.map((item) => (
-                <TreeNodeComponent
-                  key={item.id}
-                  node={item}
-                  activeTreeItem={activeTreeItem}
-                  onItemClick={handleTreeItemClick}
-                  level={0}
-                  className='parent-tree-row'
-                />
-              ))}
+              {scenariosTreeLoading ? (
+                <div className="detail-page__tree-loading">Загрузка...</div>
+              ) : (
+                treeStructure.map((item) => (
+                  <TreeNodeComponent
+                    key={item.id}
+                    node={item}
+                    activeTreeItem={activeTreeItem}
+                    onItemClick={handleTreeItemClick}
+                    level={0}
+                    className='parent-tree-row'
+                  />
+                ))
+              )}
             </div>
           </aside>
         )}
@@ -399,39 +380,51 @@ const DetailPage = () => {
 
           {activeTab === 'scenarios' && (
             <div className="detail-page__scenarios-content">
-              {flatTreeStructure.map((item) => (
-                          <div 
-                  key={item.id}
-                  id={item.sectionId}
-                            ref={(el) => {
-                    sectionRefs.current[item.sectionId] = el;
-                            }}
-                            className="detail-page__scenario-section"
-                          >
-                            <div className="detail-page__scenario-section-header">
-                    <h3 className="detail-page__scenario-section-title">{item.label}</h3>
-                    <span className="detail-page__scenario-section-count">{item.count} экранов</span>
+              {scenariosLoading ? (
+                <div className="detail-page__scenarios-loading">Загрузка...</div>
+              ) : (
+                flatTreeStructure.map((item) => {
+                  const sectionScreens = scenariosByCategoryId[item.id] ?? scenariosByCategoryId[item.sectionId] ?? [];
+                  return (
+                    <div
+                      key={item.id}
+                      id={item.sectionId}
+                      ref={(el) => {
+                        sectionRefs.current[item.sectionId] = el;
+                      }}
+                      className="detail-page__scenario-section"
+                    >
+                      <div className="detail-page__scenario-section-header">
+                        <h3 className="detail-page__scenario-section-title">{item.label}</h3>
+                        <span className="detail-page__scenario-section-count">{sectionScreens.length} экранов</span>
+                      </div>
+                      <div className="detail-page__scenario-section-grid">
+                        {sectionScreens.map((screen) => {
+                          const globalIndex = allScenarios.findIndex(
+                            (s) => String(s.screenId ?? s.id) === String(screen.screenId ?? screen.id)
+                          );
+                          return (
+                            <div
+                              key={`${item.sectionId}-${screen.id}`}
+                              className="detail-page__screen-card"
+                              onClick={() => handleImageClick(globalIndex >= 0 ? globalIndex : 0)}
+                              style={{ cursor: 'pointer' }}
+                            >
+                              <div className="detail-page__phone-screen">
+                                <img
+                                  src={screen.image}
+                                  alt={screen.title}
+                                  className="detail-page__phone-image"
+                                />
+                              </div>
                             </div>
-                            <div className="detail-page__scenario-section-grid">
-                              {screens.map((screen, index) => (
-                                <div 
-                        key={`${item.sectionId}-${screen.id}`} 
-                                  className="detail-page__screen-card"
-                                  onClick={() => handleImageClick(index)}
-                                  style={{ cursor: 'pointer' }}
-                                >
-                                  <div className="detail-page__phone-screen">
-                                    <img 
-                                      src={screen.image} 
-                                      alt={screen.title}
-                                      className="detail-page__phone-image"
-                                    />
-                                  </div>
-                                </div>
-                              ))}
-                                          </div>
-                                        </div>
-                                      ))}
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })
+              )}
             </div>
           )}
 
@@ -448,8 +441,8 @@ const DetailPage = () => {
       <ImagePreviewModal
         isOpen={isImagePreviewOpen}
         onClose={handleModalClose}
-        images={screens}
-        initialIndex={selectedImageIndex}
+        images={screensForModal}
+        initialIndex={Math.min(selectedImageIndex, Math.max(0, screensForModal.length - 1))}
         appInfo={{
           logo: item.logo ?? item.img2 ?? item.img1 ?? '',
           name: item.app_name,
@@ -462,8 +455,8 @@ const DetailPage = () => {
         subCategories={subCategories}
         activeSubCategory={activeSubCategory}
         onSubCategoryClick={(categoryId) => setActiveSubCategory(categoryId)}
-        screenMeta={screenDetails}
-        screenMetaLoading={screenDetailsLoading}
+        screenMeta={modalScreenMeta}
+        screenMetaLoading={modalScreenMetaLoading}
       />
     </div>
     </>

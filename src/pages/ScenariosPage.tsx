@@ -1,31 +1,38 @@
-import { useState, useRef, useEffect, useCallback } from "react";
-import contentData from "@/data/content";
-import { SCENARIO_CATEGORIES } from "@/constants";
-import { useCategories } from "@/hooks/useCategories";
-import ImagePreviewModal from "@/components/ImagePreviewModal";
 import { useSEO } from "@/hooks/useSEO";
-import '@/styles/header-search.css';
 import '@/styles/detail-page.css';
 
-// Category counts based on the design
-const SCENARIO_COUNTS: Record<string, number> = {
-  '': 12,
-  '/search': 2,
-  '/login': 3,
-  '/cancel': 5,
-  '/order': 2,
-};
-
 const ScenariosPage = () => {
-  const { categories } = useCategories();
-  // SEO optimization
   useSEO({
     title: 'Сценарии - UI/UX Design Scenarios',
     description: 'UI/UX dizayn scenariylar to\'plami. User flow va interaction patternlari.',
     keywords: 'UI scenarios, UX scenarios, user flows, interaction patterns, mobile app scenarios',
     ogUrl: 'https://inspiro.com/scenarios',
   });
-  
+
+  return (
+    <div className="detail-page">
+      <div className="detail-page__not-found" style={{ padding: '60px 24px', textAlign: 'center', fontSize: '24px', color: '#888' }}>
+        Скоро...
+      </div>
+    </div>
+  );
+};
+
+export default ScenariosPage;
+
+/* ========== COMMENTED OUT – restore when scenarios page is ready ==========
+import { useState, useRef, useEffect, useCallback } from "react";
+import contentData from "@/data/content";
+import { SCENARIO_CATEGORIES } from "@/constants";
+import { useCategories } from "@/hooks/useCategories";
+import ImagePreviewModal from "@/components/ImagePreviewModal";
+import '@/styles/header-search.css';
+
+const SCENARIO_COUNTS: Record<string, number> = {
+  '': 12, '/search': 2, '/login': 3, '/cancel': 5, '/order': 2,
+};
+
+  const { categories } = useCategories();
   const [activeCategory, setActiveCategory] = useState<string>('');
   const filterOptions = [{ id: '', name: 'Все' }, ...categories];
   const [activeFilter, setActiveFilter] = useState<string>(filterOptions[0]?.id ?? '');
@@ -37,231 +44,14 @@ const ScenariosPage = () => {
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
   const filtersRef = useRef<HTMLUListElement>(null);
-
-  // Create screens array for the modal (image must be string for ImagePreviewModal)
   const screens = contentData.map((item) => ({
-    id: item.id,
-    screenId: item.screenId,
-    image: item.logo ?? item.images?.[0] ?? '',
-    title: item.app_name,
+    id: item.id, screenId: item.screenId, image: item.logo ?? item.images?.[0] ?? '', title: item.app_name,
   }));
-
-  // Get first item for app info (or use selected item)
   const firstItem = contentData[0] || null;
-
-  // Convert SCENARIO_CATEGORIES to subCategories format
   const subCategories = SCENARIO_CATEGORIES.map((category) => ({
-    id: category.path,
-    label: category.label,
-    count: SCENARIO_COUNTS[category.path] || 0,
+    id: category.path, label: category.label, count: SCENARIO_COUNTS[category.path] || 0,
   }));
-
-  // Tree structure for scenarios (similar to DetailPage)
-  const treeStructure = [
-    {
-      id: 'item-1',
-      label: 'Онбординг',
-      sectionId: 'section-1',
-      count: 12,
-      children: [
-        {
-          id: 'item-2',
-          label: 'Онбординг',
-          sectionId: 'section-2',
-          count: 12,
-          children: [
-            {
-              id: 'item-3',
-              label: 'Онбординг',
-              sectionId: 'section-3',
-              count: 12,
-              children: [
-                { id: 'item-4', label: 'Онбординг', sectionId: 'section-4', count: 12 },
-              ],
-            },
-            { id: 'item-6', label: 'Онбординг', sectionId: 'section-6', count: 12 },
-          ],
-        },
-        {
-          id: 'item-8',
-          label: 'Онбординг',
-          sectionId: 'section-8',
-          count: 12,
-          children: []
-        }
-      ],
-    },
-    { id: 'item-7', label: 'Онбординг', sectionId: 'section-7', count: 12 },
-  ];
-
+  const treeStructure = [ ... ];
   const [activeTreeItem, setActiveTreeItem] = useState<string | null>(null);
-
-  const handleTreeItemClick = (_sectionId: string, itemId: string) => {
-    setActiveTreeItem(itemId);
-    // You can add scroll to section logic here if needed
-  };
-
-  const handleImageClick = (index: number) => {
-    setPreviewIndex(index);
-    setIsPreviewOpen(true);
-  };
-
-  // Check scroll position
-  const checkScroll = useCallback(() => {
-    const container = filtersRef.current;
-    if (!container) return;
-    const canScrollRight = container.scrollLeft < container.scrollWidth - container.clientWidth - 10;
-    const canScrollLeft = container.scrollLeft > 10;
-    setCanScrollRight(canScrollRight);
-    setCanScrollLeft(canScrollLeft);
-  }, []);
-
-  // Scroll filters
-  const scrollFilters = (direction: 'left' | 'right') => {
-    if (filtersRef.current) {
-      const scrollAmount = 200;
-      filtersRef.current.scrollBy({
-        left: direction === 'left' ? -scrollAmount : scrollAmount,
-        behavior: 'smooth'
-      });
-    }
-  };
-
-  // Set up scroll listeners
-  useEffect(() => {
-    const container = filtersRef.current;
-    if (!container) return;
-
-    container.addEventListener('scroll', checkScroll);
-    checkScroll();
-    
-    return () => {
-      container.removeEventListener('scroll', checkScroll);
-    };
-  }, [checkScroll]);
-
-  return (
-    <>
-      <div className="detail-page__content">
-        {/* Left Sidebar */}
-        <aside className="detail-page__sidebar">
-          <div className="detail-page__subcategories">
-            {SCENARIO_CATEGORIES.map((category) => (
-              <button
-                key={category.path}
-                className={`detail-page__subcategory ${activeCategory === category.path ? 'active' : ''}`}
-                onClick={() => setActiveCategory(category.path)}
-              >
-                {category.label}
-                <span className="detail-page__subcategory-count">
-                  {SCENARIO_COUNTS[category.path] || 0}
-                </span>
-              </button>
-            ))}
-          </div>
-        </aside>
-
-        {/* Main Content */}
-        <main className="scenarios-page__main detail-page__main with-sidebar">
-          {/* Horizontal Category Filters - Same as HomePage */}
-          <section className="category-filter-section" aria-label="Category filters">
-            <div className="category-filter-wrapper">
-              {canScrollLeft && (
-                <button 
-                  className="category-scroll-btn category-scroll-btn--left"
-                  onClick={() => scrollFilters('left')}
-                  aria-label="Scroll left"
-                >
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M15.0625 7.9375L1.0625 7.9375" stroke="#D9F743" strokeWidth="1.875" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M8.0625 0.9375L1.0625 7.9375L8.0625 14.9375" stroke="#D9F743" strokeWidth="1.875" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </button>
-              )}
-              <ul className="category-list" ref={filtersRef} role="list">
-                {filterOptions.map((category) => (
-                  <li 
-                    key={category.id || 'all'} 
-                    className={`category-item ${activeFilter === category.id ? 'active' : ''}`}
-                    role="listitem"
-                    aria-label={`Filter by ${category.name}`}
-                    onClick={() => setActiveFilter(category.id)}
-                  >
-                    {category.name}
-                  </li>
-                ))}
-              </ul>
-              {canScrollRight && (
-                <button 
-                  className="category-scroll-btn category-scroll-btn--right"
-                  onClick={() => scrollFilters('right')}
-                  aria-label="Scroll right"
-                >
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M0.9375 7.9375L14.9375 7.9375" stroke="#D9F743" strokeWidth="1.875" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M7.9375 0.9375L14.9375 7.9375L7.9375 14.9375" stroke="#D9F743" strokeWidth="1.875" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </button>
-              )}
-            </div>
-          </section>
-
-          {/* Cards Grid - Same as Patterns Page */}
-          <div className="detail-page__grid">
-            {contentData.map((item, index) => (
-              <div 
-                key={item.id} 
-                className="patterns-card"
-                onClick={() => handleImageClick(index)}
-              >
-                {/* Screen Image */}
-                <div className="patterns-card__image-wrapper">
-                  <img 
-                    src={item.logo} 
-                    alt={item.app_name}
-                    className="patterns-card__image"
-                  />
-                </div>
-                
-                {/* App Info */}
-                <div className="patterns-card__app-info">
-                  <img 
-                    src={item.img2} 
-                    alt={item.app_name}
-                    className="patterns-card__app-logo"
-                  />
-                  <span className="patterns-card__app-name">{item.app_name}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </main>
-      </div>
-
-      {/* Image Preview Modal */}
-      {firstItem && (
-        <ImagePreviewModal
-          isOpen={isPreviewOpen}
-          onClose={() => setIsPreviewOpen(false)}
-          images={screens}
-          initialIndex={previewIndex}
-          appInfo={{
-            logo: firstItem.logo ?? firstItem.img2 ?? '',
-            name: firstItem.app_name,
-            description: firstItem.text_info || 'Description of the company',
-          }}
-          activeTab="scenarios"
-          treeStructure={treeStructure}
-          activeTreeItem={activeTreeItem}
-          onTreeItemClick={handleTreeItemClick}
-          subCategories={subCategories}
-          activeSubCategory={activeCategory}
-          onSubCategoryClick={(categoryId) => setActiveCategory(categoryId)}
-        />
-      )}
-    </>
-  );
-};
-
-export default ScenariosPage;
-
+  ... rest of component JSX (sidebar, filters, grid, modal) ...
+========== END COMMENTED OUT ========== */

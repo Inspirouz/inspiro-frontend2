@@ -212,6 +212,93 @@ export function useProjectScreens(projectId: string | undefined) {
   return { screens, loading };
 }
 
+export type ScenarioItem = ScreenItem & { categoryId?: string };
+
+type ApiScenarioCategory = {
+  id?: string;
+  is_deleted?: boolean;
+  parent_id?: string | null;
+  tag?: { id?: string; name?: string };
+  scenarios?: ApiScenario[];
+};
+
+type ApiScenario = {
+  id?: string;
+  is_deleted?: boolean;
+  scenario_category_id?: string;
+  images?: Array<{ id?: string; path?: string; file_name?: string }>;
+};
+
+/**
+ * Fetches scenarios for a project from GET /projects/:projectId/scenarios.
+ * API returns data = array of categories; each has id, tag.name, scenarios[]; each scenario has id, images[].
+ * Returns screens grouped by category id (one card per image).
+ */
+export function useProjectScenarios(projectId: string | undefined) {
+  const [scenariosByCategoryId, setScenariosByCategoryId] = useState<Record<string, ScenarioItem[]>>({});
+  const [allScenarios, setAllScenarios] = useState<ScenarioItem[]>([]);
+  const [loading, setLoading] = useState(!!projectId);
+
+  useEffect(() => {
+    if (!projectId) {
+      setScenariosByCategoryId({});
+      setAllScenarios([]);
+      setLoading(false);
+      return;
+    }
+    const apiUrl = import.meta.env.VITE_API_URL;
+    setLoading(true);
+    fetch(`${apiUrl}/projects/${projectId}/scenarios`)
+      .then((res) => res.json())
+      .then((json) => {
+        const data = json?.data ?? json;
+        const categories: ApiScenarioCategory[] = Array.isArray(data) ? data : Array.isArray(data?.items) ? data.items : [];
+        const ok = json?.success === true || (json?.status_code >= 200 && json?.status_code < 300);
+        if (!ok || !Array.isArray(categories)) {
+          setScenariosByCategoryId({});
+          setAllScenarios([]);
+          return;
+        }
+        const byCategory: Record<string, ScenarioItem[]> = {};
+        const all: ScenarioItem[] = [];
+        for (const cat of categories) {
+          if (cat.is_deleted) continue;
+          const categoryId = String(cat.id ?? '');
+          const categoryName = (cat.tag && typeof cat.tag === 'object' && cat.tag.name) ? String(cat.tag.name) : categoryId;
+          const scenarioList = Array.isArray(cat.scenarios) ? cat.scenarios : [];
+          for (const scenario of scenarioList) {
+            if (scenario.is_deleted) continue;
+            const scenarioId = String(scenario.id ?? '');
+            const images = Array.isArray(scenario.images) ? scenario.images : [];
+            for (const img of images) {
+              const path = (img.path ?? img.file_name) as string | undefined;
+              if (!path) continue;
+              const item: ScenarioItem = {
+                id: String(img.id ?? `${scenarioId}-${path}`),
+                screenId: scenarioId,
+                title: categoryName,
+                image: toImageUrl(path),
+                categoryId,
+              };
+              if (!byCategory[categoryId]) byCategory[categoryId] = [];
+              byCategory[categoryId].push(item);
+              all.push(item);
+            }
+          }
+        }
+        setScenariosByCategoryId(byCategory);
+        setAllScenarios(all);
+      })
+      .catch(() => {
+        setScenariosByCategoryId({});
+        setAllScenarios([]);
+      })
+      .finally(() => setLoading(false));
+  }, [projectId]);
+
+  return { scenariosByCategoryId, allScenarios, loading };
+}
+
 // Per-screen details for ImagePreviewModal side panel (API may return objects with id/name/type)
 export interface ScreenDetails {
   uploadDate?: string;
@@ -276,6 +363,69 @@ export function useScreenDetails(
       })
       .finally(() => setLoading(false));
   }, [projectId, screenId]);
+
+  return { details, loading };
+}
+
+/**
+ * Fetches a single scenario for the preview modal from GET /projects/:projectId/scenarios/:scenarioId.
+ * Maps response to the same ScreenDetails shape as useScreenDetails for the modal sidebar.
+ */
+export function useScenarioDetails(
+  projectId: string | undefined,
+  scenarioId: string | null
+) {
+  const [details, setDetails] = useState<ScreenDetails | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!projectId || !scenarioId) {
+      setDetails(null);
+      setLoading(false);
+      return;
+    }
+    const apiUrl = import.meta.env.VITE_API_URL;
+    setLoading(true);
+    fetch(`${apiUrl}/projects/${projectId}/scenarios/${scenarioId}`)
+      .then((res) => res.json())
+      .then((json) => {
+        const data = json?.data ?? json;
+        if (!data || typeof data !== 'object') {
+          setDetails(null);
+          return;
+        }
+        const d = data as Record<string, unknown>;
+        const rawDate =
+          (d.upload_date as string | undefined) ??
+          (d.uploadDate as string | undefined) ??
+          (d.created_at as string | undefined) ??
+          (d.updated_at as string | undefined);
+        const uploadDate = formatDateDDMMYYYYHHMM(rawDate);
+        const resolution = d.resolution as string | undefined;
+        const scenarios = Array.isArray(d.scenarios)
+          ? (d.scenarios as (string | Record<string, unknown>)[])
+          : undefined;
+        const uiElements = Array.isArray(d.ui_elements)
+          ? (d.ui_elements as (string | Record<string, unknown>)[])
+          : Array.isArray(d.uiElements)
+            ? (d.uiElements as (string | Record<string, unknown>)[])
+            : undefined;
+        const patterns = Array.isArray(d.patterns)
+          ? (d.patterns as (string | Record<string, unknown>)[])
+          : undefined;
+        setDetails({
+          uploadDate,
+          resolution,
+          scenarios,
+          uiElements,
+          patterns,
+        });
+      })
+      .catch(() => {
+        setDetails(null);
+      })
+      .finally(() => setLoading(false));
+  }, [projectId, scenarioId]);
 
   return { details, loading };
 }
