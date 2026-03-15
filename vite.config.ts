@@ -23,7 +23,7 @@ export default defineConfig({
     host: 'localhost'
   },  
 preview:{
-allowedHosts:['admin.inspiro.uz'],
+allowedHosts:['inspiro.uz'],
 port:4002
 
 },
