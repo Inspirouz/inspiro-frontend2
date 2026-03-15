@@ -17,6 +17,16 @@ export default defineConfig({
       '@/types': path.resolve(__dirname, './src/types'),
     },
   },
+  server: {
+    port: 4002,
+    open: true,
+    host: 'localhost'
+  },  
+preview:{
+allowedHosts:['admin.inspiro.uz'],
+port:4002
+
+},
   build: {
     // Code splitting optimization
     rollupOptions: {

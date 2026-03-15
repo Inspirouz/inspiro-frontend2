@@ -315,7 +315,7 @@ const DetailPage = () => {
                   ? subCategories
                   : [{ id: 'all', label: 'Все', count: totalCount }, ...subCategories];
                 return items;
-              })().map((subCat, idx) => (
+              })().filter((c) => c.count > 0).map((subCat, idx) => (
                 <button
                   key={`${subCat.id}-${idx}`}
                   className={`detail-page__subcategory ${
