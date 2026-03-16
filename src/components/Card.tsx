@@ -1,12 +1,17 @@
 import { useState } from 'react';
 import type { CardProps } from '@/types';
-const IMAGE_BASE_URL = 'https://dev.api.inspiro.uz/images/';
+
+function getImageBaseUrl(): string {
+  const apiUrl = import.meta.env.VITE_API_URL || '';
+  const root = apiUrl.replace(/\/api\/?$/, '');
+  return `${root}/images/`;
+}
 
 function toImageUrl(image: string): string {
   if (!image) return '';
   if (image.startsWith('http://') || image.startsWith('https://')) return image;
   const path = image.startsWith('/') ? image.slice(1) : image;
-  return `${IMAGE_BASE_URL}${path}`;
+  return `${getImageBaseUrl()}${path}`;
 }
 const Card = ({ item, onClick, variant = 'default' }: CardProps) => {
   const isPattern = variant === 'pattern';
