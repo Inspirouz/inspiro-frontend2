@@ -26,10 +26,16 @@ const PatternsPage = () => {
   const displayItems = activeCategory === 'all' ? contentData : patternsByTag;
   const firstItem = displayItems[0] || null;
 
-  const subCategories = [
-    { id: 'all', label: 'Все', count: contentData.length },
-    ...patternTags.map((t) => ({ id: t.id, label: t.label, count: t.count })),
-  ];
+  const nonEmptyPatternTags = patternTags.filter((t) => t.count > 0);
+  const allPatternsCount = nonEmptyPatternTags.reduce((sum, t) => sum + t.count, 0);
+  const hasAnyPatterns = allPatternsCount > 0;
+
+  const subCategories = hasAnyPatterns
+    ? [
+        { id: 'all', label: 'Все', count: allPatternsCount },
+        ...nonEmptyPatternTags.map((t) => ({ id: t.id, label: t.label, count: t.count })),
+      ]
+    : [];
 
   const handleImageClick = (index: number) => {
     setPreviewIndex(index);
@@ -46,24 +52,28 @@ const PatternsPage = () => {
               <div className="detail-page__subcategories-loading">Загрузка...</div>
             ) : (
               <>
-                <button
-                  key="all"
-                  className={`detail-page__subcategory ${activeCategory === 'all' ? 'active' : ''}`}
-                  onClick={() => setActiveCategory('all')}
-                >
-                  Все
-                  <span className="detail-page__subcategory-count">{contentData.length}</span>
-                </button>
-                {patternTags.map((tag) => (
-                  <button
-                    key={tag.id}
-                    className={`detail-page__subcategory ${activeCategory === tag.id ? 'active' : ''}`}
-                    onClick={() => setActiveCategory(tag.id)}
-                  >
-                    {tag.label}
-                    <span className="detail-page__subcategory-count">{tag.count}</span>
-                  </button>
-                ))}
+                {hasAnyPatterns && (
+                  <>
+                    <button
+                      key="all"
+                      className={`detail-page__subcategory ${activeCategory === 'all' ? 'active' : ''}`}
+                      onClick={() => setActiveCategory('all')}
+                    >
+                      Все
+                      <span className="detail-page__subcategory-count">{allPatternsCount}</span>
+                    </button>
+                    {nonEmptyPatternTags.map((tag) => (
+                      <button
+                        key={tag.id}
+                        className={`detail-page__subcategory ${activeCategory === tag.id ? 'active' : ''}`}
+                        onClick={() => setActiveCategory(tag.id)}
+                      >
+                        {tag.label}
+                        <span className="detail-page__subcategory-count">{tag.count}</span>
+                      </button>
+                    ))}
+                  </>
+                )}
               </>
             )}
           </div>
@@ -71,11 +81,29 @@ const PatternsPage = () => {
 
         {/* Main Content */}
         <main className="detail-page__main with-sidebar">
-          <div className="detail-page__grid">
-            {patternsLoading ? (
-              <div className="detail-page__grid-loading">Загрузка...</div>
-            ) : (
-              displayItems.map((item, index) => (
+          {patternsLoading ? (
+            <div className="detail-page__grid-loading">Загрузка...</div>
+          ) : displayItems.length === 0 ? (
+            <div
+              className="detail-page__grid-empty"
+              style={{
+                width: '100%',
+                height: '100%',
+                minHeight: '400px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '20px',
+                color: '#888',
+                textAlign: 'center',
+                paddingRight: '200px',
+              }}
+            >
+              Malumot mavjude emas
+            </div>
+          ) : (
+            <div className="detail-page__grid">
+              {displayItems.map((item, index) => (
                 <div
                   key={item.id}
                   className="patterns-card"
@@ -97,9 +125,9 @@ const PatternsPage = () => {
                     <span className="patterns-card__app-name">{item.app_name}</span>
                   </div>
                 </div>
-              ))
-            )}
-          </div>
+              ))}
+            </div>
+          )}
         </main>
       </div>
 

@@ -201,6 +201,16 @@ const ImagePreviewModal = ({
   const currentImage = images[currentIndex];
   if (!currentImage) return null;
 
+  const nonEmptySubCategories = subCategories.filter((subCat) => subCat.count > 0);
+  const allSubCategoriesCount = nonEmptySubCategories.reduce(
+    (sum, subCat) => sum + subCat.count,
+    0
+  );
+  const subCategoriesWithAll =
+    activeTab !== 'scenarios' && allSubCategoriesCount > 0
+      ? [{ id: 'all', label: 'Все', count: allSubCategoriesCount }, ...nonEmptySubCategories]
+      : nonEmptySubCategories;
+
   return (
     <div className="image-preview-modal" onClick={onClose}>
       <div className="image-preview-modal__content" onClick={(e) => e.stopPropagation()}>
@@ -226,7 +236,7 @@ const ImagePreviewModal = ({
             {/* Show tree only for scenarios tab */}
             {activeTab === 'scenarios' && treeStructure.length > 0 && (
               <div className="image-preview-modal__tree">
-                {treeStructure.map((item) => (
+                {treeStructure.filter((item) => item.count > 0).map((item) => (
                   <TreeNodeComponent
                     key={item.id}
                     node={item}
@@ -240,9 +250,9 @@ const ImagePreviewModal = ({
             )}
 
             {/* Show subcategories for other tabs */}
-            {activeTab !== 'scenarios' && subCategories.length > 0 && (
+            {activeTab !== 'scenarios' && subCategoriesWithAll.length > 0 && (
               <div className="image-preview-modal__subcategories">
-                {subCategories.map((subCat) => (
+                {subCategoriesWithAll.map((subCat) => (
                   <button
                     key={subCat.id}
                     className={`image-preview-modal__subcategory ${
