@@ -15,12 +15,17 @@ function toImageUrl(image: string): string {
   return `${getImageBaseUrl()}${path}`;
 }
 
-type ImageItem = { path?: string; file_name?: string };
+type ImageItem = string | { path?: string; file_name?: string };
 
 function getImagePaths(raw: Record<string, unknown>): string[] {
   const images = raw.images as ImageItem[] | undefined;
   if (Array.isArray(images) && images.length > 0) {
-    return images.map((img) => (img.path ?? img.file_name ?? '') as string).filter(Boolean);
+    return images
+      .map((img) => {
+        if (typeof img === 'string') return img;
+        return (img.path ?? img.file_name ?? '') as string;
+      })
+      .filter(Boolean);
   }
   const single = raw.image as string | undefined;
   return single ? [single] : [];
@@ -58,7 +63,6 @@ function mapProjectToContentItem(raw: Record<string, unknown>): ContentItem {
   return {
     id,
     app_name,
-    images:raw?.images as string[] | undefined,
     // img1,
     // img2,
     ...(logoUrl && { logo: logoUrl }),
@@ -163,7 +167,7 @@ export type ScreenItem = {
 type ApiScreen = {
   id?: string;
   screensCategory?: { name?: string };
-  images?: Array<{ id?: string; path?: string; file_name?: string }>;
+  images?: Array<string | { id?: string; path?: string; file_name?: string }>;
 };
 
 function flattenScreensFromApi(list: ApiScreen[]): ScreenItem[] {
@@ -172,10 +176,11 @@ function flattenScreensFromApi(list: ApiScreen[]): ScreenItem[] {
     const categoryName = (screen.screensCategory?.name ?? screen.id ?? '') as string;
     const images = screen.images ?? [];
     for (const img of images) {
-      const path = (img.path ?? img.file_name ?? '') as string;
+      const path =
+        typeof img === 'string' ? img : ((img.path ?? img.file_name ?? '') as string);
       if (path) {
         result.push({
-          id: (img.id as string) ?? `${screen.id}-${result.length}`,
+          id: (typeof img === 'string' ? undefined : (img.id as string)) ?? `${screen.id}-${result.length}`,
           screenId: (screen.id as string) ?? `${screen.id ?? 'screen'}-${result.length}`,
           title: categoryName,
           image: toImageUrl(path),

@@ -80,7 +80,7 @@ const DetailPage = () => {
     title: item ? `${item.app_name} - Detail` : 'Detail Page',
     description: item?.text_info || 'Application detail page',
     keywords: 'UI design, UX design, application detail',
-    ogUrl: `https://inspiro.com/detail/${id}`,
+    ogUrl: `https://inspiro.uz/detail/${id}`,
   });
 
   useEffect(() => {
@@ -245,7 +245,29 @@ const DetailPage = () => {
       <div className="detail-page__header">
         <div className="detail-page__header-main">
           <div className="detail-page__header-icon">
-            <img src={item.logo ?? item.logo ?? item.logo} alt={item.app_name} />
+            {item.logo ? (
+              <img src={item.logo} alt={item.app_name} />
+            ) : (
+              <div
+                aria-label={item.app_name}
+                style={{
+                  width: 56,
+                  height: 56,
+                  borderRadius: 12,
+                  background: '#242424',
+                  color: '#FFFFFF',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontWeight: 700,
+                  fontSize: 22,
+                  textTransform: 'uppercase',
+                  userSelect: 'none',
+                }}
+              >
+                {(item.app_name?.trim()?.[0] ?? '?').toUpperCase()}
+              </div>
+            )}
           </div>
           <div className="detail-page__header-info">
             <h1 className="detail-page__header-title">{item.app_name}</h1>

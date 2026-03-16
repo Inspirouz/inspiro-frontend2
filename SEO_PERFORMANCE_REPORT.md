@@ -191,7 +191,7 @@
      "@context": "https://schema.org",
      "@type": "WebSite",
      "name": "Inspiro",
-     "url": "https://inspiro.com"
+     "url": "https://inspiro.uz"
    }
    ```
 

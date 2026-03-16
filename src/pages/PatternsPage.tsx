@@ -12,7 +12,7 @@ const PatternsPage = () => {
     title: 'Patterns - UI/UX Design Patterns',
     description: 'UI/UX dizayn patternlar to\'plami. Zamonaviy dizayn yechimlari va best practices.',
     keywords: 'UI patterns, UX patterns, design patterns, interface patterns, user experience patterns',
-    ogUrl: 'https://inspiro.com/patterns',
+    ogUrl: 'https://inspiro.uz/patterns',
   });
 
   const { tags: patternTags, loading: tagsLoading } = usePatternTags();

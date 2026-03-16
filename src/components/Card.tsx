@@ -52,7 +52,7 @@ const Card = ({ item, onClick, variant = 'default' }: CardProps) => {
     >
       {/* Header section with logo and app name */}
       <div className="card__header">
-        {item.logo && (
+        {item.logo ? (
           <img
             className="card__logo"
             src={item.logo}
@@ -60,6 +60,23 @@ const Card = ({ item, onClick, variant = 'default' }: CardProps) => {
             loading="lazy"
             decoding="async"
           />
+        ) : (
+          <div
+            className="card__logo"
+            aria-label={`${item.app_name} logo placeholder`}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              background: '#242424',
+              color: '#FFFFFF',
+              fontWeight: 700,
+              textTransform: 'uppercase',
+              userSelect: 'none',
+            }}
+          >
+            {(item.app_name?.trim()?.[0] ?? '?').toUpperCase()}
+          </div>
         )}
         <div className="card__info">
           <h3 className="card__title">{item.app_name}</h3>

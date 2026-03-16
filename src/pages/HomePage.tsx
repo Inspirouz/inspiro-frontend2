@@ -13,7 +13,7 @@ const HomePage = () => {
     title: 'Inspiro - UI/UX Patterns va Design Elements',
     description: 'Zamonaviy UI/UX dizayn patternlar, scenario va elementlar to\'plami. Dizayn ilhomlari va best practices.',
     keywords: 'UI design, UX design, design patterns, UI elements, UX scenarios, design inspiration',
-    ogUrl: 'https://inspiro.com/',
+    ogUrl: 'https://inspiro.uz/',
   });
   const containerRef = useRef<HTMLUListElement>(null);
   const [activeCategory, setActiveCategory] = useState<string>('all');

@@ -6,7 +6,7 @@ const ScenariosPage = () => {
     title: 'Сценарии - UI/UX Design Scenarios',
     description: 'UI/UX dizayn scenariylar to\'plami. User flow va interaction patternlari.',
     keywords: 'UI scenarios, UX scenarios, user flows, interaction patterns, mobile app scenarios',
-    ogUrl: 'https://inspiro.com/scenarios',
+    ogUrl: 'https://inspiro.uz/scenarios',
   });
 
   return (

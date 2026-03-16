@@ -221,11 +221,31 @@ const ImagePreviewModal = ({
           <div className="image-preview-modal__left">
             {appInfo && (
               <div className="image-preview-modal__app-branding">
-                <img 
-                  src={appInfo.logo} 
-                  alt={appInfo.name}
-                  className="image-preview-modal__app-logo"
-                />
+                {appInfo.logo ? (
+                  <img 
+                    src={appInfo.logo} 
+                    alt={appInfo.name}
+                    className="image-preview-modal__app-logo"
+                  />
+                ) : (
+                  <div
+                    className="image-preview-modal__app-logo"
+                    aria-label={`${appInfo.name} logo placeholder`}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      background: '#242424',
+                      color: '#FFFFFF',
+                      fontWeight: 700,
+                      textTransform: 'uppercase',
+                      userSelect: 'none',
+                      fontSize: 32,
+                    }}
+                  >
+                    {(appInfo.name?.trim()?.[0] ?? '?').toUpperCase()}
+                  </div>
+                )}
                 <div className="image-preview-modal__app-info">
                   <h2 className="image-preview-modal__app-name">{appInfo.name}</h2>
                   <p className="image-preview-modal__app-description">{appInfo.description}</p>

@@ -18,7 +18,7 @@
 
 ## 2. Texnik talablar
 
-- **Base URL:** `https://api.inspiro.com` yoki `http://localhost:3001/api`
+- **Base URL:** `https://api.inspiro.uz` yoki `http://localhost:3001/api`
 - **Format:** JSON
 - **Autentifikatsiya:** Bearer token (JWT) — `Authorization: Bearer <token>`
 - **CORS:** Frontend domeniga ruxsat berilishi kerak
@@ -240,9 +240,9 @@ Query params: ?category=Банк&page=1&limit=20
         "id": 1,
         "app_name": "Unitrip",
         "text_info": "Путешествие",
-        "img1": "https://cdn.inspiro.com/apps/1/screenshot1.png",
-        "img2": "https://cdn.inspiro.com/apps/1/logo.png",
-        "images": ["https://cdn.inspiro.com/apps/1/s1.png", "https://cdn.inspiro.com/apps/1/s2.png"],
+        "img1": "https://cdn.inspiro.uz/apps/1/screenshot1.png",
+        "img2": "https://cdn.inspiro.uz/apps/1/logo.png",
+        "images": ["https://cdn.inspiro.uz/apps/1/s1.png", "https://cdn.inspiro.uz/apps/1/s2.png"],
         "category": "Путешествие",
         "platforms": ["iOS", "Android"],
         "updatedAt": "2025-10-14T00:00:00Z"
@@ -281,8 +281,8 @@ GET /api/applications/:id
     "app_name": "Unitrip",
     "text_info": "Путешествие",
     "description": "Description of the company",
-    "img1": "https://cdn.inspiro.com/apps/1/screenshot1.png",
-    "img2": "https://cdn.inspiro.com/apps/1/logo.png",
+    "img1": "https://cdn.inspiro.uz/apps/1/screenshot1.png",
+    "img2": "https://cdn.inspiro.uz/apps/1/logo.png",
     "images": ["url1", "url2"],
     "category": "Финтех",
     "platforms": ["iOS", "Android"],
@@ -318,7 +318,7 @@ GET /api/applications/:id
       {
         "id": 101,
         "title": "Welcome to Your Travel Companion",
-        "image": "https://cdn.inspiro.com/screens/101.png",
+        "image": "https://cdn.inspiro.uz/screens/101.png",
         "subCategoryId": "onboarding",
         "scenarioSectionId": "section-1"
       }
@@ -415,7 +415,7 @@ Query params: ?q=korzinka&type=applications&limit=20
         "id": "1",
         "name": "Korzinka.uz",
         "category": "Приложения",
-        "icon": "https://cdn.inspiro.com/logos/korzinka.png",
+        "icon": "https://cdn.inspiro.uz/logos/korzinka.png",
         "type": "applications"
       }
     ],
@@ -435,7 +435,7 @@ Query params: ?q=korzinka&type=applications&limit=20
       "id": "1",
       "name": "Korzinka.uz",
       "category": "Приложения",
-      "icon": "https://cdn.inspiro.com/logos/korzinka.png",
+      "icon": "https://cdn.inspiro.uz/logos/korzinka.png",
       "type": "applications"
     }
   ]
@@ -537,7 +537,7 @@ Content-Type: application/json
 {
   "success": true,
   "data": {
-    "paymentUrl": "https://pay.inspiro.com/checkout/xxx",
+    "paymentUrl": "https://pay.inspiro.uz/checkout/xxx",
     "orderId": "order_123"
   }
 }
