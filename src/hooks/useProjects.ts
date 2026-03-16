@@ -1,13 +1,18 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { ContentItem } from '@/types';
 
-const IMAGE_BASE_URL = 'https://dev.api.inspiro.uz/images/';
+function getImageBaseUrl(): string {
+  const apiUrl = import.meta.env.VITE_API_URL || '';
+  // Remove trailing /api or /api/ if present, then append /images/
+  const root = apiUrl.replace(/\/api\/?$/, '');
+  return `${root}/images/`;
+}
 
 function toImageUrl(image: string): string {
   if (!image) return '';
   if (image.startsWith('http://') || image.startsWith('https://')) return image;
   const path = image.startsWith('/') ? image.slice(1) : image;
-  return `${IMAGE_BASE_URL}${path}`;
+  return `${getImageBaseUrl()}${path}`;
 }
 
 type ImageItem = { path?: string; file_name?: string };
