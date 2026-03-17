@@ -219,6 +219,7 @@ max-width: 380px !important;
   display: block !important;
   object-fit: contain !important;
   margin: 0 auto !important;
+  border-radius: 14px;
 }
 
 /* Footer Pagination */
@@ -240,12 +241,15 @@ max-width: 380px !important;
 
 .image-preview-modal__info-header {
   height: 80px !important;
-  margin-bottom: 50px !important;
+  margin-bottom: 0 !important;
   display: flex !important;
   align-items: center !important;
   gap: 20px !important;
   justify-content: flex-end !important;
-
+  position: absolute !important;
+  top: 40px !important;
+  right: 50px !important;
+  z-index: 50 !important;
 }
 
 .image-preview-modal__share-btn {
@@ -300,12 +304,20 @@ box-shadow: 0px 1.25px 5px 0px #00000040 !important;
 }
 
 .image-preview-modal__image-container-wrapper{
+  padding-left: 180px;
   width: 100% !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   gap: 78px !important;
   position: relative !important;
+}
+
+.image-preview-modal__info-container {
+  width: 480px !important;
+  max-width: 480px !important;
+  flex: 0 1 480px !important; /* allow shrinking so image doesn't get squeezed */
+  min-width: 360px !important;
 }
 
 .image-preview-modal__image-wrapper {
@@ -323,7 +335,7 @@ box-shadow: 0px 1.25px 5px 0px #00000040 !important;
 
 
 .image-preview-modal__info-box {
-  margin-right: 150px !important;
+  margin-right: 0 !important;
   width: 100%;
   max-width: 484px !important;
   background:  #0E0E0E !important;
@@ -449,7 +461,7 @@ flex-shrink: 0 !important;
   }
 
   .image-preview-modal__info-box {
-    margin-right: 100px !important;
+    margin-right: 0 !important;
     max-width: 420px !important;
     padding: 28px !important;
   }
@@ -487,11 +499,11 @@ flex-shrink: 0 !important;
     font-size: 16px !important;
   }
   .image-preview-modal__image-container-wrapper {
-    margin-right: 100px !important;
+    margin-right: 0 !important;
     gap: 50px !important;
   }
   .image-preview-modal__info-box {
-    margin-right: 80px !important;
+    margin-right: 0 !important;
     max-width: 370px !important;
   }
   .image-preview-modal__nav-arrow {
@@ -538,11 +550,11 @@ flex-shrink: 0 !important;
 
   .image-preview-modal__image-container-wrapper {
     gap: 45px !important;
-    margin-right: 80px !important;
+    margin-right: 0 !important;
   }
 
   .image-preview-modal__info-box {
-    margin-right: 60px !important;
+    margin-right: 0 !important;
     max-width: 340px !important;
     padding: 24px !important;
   }
@@ -613,11 +625,11 @@ flex-shrink: 0 !important;
 
   .image-preview-modal__image-container-wrapper {
     gap: 35px !important;
-    margin-right: 60px !important;
+    margin-right: 0 !important;
   }
 
   .image-preview-modal__info-box {
-    margin-right: 40px !important;
+    margin-right: 0 !important;
     max-width: 310px !important;
     padding: 20px !important;
   }
@@ -670,7 +682,10 @@ flex-shrink: 0 !important;
 
 @media screen and (max-width: 1100px) {
   .image-preview-modal__content {
-    padding: 70px 25px !important;
+    padding: 90px 20px 60px 0 !important;
+    max-height: 100vh !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
   }
 
   .image-preview-modal__layout {
@@ -689,16 +704,30 @@ flex-shrink: 0 !important;
     width: 100% !important;
   }
 
+  .image-preview-modal__info-header {
+    position: fixed !important;
+    top: 16px !important;
+    right: 16px !important;
+    left: auto !important;
+    margin-bottom: 0 !important;
+    height: auto !important;
+    justify-content: flex-end !important;
+    z-index: 60 !important;
+  }
+
   .image-preview-modal__image-container-wrapper {
     flex-direction: column !important;
     gap: 30px !important;
     align-items: center !important;
     margin-right: 0 !important;
+    padding-left: 0 !important;
   }
 
   .image-preview-modal__info-container {
     width: 100% !important;
     max-width: 100% !important;
+    flex: 1 1 auto !important;
+    min-width: 0 !important; /* override desktop min-width to prevent overflow */
   }
 
   .image-preview-modal__info-box {
@@ -709,6 +738,12 @@ flex-shrink: 0 !important;
 
   .image-preview-modal__image {
     max-width: 280px !important;
+  }
+
+  /* Arrows should align with image, not the whole column */
+  .image-preview-modal__nav-arrow {
+    top: 200px !important;
+    transform: none !important;
   }
 
   .image-preview-modal__nav-arrow--left {
