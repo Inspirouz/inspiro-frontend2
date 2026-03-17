@@ -140,6 +140,7 @@
 .card__phone-image {
   width: 100%;
   max-width: 280px;
+  border-radius: 14px;
   height: auto;
   display: block;
   object-fit: contain;

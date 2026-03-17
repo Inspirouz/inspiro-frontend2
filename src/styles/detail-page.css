@@ -52,7 +52,7 @@
 
 /* Header */
 .detail-page__header {
-  margin-bottom: 60px;
+  margin-bottom: 45px;
   padding-bottom: 0;
   border-bottom: none;
 }
@@ -153,12 +153,16 @@
 
 /* Navigation Tabs */
 .detail-page__nav {
+  padding-top:15px ;
   display: flex;
   gap: 40px;
   margin-bottom: 24px;
   padding-bottom: 0;
   border-bottom: none;
   list-style-type: none;
+  overflow-x: auto;
+  overflow-y: hidden;
+
 }
 
 .detail-page__nav-tab {
@@ -650,17 +654,22 @@
 
 .detail-page__grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 20px;
 }
 
 @media (max-width: 1400px) {
   .detail-page__grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
   }
 }
 
-@media (max-width: 1100px) {
+@media (max-width: 1250px) {
+  .detail-page__grid {
+    grid-template-columns: repeat(3, 1fr);
+}
+}
+@media (max-width: 900px) {
   .detail-page__grid {
     grid-template-columns: repeat(2, 1fr);
 }
@@ -708,6 +717,7 @@
   height: auto;
   display: block;
   object-fit: contain;
+  border-radius: 14px;
 }
 
 /* Scenarios Section */
