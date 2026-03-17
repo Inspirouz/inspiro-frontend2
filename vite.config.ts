@@ -19,7 +19,7 @@ export default defineConfig({
   },
   server: {
     port: 4003,
-    open: true,
+    // open: true,
     host: 'localhost'
   },  
 preview:{
