@@ -18,13 +18,13 @@ export default defineConfig({
     },
   },
   server: {
-    port: 4003,
-    open: true,
+    port: 4002,
+    // open: true,
     host: 'localhost'
   },  
 preview:{
 allowedHosts:['inspiro.uz'],
-port:4003
+port:4002
 
 },
   build: {
