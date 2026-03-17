@@ -316,10 +316,10 @@ const Reg = ({ onClose }: RegProps) => {
               : (mode === 'register' ? 'Зарегестрироваться' : 'Войти')
             }
           </button>
-          <button type="button" onClick={handleGoogleLogin} disabled={isSubmitting} className="google-button">
+          {/* <button type="button" onClick={handleGoogleLogin} disabled={isSubmitting} className="google-button">
             <img src={Google} alt="Google" />
             Войти через Google
-          </button>
+          </button> */}
         </div>
       </form>
       
