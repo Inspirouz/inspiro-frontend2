@@ -1,57 +1,97 @@
-import { useSEO } from "@/hooks/useSEO";
+import { useState } from 'react';
+import { useScenariosTags } from '@/hooks/useScenariosTags';
+import { useScenariosWithScreens } from '@/hooks/useScenariosWithScreens';
+import { useSEO } from '@/hooks/useSEO';
+import '@/styles/header-search.css';
 import '@/styles/detail-page.css';
+import '@/styles/ui-elements-page.css';
 
 const ScenariosPage = () => {
   useSEO({
     title: 'Сценарии - UI/UX Design Scenarios',
-    description: 'UI/UX dizayn scenariylar to\'plami. User flow va interaction patternlari.',
+    description: "UI/UX dizayn scenariylar to'plami. User flow va interaction patternlari.",
     keywords: 'UI scenarios, UX scenarios, user flows, interaction patterns, mobile app scenarios',
     ogUrl: 'https://inspiro.uz/scenarios',
   });
 
+  const { tags, loading: tagsLoading } = useScenariosTags();
+  const { groups, loading: groupsLoading } = useScenariosWithScreens();
+  const [activeTag, setActiveTag] = useState<string>('all');
+
+  const allCount = tags.reduce((sum, t) => sum + t.count, 0);
+
+  const visibleGroups =
+    activeTag === 'all' ? groups : groups.filter((g) => g.id === activeTag);
+
   return (
-    <div className="detail-page">
-      <div className="detail-page__not-found" style={{ padding: '60px 24px', textAlign: 'center', fontSize: '24px', color: '#888' }}>
-        Скоро...
-      </div>
+    <div className="ui-elements-page">
+      {/* Left Sidebar */}
+      <aside className="ui-elements-page__sidebar">
+        {tagsLoading ? (
+          <div className="ui-elements-page__sidebar-loading">Загрузка...</div>
+        ) : (
+          <>
+            <button
+              className={`detail-page__subcategory ${activeTag === 'all' ? 'active' : ''}`}
+              onClick={() => setActiveTag('all')}
+            >
+              Все
+              <span className="detail-page__subcategory-count">{allCount}</span>
+            </button>
+            {tags.map((tag) => (
+              <button
+                key={tag.id}
+                className={`detail-page__subcategory ${activeTag === tag.id ? 'active' : ''}`}
+                onClick={() => setActiveTag(tag.id)}
+              >
+                {tag.label}
+                <span className="detail-page__subcategory-count">{tag.count}</span>
+              </button>
+            ))}
+          </>
+        )}
+      </aside>
+
+      {/* Main Content */}
+      <main className="ui-elements-page__main">
+        {groupsLoading ? (
+          <div className="ui-elements-page__loading">Загрузка...</div>
+        ) : visibleGroups.length === 0 ? (
+          <div className="ui-elements-page__empty">Malumot mavjud emas</div>
+        ) : (
+          visibleGroups.map((group) => (
+            <section key={group.id} className="ui-elements-page__group">
+              <div className="ui-elements-page__group-header">
+                <h2 className="ui-elements-page__group-title">{group.label}</h2>
+                <p className="ui-elements-page__group-count">{group.screens.length} экранов</p>
+              </div>
+              <div className="ui-elements-page__grid">
+                {group.screens.map((screen, idx) => (
+                  <div key={idx} className="patterns-card">
+                    <div className="patterns-card__image-wrapper">
+                      <img
+                        src={screen.path}
+                        alt={screen.project_name}
+                        className="patterns-card__image"
+                      />
+                    </div>
+                    <div className="patterns-card__app-info">
+                      <img
+                        src={screen.project_logo}
+                        alt={screen.project_name}
+                        className="patterns-card__app-logo"
+                      />
+                      <span className="patterns-card__app-name">{screen.project_name}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          ))
+        )}
+      </main>
     </div>
   );
 };
 
 export default ScenariosPage;
-
-/* ========== COMMENTED OUT – restore when scenarios page is ready ==========
-import { useState, useRef, useEffect, useCallback } from "react";
-import contentData from "@/data/content";
-import { SCENARIO_CATEGORIES } from "@/constants";
-import { useCategories } from "@/hooks/useCategories";
-import ImagePreviewModal from "@/components/ImagePreviewModal";
-import '@/styles/header-search.css';
-
-const SCENARIO_COUNTS: Record<string, number> = {
-  '': 12, '/search': 2, '/login': 3, '/cancel': 5, '/order': 2,
-};
-
-  const { categories } = useCategories();
-  const [activeCategory, setActiveCategory] = useState<string>('');
-  const filterOptions = [{ id: '', name: 'Все' }, ...categories];
-  const [activeFilter, setActiveFilter] = useState<string>(filterOptions[0]?.id ?? '');
-  useEffect(() => {
-    if (filterOptions.length && !filterOptions.some((c) => c.id === activeFilter)) setActiveFilter(filterOptions[0]?.id ?? '');
-  }, [categories]);
-  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const [previewIndex, setPreviewIndex] = useState(0);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(true);
-  const filtersRef = useRef<HTMLUListElement>(null);
-  const screens = contentData.map((item) => ({
-    id: item.id, screenId: item.screenId, image: item.logo ?? item.images?.[0] ?? '', title: item.app_name,
-  }));
-  const firstItem = contentData[0] || null;
-  const subCategories = SCENARIO_CATEGORIES.map((category) => ({
-    id: category.path, label: category.label, count: SCENARIO_COUNTS[category.path] || 0,
-  }));
-  const treeStructure = [ ... ];
-  const [activeTreeItem, setActiveTreeItem] = useState<string | null>(null);
-  ... rest of component JSX (sidebar, filters, grid, modal) ...
-========== END COMMENTED OUT ========== */

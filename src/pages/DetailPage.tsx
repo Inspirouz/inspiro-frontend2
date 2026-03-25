@@ -91,8 +91,8 @@ const DetailPage = () => {
   }, [subCategories, activeSubCategory]);
 
   const tabs = [
-    { id: 'screens' as TabType, label: 'Экраны', count: 212 },
-    { id: 'scenarios' as TabType, label: 'Сценарии', count: 30 },
+    { id: 'screens' as TabType, label: 'Экраны', count: screens.length },
+    { id: 'scenarios' as TabType, label: 'Сценарии', count: allScenarios.length },
     { id: 'videos' as TabType, label: 'Видео', count: null, comingSoon: true, disabled: true },
   ];
 

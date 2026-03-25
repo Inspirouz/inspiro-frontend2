@@ -117,7 +117,7 @@ const Header = () => {
 
 
       <Modal active={isSearchModalOpen} setActive={setIsSearchModalOpen}>
-        <SearchModal />
+        <SearchModal onClose={() => setIsSearchModalOpen(false)} />
       </Modal>
     </>
   );

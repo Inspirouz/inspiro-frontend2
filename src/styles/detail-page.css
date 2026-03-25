@@ -296,6 +296,11 @@
   z-index: 10;
 }
 
+/* Right Sidebar */
+.detail-page__sidebar--right {
+  order: 1;
+}
+
 /* Tree Sidebar for Scenarios */
 .detail-page__sidebar--tree {
   width: 280px !important;
