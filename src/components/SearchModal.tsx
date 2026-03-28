@@ -245,7 +245,7 @@ const SearchModal = ({ onClose }: { onClose?: () => void }) => {
           </div>
         ) : items.length > 0 ? (
           <ul className="search-modal__list">
-            {items.map((item) => (
+            {items?.map((item) => (
               <li key={item.id} className="search-modal__item" style={{ cursor: 'pointer' }} onClick={() => { navigate(`/detail/${item.id}`); onClose?.(); }}>
                 <div className="search-modal__item-icon">
                   {item.icon ? (
