@@ -1,5 +1,5 @@
 import { useState } from "react";
-import contentData from "@/data/content";
+
 import ImagePreviewModal from "@/components/ImagePreviewModal";
 import { usePatternTags } from "@/hooks/usePatternTags";
 import { usePatternsByTag } from "@/hooks/usePatternsByTag";
@@ -23,7 +23,7 @@ const PatternsPage = () => {
   const { patterns: patternsByTag, loading: patternsLoading } = usePatternsByTag(
     activeCategory === 'all' ? null : activeCategory
   );
-  const displayItems = activeCategory === 'all' ? contentData : patternsByTag;
+  const displayItems = patternsByTag;
   const firstItem = displayItems[0] || null;
 
   const nonEmptyPatternTags = patternTags.filter((t) => t.count > 0);

@@ -9,15 +9,23 @@ export type PatternTagItem = {
 type RawTag = Record<string, unknown>;
 
 function mapTag(raw: RawTag): PatternTagItem | null {
-  const id = String(raw.id ?? raw.slug ?? '');
+  const tag = raw.tag as Record<string, unknown> | undefined;
+  if (!tag) {
+    const id = String(raw.id ?? raw.slug ?? '');
+    if (!id) return null;
+    const label = String(raw.name ?? raw.label ?? '');
+    const count = Number(raw.count ?? raw.patterns_count ?? 0);
+    return { id, label, count };
+  }
+  const id = String(tag.id ?? '');
   if (!id) return null;
-  const label = String(raw.name ?? raw.label ?? '');
-  const count = Number(raw.count ?? raw.patterns_count ?? 0);
+  const label = String(tag.name ?? '');
+  const count = Number(raw.screen_count ?? 0);
   return { id, label, count };
 }
 
 /**
- * Fetches pattern tags (categories) from GET /tags?type=patterns for the Patterns page sidebar.
+ * Fetches pattern tags (categories) from GET /tags/patterns/with-count for the Patterns page sidebar.
  */
 export function usePatternTags() {
   const [tags, setTags] = useState<PatternTagItem[]>([]);
@@ -26,7 +34,7 @@ export function usePatternTags() {
   useEffect(() => {
     const apiUrl = import.meta.env.VITE_API_URL;
     setLoading(true);
-    fetch(`${apiUrl}/tags?type=patterns`)
+    fetch(`${apiUrl}/tags/patterns/with-count`)
       .then((res) =>
         res.json().then((json) => {
           const data = json?.data ?? json;
