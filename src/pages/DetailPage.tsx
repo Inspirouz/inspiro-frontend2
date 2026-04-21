@@ -90,12 +90,6 @@ const DetailPage = () => {
     }
   }, [subCategories, activeSubCategory]);
 
-  const tabs = [
-    { id: 'screens' as TabType, label: 'Экраны', count: screens.length },
-    { id: 'scenarios' as TabType, label: 'Сценарии', count: allScenarios.length },
-    { id: 'videos' as TabType, label: 'Видео', count: null, comingSoon: true, disabled: true },
-  ];
-
   const treeStructure: TreeNode[] = scenariosTree;
 
   const flattenTree = (nodes: TreeNode[], level: number = 0): Array<TreeNode & { level: number }> => {
@@ -133,6 +127,12 @@ const DetailPage = () => {
           ])
       : [];
   const screens = screensFromApi.length > 0 ? screensFromApi : screensFallback;
+
+  const tabs = [
+    { id: 'screens' as TabType, label: 'Экраны', count: screens.length },
+    { id: 'scenarios' as TabType, label: 'Сценарии', count: allScenarios.length },
+    { id: 'videos' as TabType, label: 'Видео', count: null, comingSoon: true, disabled: true },
+  ];
 
   /** For modal and click index: scenarios tab uses allScenarios, screens tab uses screens */
   const screensForModal = activeTab === 'scenarios' ? allScenarios : screens;
