@@ -214,10 +214,12 @@ justify-content: space-between;
 }
 
 .image-preview-modal__image {
-/* max-height: 800px !important; */
-max-width: 380px !important;
+  width: 380px !important;
+  height: auto !important;
+  aspect-ratio: 9 / 19.5;
   display: block !important;
   object-fit: contain !important;
+  background: #1a1a1a;
   margin: 0 auto !important;
   border-radius: 14px;
 }
@@ -467,7 +469,7 @@ flex-shrink: 0 !important;
   }
 
   .image-preview-modal__image {
-    max-width: 360px !important;
+    width: 360px !important;
   }
 
   .image-preview-modal__nav-arrow {
@@ -511,7 +513,7 @@ flex-shrink: 0 !important;
     height: 60px !important;
   }
   .image-preview-modal__image {
-    max-width: 340px !important;
+    width: 340px !important;
   }
 }
 
@@ -568,7 +570,7 @@ flex-shrink: 0 !important;
   }
 
   .image-preview-modal__image {
-    max-width: 320px !important;
+    width: 320px !important;
   }
 
   .image-preview-modal__nav-arrow {
@@ -652,7 +654,7 @@ flex-shrink: 0 !important;
   }
 
   .image-preview-modal__image {
-    max-width: 300px !important;
+    width: 300px !important;
   }
 
   .image-preview-modal__nav-arrow {
@@ -737,7 +739,7 @@ flex-shrink: 0 !important;
   }
 
   .image-preview-modal__image {
-    max-width: 280px !important;
+    width: 280px !important;
   }
 
   /* Arrows should align with image, not the whole column */
