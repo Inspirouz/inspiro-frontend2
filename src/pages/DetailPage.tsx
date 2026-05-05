@@ -90,7 +90,33 @@ const DetailPage = () => {
     }
   }, [subCategories, activeSubCategory]);
 
-  const treeStructure: TreeNode[] = scenariosTree;
+  useEffect(() => {
+    if (activeSubCategory === 'all') return;
+    const stillVisible = screens.some((s) => {
+      const cat = subCategories.find((c) => c.id === activeSubCategory);
+      return cat && s.title === cat.label;
+    });
+    if (!stillVisible) setActiveSubCategory('all');
+  }, [screens, subCategories, activeSubCategory]);
+
+  const rawTreeStructure: TreeNode[] = scenariosTree;
+
+  const nodeHasScreens = (node: TreeNode): boolean => {
+    const own =
+      (scenariosByCategoryId[node.id] ?? scenariosByCategoryId[node.sectionId] ?? []).length > 0;
+    const childHas = node.children?.some(nodeHasScreens) ?? false;
+    return own || childHas;
+  };
+
+  const filterTreeByScreens = (nodes: TreeNode[]): TreeNode[] =>
+    nodes
+      .filter(nodeHasScreens)
+      .map((node) => ({
+        ...node,
+        children: node.children ? filterTreeByScreens(node.children) : undefined,
+      }));
+
+  const treeStructure: TreeNode[] = filterTreeByScreens(rawTreeStructure);
 
   const flattenTree = (nodes: TreeNode[], level: number = 0): Array<TreeNode & { level: number }> => {
     const result: Array<TreeNode & { level: number }> = [];
@@ -137,11 +163,19 @@ const DetailPage = () => {
   /** For modal and click index: scenarios tab uses allScenarios, screens tab uses screens */
   const screensForModal = activeTab === 'scenarios' ? allScenarios : screens;
 
+  const visibleSubCategories = subCategories
+    .filter((c) => c.id !== 'all')
+    .map((c) => ({
+      ...c,
+      count: screens.filter((s) => s.title === c.label).length,
+    }))
+    .filter((c) => c.count > 0);
+
   const filteredScreens =
     activeSubCategory === 'all'
       ? screens
       : screens.filter((screen) => {
-          const selectedCat = subCategories.find((c) => c.id === activeSubCategory);
+          const selectedCat = visibleSubCategories.find((c) => c.id === activeSubCategory);
           return selectedCat ? screen.title === selectedCat.label : true;
         });
 
@@ -331,11 +365,11 @@ const DetailPage = () => {
           <aside className="detail-page__sidebar">
             <div className="detail-page__subcategories">
               {(() => {
-                const totalCount = subCategories.reduce((sum, c) => sum + c.count, 0);
-                const hasAll = subCategories.some((c) => c.id === 'all');
-                const items = hasAll
-                  ? subCategories
-                  : [{ id: 'all', label: 'Все', count: totalCount }, ...subCategories];
+                const totalCount = screens.length;
+                const items = [
+                  { id: 'all', label: 'Все', count: totalCount },
+                  ...visibleSubCategories,
+                ];
                 return items;
               })().filter((c) => c.count > 0).map((subCat, idx) => (
                 <button
@@ -407,6 +441,7 @@ const DetailPage = () => {
               ) : (
                 flatTreeStructure.map((item) => {
                   const sectionScreens = scenariosByCategoryId[item.id] ?? scenariosByCategoryId[item.sectionId] ?? [];
+                  if (sectionScreens.length === 0) return null;
                   return (
                     <div
                       key={item.id}
