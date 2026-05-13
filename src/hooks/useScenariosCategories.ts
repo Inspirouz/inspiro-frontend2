@@ -13,6 +13,7 @@ type RawItem = {
   parent_id?: string | null;
   is_deleted?: boolean;
   tag?: { id?: string; name?: string };
+  screens_count?: number;
   scenarios_count?: number;
   children?: RawItem[];
 };
@@ -24,7 +25,7 @@ function mapNode(raw: RawItem): ScenariosTreeNode | null {
   const tag = raw.tag && typeof raw.tag === 'object' ? raw.tag : undefined;
   const label = String(tag?.name ?? '');
   const sectionId = id;
-  const count = Number(raw.scenarios_count ?? 0);
+  const count = Number(raw.screens_count ?? raw.scenarios_count ?? 0);
   const rawChildren = raw.children;
   const children = Array.isArray(rawChildren)
     ? rawChildren.map((c) => mapNode(c)).filter((n): n is ScenariosTreeNode => n != null)
@@ -40,9 +41,8 @@ export function useScenariosCategories(projectId?: string | null) {
     const apiUrl = import.meta.env.VITE_API_URL;
     setLoading(true);
     try {
-      const params = new URLSearchParams();
-      if (projectId) params.set('project_id', projectId);
-      const url = `${apiUrl}/scenarios-categories${params.toString() ? `?${params}` : ''}`;
+      const query = projectId ? `?project_id=${encodeURIComponent(projectId)}` : '';
+      const url = `${apiUrl}/scenarios-categories${query}`;
       const res = await fetch(url);
       const json = await res.json().catch(() => ({}));
       const data = json?.data ?? json;

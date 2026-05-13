@@ -20,8 +20,13 @@ function getImageBaseUrl(): string {
 
 function toImageUrl(path: string): string {
   if (!path) return '';
-  if (path.startsWith('http://') || path.startsWith('https://')) return path;
-  return getImageBaseUrl() + (path.startsWith('/') ? path.slice(1) : path);
+  let cleaned = path;
+  const matches = [...path.matchAll(/https?:\/+/gi)];
+  const last = matches.length > 0 ? matches[matches.length - 1] : undefined;
+  if (last && last.index !== undefined && last.index > 0) cleaned = path.slice(last.index);
+  cleaned = cleaned.replace(/^(https?:)\/+/i, '$1//');
+  if (/^https?:\/\//i.test(cleaned)) return cleaned;
+  return getImageBaseUrl() + (cleaned.startsWith('/') ? cleaned.slice(1) : cleaned);
 }
 
 /**

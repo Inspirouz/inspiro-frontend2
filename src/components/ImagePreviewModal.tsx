@@ -5,7 +5,7 @@ import '@/styles/image-preview-modal.css';
 interface ImagePreviewModalProps {
   isOpen: boolean;
   onClose: () => void;
-  images: Array<{ id: number | string; screenId?: number | string; image: string; title: string }>;
+  images: Array<{ id: number | string; screenId?: number | string; image: string; title: string; categoryId?: string }>;
   initialIndex?: number;
   appInfo?: {
     logo: string;
@@ -156,6 +156,17 @@ const ImagePreviewModal = ({
     }
   };
 
+  const handleTreeItemClick = (sectionId: string, itemId: string) => {
+    onTreeItemClick?.(sectionId, itemId);
+    const targetIndex = images.findIndex((img) => img.categoryId === itemId);
+    if (targetIndex !== -1) {
+      setCurrentIndex(targetIndex);
+      const screen = images[targetIndex];
+      const screenId = screen?.screenId ?? screen?.id;
+      if (screenId != null) setSearchParams({ screen: String(screenId) });
+    }
+  };
+
   // Recursive component for rendering tree nodes - same as DetailPage
   const TreeNodeComponent = ({
     node,
@@ -261,7 +272,7 @@ const ImagePreviewModal = ({
                     key={item.id}
                     node={item}
                     activeTreeItem={activeTreeItem}
-                    onItemClick={onTreeItemClick}
+                    onItemClick={handleTreeItemClick}
                     level={0}
                     className="parent-tree-row"
                   />

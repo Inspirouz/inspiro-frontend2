@@ -10,8 +10,13 @@ function getImageBaseUrl(): string {
 
 function toImageUrl(image: string): string {
   if (!image) return '';
-  if (image.startsWith('http://') || image.startsWith('https://')) return image;
-  const path = image.startsWith('/') ? image.slice(1) : image;
+  let cleaned = image;
+  const matches = [...image.matchAll(/https?:\/+/gi)];
+  const last = matches.length > 0 ? matches[matches.length - 1] : undefined;
+  if (last && last.index !== undefined && last.index > 0) cleaned = image.slice(last.index);
+  cleaned = cleaned.replace(/^(https?:)\/+/i, '$1//');
+  if (/^https?:\/\//i.test(cleaned)) return cleaned;
+  const path = cleaned.startsWith('/') ? cleaned.slice(1) : cleaned;
   return `${getImageBaseUrl()}${path}`;
 }
 
@@ -222,7 +227,12 @@ export function useProjectScreens(projectId: string | undefined) {
   return { screens, loading };
 }
 
-export type ScenarioItem = ScreenItem & { categoryId?: string };
+export type ScenarioItem = ScreenItem & {
+  categoryId?: string;
+  projectId?: string;
+  projectName?: string;
+  projectLogo?: string;
+};
 
 type ApiScenarioCategory = {
   id?: string;
@@ -318,6 +328,54 @@ export interface ScreenDetails {
   patterns?: (string | Record<string, unknown>)[];
 }
 
+type TagLike = { id?: unknown; name?: unknown; type?: unknown };
+
+/**
+ * Normalizes an API tag entry into `{ id, name, type }`.
+ * Handles items shaped like `{ tag: { id, name } }` (e.g. senarys/scenarios from /projects/:id/scenarios/:scenarioId)
+ * and falls back to top-level `id`/`name` when no nested `tag` is present.
+ */
+function normalizeTagEntries(raw: unknown): (string | { id?: string; name?: string; type?: string })[] | undefined {
+  if (!Array.isArray(raw)) return undefined;
+  const out: (string | { id?: string; name?: string; type?: string })[] = [];
+  for (const item of raw) {
+    if (item == null) continue;
+    if (typeof item === 'string') {
+      out.push(item);
+      continue;
+    }
+    if (typeof item !== 'object') continue;
+    const obj = item as Record<string, unknown>;
+    const nestedTag = (obj.tag && typeof obj.tag === 'object') ? (obj.tag as TagLike) : undefined;
+    const name =
+      (nestedTag?.name as string | undefined) ??
+      (obj.name as string | undefined) ??
+      (obj.label as string | undefined);
+    const id =
+      (obj.id as string | undefined) ??
+      (nestedTag?.id as string | undefined);
+    const type =
+      (nestedTag?.type as string | undefined) ??
+      (obj.type as string | undefined);
+    if (name || id) {
+      out.push({
+        ...(id ? { id: String(id) } : {}),
+        ...(name ? { name: String(name) } : {}),
+        ...(type ? { type: String(type) } : {}),
+      });
+    }
+  }
+  return out;
+}
+
+function pickArrayField(data: Record<string, unknown>, ...keys: string[]): unknown {
+  for (const key of keys) {
+    const val = data[key];
+    if (Array.isArray(val)) return val;
+  }
+  return undefined;
+}
+
 export function useScreenDetails(
   projectId: string | undefined,
   screenId: string | null
@@ -349,17 +407,9 @@ export function useScreenDetails(
           (d.updated_at as string | undefined);
         const uploadDate = formatDateDDMMYYYYHHMM(rawDate);
         const resolution = d.resolution as string | undefined;
-        const scenarios = Array.isArray(d.scenarios)
-          ? (d.scenarios as (string | Record<string, unknown>)[])
-          : undefined;
-        const uiElements = Array.isArray(d.ui_elements)
-          ? (d.ui_elements as (string | Record<string, unknown>)[])
-          : Array.isArray(d.uiElements)
-            ? (d.uiElements as (string | Record<string, unknown>)[])
-            : undefined;
-        const patterns = Array.isArray(d.patterns)
-          ? (d.patterns as (string | Record<string, unknown>)[])
-          : undefined;
+        const scenarios = normalizeTagEntries(pickArrayField(d, 'senarys', 'scenarios', 'senary'));
+        const uiElements = normalizeTagEntries(pickArrayField(d, 'ui_elements', 'uiElements', 'uiElement'));
+        const patterns = normalizeTagEntries(pickArrayField(d, 'patterns', 'pattern'));
         setDetails({
           uploadDate,
           resolution,
@@ -412,17 +462,9 @@ export function useScenarioDetails(
           (d.updated_at as string | undefined);
         const uploadDate = formatDateDDMMYYYYHHMM(rawDate);
         const resolution = d.resolution as string | undefined;
-        const scenarios = Array.isArray(d.scenarios)
-          ? (d.scenarios as (string | Record<string, unknown>)[])
-          : undefined;
-        const uiElements = Array.isArray(d.ui_elements)
-          ? (d.ui_elements as (string | Record<string, unknown>)[])
-          : Array.isArray(d.uiElements)
-            ? (d.uiElements as (string | Record<string, unknown>)[])
-            : undefined;
-        const patterns = Array.isArray(d.patterns)
-          ? (d.patterns as (string | Record<string, unknown>)[])
-          : undefined;
+        const scenarios = normalizeTagEntries(pickArrayField(d, 'senarys', 'scenarios', 'senary'));
+        const uiElements = normalizeTagEntries(pickArrayField(d, 'ui_elements', 'uiElements', 'uiElement'));
+        const patterns = normalizeTagEntries(pickArrayField(d, 'patterns', 'pattern'));
         setDetails({
           uploadDate,
           resolution,

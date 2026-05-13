@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { useScenariosTags } from '@/hooks/useScenariosTags';
-import { useScenariosWithScreens } from '@/hooks/useScenariosWithScreens';
+import { useScenariosCategories } from '@/hooks/useScenariosCategories';
+import { useScenariosCategoriesWithScreens } from '@/hooks/useScenariosCategoriesWithScreens';
 import { useSEO } from '@/hooks/useSEO';
 import '@/styles/header-search.css';
 import '@/styles/detail-page.css';
@@ -14,11 +14,37 @@ const ScenariosPage = () => {
     ogUrl: 'https://inspiro.uz/scenarios',
   });
 
-  const { tags, loading: tagsLoading } = useScenariosTags();
-  const { groups, loading: groupsLoading } = useScenariosWithScreens();
+  const { treeStructure: categoriesTree, loading: tagsLoading } = useScenariosCategories(null);
+  const {
+    treeStructure: groupsTree,
+    scenariosByCategoryId,
+    loading: groupsLoading,
+  } = useScenariosCategoriesWithScreens(null);
   const [activeTag, setActiveTag] = useState<string>('all');
 
+  const countForCategory = (nodeId: string, nodeSectionId?: string): number => {
+    const ownLoaded =
+      (scenariosByCategoryId[nodeId] ?? scenariosByCategoryId[nodeSectionId ?? ''] ?? []).length;
+    if (ownLoaded > 0) return ownLoaded;
+    const fromTree = groupsTree.find((g) => g.id === nodeId);
+    return fromTree?.count ?? 0;
+  };
+
+  const tags = categoriesTree.map((node) => ({
+    id: node.id,
+    label: node.label,
+    count: countForCategory(node.id, node.sectionId) || node.count,
+  }));
+
   const allCount = tags.reduce((sum, t) => sum + t.count, 0);
+
+  const groups = groupsTree
+    .map((node) => ({
+      id: node.id,
+      label: node.label,
+      screens: scenariosByCategoryId[node.id] ?? [],
+    }))
+    .filter((g) => g.screens.length > 0);
 
   const visibleGroups =
     activeTag === 'all' ? groups : groups.filter((g) => g.id === activeTag);
@@ -66,22 +92,24 @@ const ScenariosPage = () => {
                 <p className="ui-elements-page__group-count">{group.screens.length} экранов</p>
               </div>
               <div className="ui-elements-page__grid">
-                {group.screens.map((screen, idx) => (
-                  <div key={idx} className="patterns-card">
+                {group.screens.map((screen) => (
+                  <div key={String(screen.id)} className="patterns-card">
                     <div className="patterns-card__image-wrapper">
                       <img
-                        src={screen.path}
-                        alt={screen.project_name}
+                        src={screen.image}
+                        alt={screen.projectName ?? screen.title}
                         className="patterns-card__image"
                       />
                     </div>
                     <div className="patterns-card__app-info">
-                      <img
-                        src={screen.project_logo}
-                        alt={screen.project_name}
-                        className="patterns-card__app-logo"
-                      />
-                      <span className="patterns-card__app-name">{screen.project_name}</span>
+                      {screen.projectLogo && (
+                        <img
+                          src={screen.projectLogo}
+                          alt={screen.projectName ?? ''}
+                          className="patterns-card__app-logo"
+                        />
+                      )}
+                      <span className="patterns-card__app-name">{screen.projectName ?? ''}</span>
                     </div>
                   </div>
                 ))}

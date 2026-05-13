@@ -9,8 +9,13 @@ function getImageBaseUrl(): string {
 
 function toImageUrl(image: string): string {
   if (!image) return '';
-  if (image.startsWith('http://') || image.startsWith('https://')) return image;
-  const path = image.startsWith('/') ? image.slice(1) : image;
+  let cleaned = image;
+  const matches = [...image.matchAll(/https?:\/+/gi)];
+  const last = matches.length > 0 ? matches[matches.length - 1] : undefined;
+  if (last && last.index !== undefined && last.index > 0) cleaned = image.slice(last.index);
+  cleaned = cleaned.replace(/^(https?:)\/+/i, '$1//');
+  if (/^https?:\/\//i.test(cleaned)) return cleaned;
+  const path = cleaned.startsWith('/') ? cleaned.slice(1) : cleaned;
   return `${getImageBaseUrl()}${path}`;
 }
 const Card = ({ item, onClick, variant = 'default' }: CardProps) => {

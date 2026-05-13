@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
-import { useProject, useProjectScreens, useProjectScenarios, useScreenDetails, useScenarioDetails } from '@/hooks/useProjects';
+import { useProject, useProjectScreens, useScreenDetails } from '@/hooks/useProjects';
 import { useScreensCategories } from '@/hooks/useScreensCategories';
 import { useScenariosCategories } from '@/hooks/useScenariosCategories';
+import { useScenariosCategoriesWithScreens } from '@/hooks/useScenariosCategoriesWithScreens';
 import { useSEO } from '@/hooks/useSEO';
 import ImagePreviewModal from '@/components/ImagePreviewModal';
 import { NavIcons } from '@/components/icons';
@@ -68,8 +69,12 @@ const DetailPage = () => {
   const { project: projectFromApi, loading: projectLoading, error: projectError } = useProject(id ?? undefined);
   const { subCategories } = useScreensCategories(id ?? null);
   const { treeStructure: scenariosTree, loading: scenariosTreeLoading } = useScenariosCategories(id ?? null);
+  const {
+    scenariosByCategoryId,
+    allScenarios,
+    loading: scenariosLoading,
+  } = useScenariosCategoriesWithScreens(id ?? null);
   const { screens: screensFromApi } = useProjectScreens(id ?? undefined);
-  const { scenariosByCategoryId, allScenarios, loading: scenariosLoading } = useProjectScenarios(id ?? undefined);
   const item = projectFromApi ??  null;
 
   const [activeTreeItem, setActiveTreeItem] = useState<string | null>(null);
@@ -82,54 +87,6 @@ const DetailPage = () => {
     keywords: 'UI design, UX design, application detail',
     ogUrl: `https://inspiro.uz/detail/${id}`,
   });
-
-  useEffect(() => {
-    const validIds = ['all', ...subCategories.map((c) => c.id)];
-    if (!validIds.includes(activeSubCategory)) {
-      setActiveSubCategory('all');
-    }
-  }, [subCategories, activeSubCategory]);
-
-  useEffect(() => {
-    if (activeSubCategory === 'all') return;
-    const stillVisible = screens.some((s) => {
-      const cat = subCategories.find((c) => c.id === activeSubCategory);
-      return cat && s.title === cat.label;
-    });
-    if (!stillVisible) setActiveSubCategory('all');
-  }, [screens, subCategories, activeSubCategory]);
-
-  const rawTreeStructure: TreeNode[] = scenariosTree;
-
-  const nodeHasScreens = (node: TreeNode): boolean => {
-    const own =
-      (scenariosByCategoryId[node.id] ?? scenariosByCategoryId[node.sectionId] ?? []).length > 0;
-    const childHas = node.children?.some(nodeHasScreens) ?? false;
-    return own || childHas;
-  };
-
-  const filterTreeByScreens = (nodes: TreeNode[]): TreeNode[] =>
-    nodes
-      .filter(nodeHasScreens)
-      .map((node) => ({
-        ...node,
-        children: node.children ? filterTreeByScreens(node.children) : undefined,
-      }));
-
-  const treeStructure: TreeNode[] = filterTreeByScreens(rawTreeStructure);
-
-  const flattenTree = (nodes: TreeNode[], level: number = 0): Array<TreeNode & { level: number }> => {
-    const result: Array<TreeNode & { level: number }> = [];
-    nodes.forEach((node) => {
-      result.push({ ...node, level });
-      if (node.children) {
-        result.push(...flattenTree(node.children, level + 1));
-      }
-    });
-    return result;
-  };
-
-  const flatTreeStructure = flattenTree(treeStructure);
 
   const screenIdFromUrl = searchParams.get('screen');
   const isImagePreviewOpen = screenIdFromUrl !== null;
@@ -153,6 +110,37 @@ const DetailPage = () => {
           ])
       : [];
   const screens = screensFromApi.length > 0 ? screensFromApi : screensFallback;
+
+  useEffect(() => {
+    const validIds = ['all', ...subCategories.map((c) => c.id)];
+    if (!validIds.includes(activeSubCategory)) {
+      setActiveSubCategory('all');
+    }
+  }, [subCategories, activeSubCategory]);
+
+  useEffect(() => {
+    if (activeSubCategory === 'all') return;
+    const stillVisible = screens.some((s) => {
+      const cat = subCategories.find((c) => c.id === activeSubCategory);
+      return cat && s.title === cat.label;
+    });
+    if (!stillVisible) setActiveSubCategory('all');
+  }, [screens, subCategories, activeSubCategory]);
+
+  const treeStructure: TreeNode[] = scenariosTree;
+
+  const flattenTree = (nodes: TreeNode[], level: number = 0): Array<TreeNode & { level: number }> => {
+    const result: Array<TreeNode & { level: number }> = [];
+    nodes.forEach((node) => {
+      result.push({ ...node, level });
+      if (node.children) {
+        result.push(...flattenTree(node.children, level + 1));
+      }
+    });
+    return result;
+  };
+
+  const flatTreeStructure = flattenTree(treeStructure);
 
   const tabs = [
     { id: 'screens' as TabType, label: 'Экраны', count: screens.length },
@@ -212,16 +200,10 @@ const DetailPage = () => {
     return () => observer.disconnect();
   }, [activeTab, flatTreeStructure]);
 
-  const { details: screenDetails, loading: screenDetailsLoading } = useScreenDetails(
+  const { details: modalScreenMeta, loading: modalScreenMetaLoading } = useScreenDetails(
     id ?? undefined,
-    activeTab === 'scenarios' ? null : screenIdFromUrl
+    screenIdFromUrl
   );
-  const { details: scenarioDetails, loading: scenarioDetailsLoading } = useScenarioDetails(
-    id ?? undefined,
-    activeTab === 'scenarios' ? screenIdFromUrl : null
-  );
-  const modalScreenMeta = activeTab === 'scenarios' ? scenarioDetails : screenDetails;
-  const modalScreenMetaLoading = activeTab === 'scenarios' ? scenarioDetailsLoading : screenDetailsLoading;
 
   useEffect(() => {
     if (!screenIdFromUrl) return;
