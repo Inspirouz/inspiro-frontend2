@@ -127,7 +127,23 @@ const DetailPage = () => {
     if (!stillVisible) setActiveSubCategory('all');
   }, [screens, subCategories, activeSubCategory]);
 
-  const treeStructure: TreeNode[] = scenariosTree;
+  const filterNodesWithScreens = (nodes: TreeNode[]): TreeNode[] => {
+    const result: TreeNode[] = [];
+    for (const node of nodes) {
+      const filteredChildren = node.children ? filterNodesWithScreens(node.children) : undefined;
+      const ownCount = scenariosByCategoryId[node.id]?.length ?? 0;
+      const hasChildren = !!filteredChildren && filteredChildren.length > 0;
+      if (ownCount === 0 && !hasChildren) continue;
+      result.push({
+        ...node,
+        count: ownCount || node.count,
+        ...(hasChildren ? { children: filteredChildren } : { children: undefined }),
+      });
+    }
+    return result;
+  };
+
+  const treeStructure: TreeNode[] = filterNodesWithScreens(scenariosTree);
 
   const flattenTree = (nodes: TreeNode[], level: number = 0): Array<TreeNode & { level: number }> => {
     const result: Array<TreeNode & { level: number }> = [];
