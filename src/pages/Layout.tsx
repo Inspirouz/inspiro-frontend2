@@ -11,7 +11,7 @@ const Layout = () => {
   return (
     <>
       <Header />
-      {!isSubscriptionPage && !isDetailPage && <PromoBanner />}
+      {/* {!isSubscriptionPage && !isDetailPage && <PromoBanner />} */}
       {!isSubscriptionPage && !isDetailPage && <NavLinks />}
       <Outlet />
     </>

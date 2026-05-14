@@ -297,11 +297,11 @@ const Reg = ({ onClose }: RegProps) => {
           />
         )}
 
-        {mode === 'login' && (
+        {/* {mode === 'login' && (
           <div className="reg_window__forgot-password">
             <Link to="/forgot-password">Забыли пароль?</Link>
           </div>
-        )}
+        )} */}
 
         {errors.submit && (
           <div className="error-message" role="alert">

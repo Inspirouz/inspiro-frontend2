@@ -160,8 +160,8 @@ const DetailPage = () => {
 
   const tabs = [
     { id: 'screens' as TabType, label: 'Экраны', count: screens.length },
-    { id: 'scenarios' as TabType, label: 'Сценарии', count: allScenarios.length },
-    { id: 'videos' as TabType, label: 'Видео', count: null, comingSoon: true, disabled: true },
+    // { id: 'scenarios' as TabType, label: 'Сценарии', count: allScenarios.length },
+    // { id: 'videos' as TabType, label: 'Видео', count: null, comingSoon: true, disabled: true },
   ];
 
   /** For modal and click index: scenarios tab uses allScenarios, screens tab uses screens */
@@ -337,9 +337,8 @@ const DetailPage = () => {
         {tabs.map((tab) => (
           <button
             key={tab.id}
-            className={`detail-page__nav-tab ${activeTab === tab.id ? 'active' : ''} ${tab.disabled ? 'disabled' : ''}`}
-            onClick={() => !tab.disabled && setActiveTab(tab.id)}
-            disabled={tab.disabled}
+            className={`detail-page__nav-tab ${activeTab === tab.id ? 'active' : ''}`}
+            onClick={() => setActiveTab(tab.id)}
           >
             <span className="detail-page__nav-icon">
               {NavIcons[tab.id]}
@@ -347,9 +346,6 @@ const DetailPage = () => {
             {tab.label}
             {tab.count !== null && (
               <span className="detail-page__nav-count">({tab.count})</span>
-            )}
-            {tab.comingSoon && (
-              <span className="detail-page__nav-coming-soon">Скоро</span>
             )}
           </button>
         ))}

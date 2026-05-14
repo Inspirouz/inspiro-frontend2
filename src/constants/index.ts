@@ -18,7 +18,7 @@ export const CATEGORIES: Category[] = [
 export const NAV_ITEMS: NavItem[] = [
   { path: '/', label: 'Приложение', icon: 'app' },
   { path: '/patterns', label: 'Паттерны', icon: 'patterns' },
-  { path: '/scenarios', label: 'Сценарии', icon: 'scenarios' },
+  // { path: '/scenarios', label: 'Сценарии', icon: 'scenarios' },
   { path: '/ui_elements', label: 'UI Элементы', icon: 'ui' },
   // { path: '/fonts', label: 'Шрифты', icon: 'fonts' },
 ];
