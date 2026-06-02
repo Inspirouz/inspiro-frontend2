@@ -64,7 +64,7 @@ const DetailPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [activeTab, setActiveTab] = useState<TabType>('screens');
+  const [activeTab, setActiveTab] = useState<TabType>('scenarios');
   const [activeSubCategory, setActiveSubCategory] = useState<string>('all');
 
   const { project: projectFromApi, loading: projectLoading, error: projectError } = useProject(id ?? undefined);
