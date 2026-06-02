@@ -1,0 +1,133 @@
+/* Profile Dropdown — Figma: 1575:12090 */
+.profile-dropdown {
+  position: fixed;
+  z-index: 10001;
+  width: max-content;
+  min-width: 340px;
+  max-width: calc(100vw - 40px);
+  background-color: #171717;
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Header: avatar + email info */
+.profile-dropdown__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.profile-dropdown__avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 30px;
+  background-color: #262626;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.profile-dropdown__avatar-img {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+}
+
+.profile-dropdown__info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.profile-dropdown__label {
+  font-size: 16px;
+  font-weight: 400;
+  color: #737373;
+  letter-spacing: -0.32px;
+  line-height: 20px;
+  margin: 0;
+}
+
+.profile-dropdown__email {
+  font-size: 24px;
+  font-weight: 700;
+  color: #fafafa;
+  letter-spacing: -0.48px;
+  line-height: 32px;
+  margin: 0;
+  white-space: nowrap;
+}
+
+/* Logout row */
+.profile-dropdown__logout {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  border-radius: 8px;
+  transition: opacity 0.2s;
+}
+
+.profile-dropdown__logout:hover {
+  opacity: 0.7;
+}
+
+.profile-dropdown__logout-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.profile-dropdown__logout-icon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  display: block;
+}
+
+.profile-dropdown__logout-text {
+  font-size: 20px;
+  font-weight: 400;
+  color: #ffffff;
+  letter-spacing: -0.4px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.profile-dropdown__chevron {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  display: block;
+  opacity: 0.5;
+}
+
+@media (max-width: 600px) {
+  .profile-dropdown {
+    width: calc(100vw - 40px);
+    min-width: unset;
+    right: 20px !important;
+  }
+
+  .profile-dropdown__email {
+    font-size: 20px;
+    white-space: normal;
+    word-break: break-all;
+  }
+}

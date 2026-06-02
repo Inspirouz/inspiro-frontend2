@@ -1,0 +1,202 @@
+/* Category section: wraps all app rows for one tag */
+.scenario-section {
+  margin-bottom: 48px;
+}
+
+/* App row: one app's scenarios within a category */
+.scenario-app-row {
+  margin-bottom: 28px;
+}
+
+.scenario-app-row__header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+/* Scenario group block (legacy, kept for safety) */
+.scenario-group {
+  margin-bottom: 40px;
+}
+
+.scenario-group__header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.scenario-group__title-block {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.scenario-group__title-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.scenario-group__category {
+  font-size: 28px;
+  font-weight: 700;
+  color: #fafafa;
+  line-height: 1.2;
+  letter-spacing: -0.56px;
+}
+
+.scenario-group__in {
+  font-size: 28px;
+  font-weight: 400;
+  color: #737373;
+  line-height: 1.2;
+}
+
+.scenario-group__app {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.scenario-group__app:hover .scenario-group__app-name {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.scenario-group__app-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.scenario-group__app-name {
+  font-size: 28px;
+  font-weight: 700;
+  color: #fafafa;
+  line-height: 1.2;
+  letter-spacing: -0.56px;
+}
+
+.scenario-group__count {
+  font-size: 14px;
+  font-weight: 400;
+  color: #737373;
+}
+
+.scenario-group__actions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.scenario-group__btn {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #262626;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  flex-shrink: 0;
+}
+
+.scenario-group__btn:hover {
+  background: #333;
+}
+
+.scenario-group__btn img {
+  width: 24px;
+  height: 24px;
+}
+
+/* Horizontal scroll row */
+.scenario-group__screens {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+/* Screen card */
+.scenario-screen-card {
+  width: 240px;
+  min-width: 240px;
+  height: 520px;
+  border: 1px solid #404040;
+  border-radius: 20px;
+  overflow: hidden;
+  cursor: pointer;
+  flex-shrink: 0;
+  background: #111;
+  transition: border-color 0.2s ease;
+}
+
+.scenario-screen-card:hover {
+  border-color: #666;
+}
+
+.scenario-screen-card__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Copy toast */
+.scenario-toast {
+  position: fixed;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #D9F743;
+  color: #111;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 10px 24px;
+  border-radius: 40px;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.scenario-toast.visible {
+  opacity: 1;
+}
+
+@media (max-width: 768px) {
+  .scenario-screen-card {
+    width: 180px;
+    min-width: 180px;
+    height: 390px;
+  }
+
+  .scenario-group__category,
+  .scenario-group__in,
+  .scenario-group__app-name {
+    font-size: 16px;
+  }
+
+  .scenario-group__header {
+    flex-wrap: wrap;
+  }
+}

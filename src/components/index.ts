@@ -1,0 +1,19 @@
+// Components (reusable UI elements)
+export { default as Header } from './Header';
+export { default as NavLinks } from './NavLinks';
+export { default as MainContent } from './MainContent';
+export { default as Modal } from './Modal';
+export { default as Reg } from './Reg';
+export { default as Card } from './Card';
+export { default as PasswordInput } from './PasswordInput';
+export { default as ErrorBoundary } from './ErrorBoundary';
+export { default as PageLoader } from './PageLoader';
+export { default as OptimizedImage } from './OptimizedImage';
+export { default as EmailConfirmation } from './EmailConfirmation';
+export { default as CreatePassword } from './CreatePassword';
+export { default as Toast } from './Toast';
+export { default as ProtectedRoute } from './ProtectedRoute';
+export { default as Profile } from './Profile';
+export { default as ProfileDropdown } from './ProfileDropdown';
+export { default as ImagePreviewModal } from './ImagePreviewModal';
+export { default as SearchModal } from './SearchModal';
