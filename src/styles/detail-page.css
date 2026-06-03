@@ -1368,11 +1368,15 @@
     white-space: nowrap !important;
     width: auto !important;
     flex-shrink: 0 !important;
-    padding: 8px 16px !important;
+    padding: 10px 18px !important;
     font-size: 14px !important;
     border-radius: 100px !important;
     background-color: #242424 !important;
     color: #7C7C7C !important;
+    justify-content: center !important;
+    gap: 0 !important;
+    line-height: 1 !important;
+    height: auto !important;
   }
 
   .detail-page__subcategory:hover,
@@ -1382,8 +1386,7 @@
   }
 
   .detail-page__subcategory-count {
-    font-size: 14px !important;
-    opacity: 0.7;
+    display: none !important;
   }
 
   /* Grid */
@@ -1416,10 +1419,6 @@
     padding: 16px 0 !important;
   }
 
-  /* Subcategory count */
-  .detail-page__subcategory-count {
-    font-size: 13px;
-  }
 }
 
 @media (max-width: 480px) {

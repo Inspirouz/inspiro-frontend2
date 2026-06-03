@@ -134,21 +134,25 @@
     white-space: nowrap !important;
     flex-shrink: 0 !important;
     width: auto !important;
-    padding: 8px 16px !important;
+    padding: 10px 18px !important;
     font-size: 14px !important;
     border-radius: 100px !important;
     background-color: #242424 !important;
     color: #7C7C7C !important;
+    justify-content: center !important;
+    gap: 0 !important;
+    line-height: 1 !important;
+    height: auto !important;
+  }
+
+  .ui-elements-page__sidebar .detail-page__subcategory-count {
+    display: none !important;
   }
 
   .ui-elements-page__sidebar .detail-page__subcategory.active {
     background-color: #D9F743 !important;
     color: #171717 !important;
-    font-weight: 700 !important;
-  }
-
-  .ui-elements-page__sidebar .detail-page__subcategory.active .detail-page__subcategory-count {
-    color: #171717 !important;
+    font-weight: 600 !important;
   }
 
   .ui-elements-page__main {
