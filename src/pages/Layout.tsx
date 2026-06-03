@@ -2,6 +2,7 @@ import { Outlet, useLocation } from "react-router-dom";
 import Header from "@/components/Header";
 import NavLinks from "@/components/NavLinks";
 import PromoBanner from "@/components/PromoBanner";
+import ScrollToTopButton from "@/components/ScrollToTopButton";
 
 const Layout = () => {
   const location = useLocation();
@@ -19,6 +20,7 @@ const Layout = () => {
       {/* {!isSubscriptionPage && !isDetailPage && <PromoBanner />} */}
       {!isSubscriptionPage && !isDetailPage && <NavLinks />}
       <Outlet />
+      <ScrollToTopButton />
     </>
   );
 };
