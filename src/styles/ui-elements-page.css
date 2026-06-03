@@ -114,6 +114,8 @@
     width: 100%;
     position: static;
     max-height: none;
+    flex-direction: row !important;
+    align-items: center;
     display: flex;
     flex-wrap: nowrap;
     overflow-x: auto;
