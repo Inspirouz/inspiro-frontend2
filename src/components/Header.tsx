@@ -22,6 +22,7 @@ const Header = () => {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const [isContactOpen, setIsContactOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const profileButtonRef = useRef<HTMLButtonElement>(null);
   const contactRef = useRef<HTMLDivElement>(null);
 
@@ -41,6 +42,15 @@ const Header = () => {
     window.addEventListener('openLoginModal', handleOpenLoginModal);
     return () => window.removeEventListener('openLoginModal', handleOpenLoginModal);
   }, []);
+
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [isMobileMenuOpen]);
 
   const handleSearchClick = () => {
     if (window.innerWidth <= 768) {
@@ -67,6 +77,19 @@ const Header = () => {
 
         <button className="header-input" onClick={handleSearchClick}>
           Поиск...
+        </button>
+
+        {/* Hamburger — visible only on mobile via CSS */}
+        <button
+          className="mobile-menu-btn"
+          onClick={() => setIsMobileMenuOpen(true)}
+          aria-label="Открыть меню"
+        >
+          <svg width="18" height="14" viewBox="0 0 18 14" fill="none">
+            <rect width="18" height="2" rx="1" fill="currentColor"/>
+            <rect y="6" width="18" height="2" rx="1" fill="currentColor"/>
+            <rect y="12" width="18" height="2" rx="1" fill="currentColor"/>
+          </svg>
         </button>
 
         <div className="Header-block">
@@ -124,6 +147,70 @@ const Header = () => {
           )}
         </div>
       </header>
+
+      {/* Mobile side menu */}
+      {isMobileMenuOpen && (
+        <div
+          className="mobile-menu-overlay"
+          onClick={() => setIsMobileMenuOpen(false)}
+        >
+          <div
+            className="mobile-menu-panel"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              className="mobile-menu-close"
+              onClick={() => setIsMobileMenuOpen(false)}
+              aria-label="Закрыть меню"
+            >
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <path d="M1 1L13 13M13 1L1 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+              </svg>
+            </button>
+
+            <img className="mobile-menu-logo" src={MainLogo} alt="Inspiro" />
+
+            <div className="mobile-menu-contacts">
+              {CONTACTS.map((c) => (
+                <a
+                  key={c.label}
+                  href={c.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="contact-dropdown__item"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <img src={c.icon} alt={c.label} className="contact-dropdown__icon" />
+                  {c.label}
+                </a>
+              ))}
+            </div>
+
+            {isAuthorized ? (
+              <button
+                className="mobile-menu-auth-btn"
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  setIsProfileDropdownOpen(true);
+                }}
+              >
+                <img src={logIcon} alt="" style={{ width: 20, height: 20 }} />
+                Профиль
+              </button>
+            ) : (
+              <button
+                className="mobile-menu-auth-btn"
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  setIsLoginModalOpen(true);
+                }}
+              >
+                Войти
+              </button>
+            )}
+          </div>
+        </div>
+      )}
 
       <Modal active={isLoginModalOpen} setActive={setIsLoginModalOpen}>
         <Reg onClose={() => setIsLoginModalOpen(false)} />
