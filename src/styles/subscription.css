@@ -240,6 +240,20 @@
   }
 }
 
+@media (max-width: 1024px) {
+  .subscription-plans {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .period-tab {
+    font-size: 28px !important;
+  }
+
+  .subscription-title {
+    font-size: 36px;
+  }
+}
+
 @media (max-width: 768px) {
   .subscription-page {
     padding: 40px 20px;

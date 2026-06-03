@@ -200,3 +200,36 @@
     flex-wrap: wrap;
   }
 }
+
+@media (max-width: 480px) {
+  .scenario-screen-card {
+    width: 140px;
+    min-width: 140px;
+    height: 303px;
+  }
+
+  .scenario-group__category,
+  .scenario-group__in,
+  .scenario-group__app-name {
+    font-size: 14px;
+  }
+
+  .scenario-group__app-logo {
+    width: 28px;
+    height: 28px;
+  }
+
+  .scenario-group__btn {
+    width: 36px;
+    height: 36px;
+  }
+
+  .scenario-group__btn img {
+    width: 18px;
+    height: 18px;
+  }
+
+  .scenario-group__screens {
+    gap: 10px;
+  }
+}
