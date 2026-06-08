@@ -15,6 +15,7 @@ const UiElementsPage = lazy(() => import('@/pages/UiElementsPage'));
 const DetailPage = lazy(() => import('@/pages/DetailPage'));
 const SearchPage = lazy(() => import('@/pages/SearchPage'));
 const TagDetailPage = lazy(() => import('@/pages/TagDetailPage'));
+const ScenarioTreePage = lazy(() => import('@/pages/ScenarioTreePage'));
 
 const App = () => {
   return (
@@ -28,6 +29,7 @@ const App = () => {
               <Route path="scenarios" element={<ScenariosPage />} />
               <Route path="ui_elements" element={<UiElementsPage />} />
               <Route path="detail/:id" element={<DetailPage />} />
+              <Route path="detail/:id/scenarios" element={<ScenarioTreePage />} />
               <Route path="search" element={<SearchPage />} />
               <Route path="patterns/:id" element={<TagDetailPage />} />
               <Route path="ui-elements/:id" element={<TagDetailPage />} />

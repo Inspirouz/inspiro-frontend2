@@ -173,10 +173,11 @@
 .detail-page__nav-tab {
   display: flex !important;
   align-items: center !important;
-  gap: 4px;
-  padding: 8px 16px;
+  gap: 8px;
+  padding: 8px 16px 12px;
   background-color: transparent !important;
   border: none !important;
+  border-bottom: 2px solid transparent !important;
   border-radius: 0;
   color: #737373 !important;
   font-size: 36px !important;
@@ -184,7 +185,7 @@
   line-height: 48px;
   letter-spacing: -0.72px;
   cursor: pointer;
-  transition: color 0.2s ease;
+  transition: color 0.2s ease, border-color 0.2s ease;
   position: relative;
   text-decoration: none;
   white-space: nowrap;
@@ -196,6 +197,43 @@
 
 .detail-page__nav-tab.active {
   color: #D9F743 !important;
+  border-bottom-color: #D9F743 !important;
+}
+
+/* Chip inside detail page tabs */
+.detail-page__nav-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 8px;
+  border-radius: 16px;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: -0.28px;
+  background-color: #262626;
+  color: #737373;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.detail-page__nav-chip > span {
+  display: block;
+  line-height: 1;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
+  -webkit-text-box-trim: trim-both;
+  -webkit-text-box-edge: cap alphabetic;
+}
+
+.detail-page__nav-tab.active .detail-page__nav-chip {
+  background-color: #2B310D;
+  color: #D9F743;
+}
+
+.detail-page__nav-tab:hover .detail-page__nav-chip {
+  background-color: #2B310D;
+  color: #D9F743;
 }
 
 .detail-page__nav-tab.disabled {
@@ -635,6 +673,7 @@
   letter-spacing: -0.6px;
   line-height: 1;
 }
+
 
 /* Main Content */
 .detail-page__main {
@@ -1287,68 +1326,218 @@
 }
 
 /* =====================
-   Mobile Responsive
+   Mobile — pixel-perfect per Figma node 28:2860
+   padding: 16px all sides, gap: 24px between sections
    ===================== */
 
 @media (max-width: 768px) {
-  /* Detail page nav tabs */
-  .detail-page__nav-tab {
-    font-size: 22px !important;
-    padding: 6px 10px;
+  /* ── Page: 16px padding all sides ── */
+  .detail-page {
+    padding: 16px !important;
   }
 
-  .detail-page__nav-icon .nav-svg-icon {
-    width: 22px !important;
-    height: 22px !important;
+  /* Back button: 44×44, #262626, rounded-full */
+  .detail-page__mobile-back {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 9999px;
+    background-color: #262626;
+    border: none;
+    color: #ffffff;
+    cursor: pointer;
+    flex-shrink: 0;
+    margin-bottom: 16px;
+    transition: background-color 0.15s ease;
   }
 
-  .detail-page__nav {
-    gap: 16px;
-    padding-top: 10px;
+  .detail-page__mobile-back:hover,
+  .detail-page__mobile-back:active {
+    background-color: #333333;
   }
 
-  /* Detail page header */
-  .detail-page__header-title {
-    font-size: 24px !important;
+  /* ── App info section → 24px gap below (to tabs) ── */
+  .detail-page__header {
+    margin-bottom: 24px !important;
+    padding-bottom: 0 !important;
+    border-bottom: none !important;
   }
 
-  .detail-page__header-description {
-    font-size: 15px !important;
+  /* Logo + info row: gap 8px, 16px below (to meta chips) */
+  .detail-page__header-main {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    margin-bottom: 16px !important;
   }
 
+  /* Logo: 60px × 60px, border-radius 32px */
   .detail-page__header-icon {
-    width: 64px;
-    height: 64px;
-    border-radius: 16px;
+    width: 60px !important;
+    height: 60px !important;
+    border-radius: 32px !important;
+    flex-shrink: 0 !important;
   }
 
   .detail-page__header-icon img {
-    border-radius: 16px;
+    border-radius: 32px !important;
   }
 
+  /* Info column: gap 4px */
+  .detail-page__header-info {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 4px !important;
+    flex: 1 !important;
+    min-width: 0 !important;
+  }
+
+  /* App name: 20px bold, #fafafa, line-height 30px */
+  .detail-page__header-title {
+    font-size: 20px !important;
+    font-weight: 700 !important;
+    line-height: 30px !important;
+    letter-spacing: -0.4px !important;
+    color: #fafafa !important;
+    margin: 0 !important;
+  }
+
+  /* App description: 14px regular, #737373, line-height 18px */
+  .detail-page__header-description {
+    font-size: 14px !important;
+    font-weight: 400 !important;
+    line-height: 18px !important;
+    letter-spacing: -0.28px !important;
+    color: #737373 !important;
+    margin: 0 !important;
+  }
+
+  /* Meta chips row: 3 equal-width chips, gap 8px */
   .detail-page__header-meta {
-    gap: 24px;
+    display: flex !important;
+    gap: 8px !important;
+    flex-wrap: nowrap !important;
+    overflow-x: visible !important;
+    align-items: stretch !important;
+    padding-bottom: 0 !important;
   }
 
-  .detail-page__meta-value {
-    font-size: 15px !important;
+  /* Each chip: flex-1, #171717 bg, 8px padding, 8px radius, centered */
+  .detail-page__meta-item {
+    flex: 1 0 0 !important;
+    min-width: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    gap: 4px !important;
+    background: #171717 !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 8px !important;
   }
 
+  /* Label: 12px regular, #737373 */
   .detail-page__meta-label {
     font-size: 12px !important;
+    font-weight: 400 !important;
+    line-height: 16px !important;
+    letter-spacing: -0.24px !important;
+    color: #737373 !important;
   }
 
-  /* Sidebar → horizontal chip row */
+  /* Value: 14px medium, #fafafa */
+  .detail-page__meta-value {
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    line-height: 18px !important;
+    letter-spacing: -0.28px !important;
+    color: #fafafa !important;
+  }
+
+  /* ── Tabs row: border-bottom #404040, margin-bottom 16px ── */
+  .detail-page__nav {
+    display: flex !important;
+    gap: 12px !important;
+    border-bottom: 1px solid #404040 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    margin-bottom: 16px !important;
+    overflow: visible !important;
+  }
+
+  /* Each tab: flex-1, centered, 6px padding, 22.5px bold */
+  .detail-page__nav-tab {
+    flex: 1 0 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 2.5px !important;
+    padding: 6px !important;
+    font-size: 22.5px !important;
+    font-weight: 700 !important;
+    line-height: 30px !important;
+    letter-spacing: -0.45px !important;
+    color: #737373 !important;
+    background-color: transparent !important;
+    border: none !important;
+    border-bottom: 1px solid transparent !important;
+    margin-bottom: -1px !important;
+    white-space: nowrap !important;
+  }
+
+  /* Active tab: yellow */
+  .detail-page__nav-tab.active {
+    color: #d9f743 !important;
+    border-bottom-color: #d9f743 !important;
+  }
+
+  .detail-page__nav-tab:hover {
+    color: #d9f743 !important;
+  }
+
+  /* Chip: smaller on mobile */
+  .detail-page__nav-chip {
+    font-size: 11px !important;
+    padding: 1px 6px !important;
+  }
+
+  /* Tab icon: 22.5px */
+  .detail-page__nav-icon .nav-svg-icon {
+    width: 22.5px !important;
+    height: 22.5px !important;
+  }
+
+  /* ── Content: no top padding, column layout ── */
   .detail-page__content {
     flex-direction: column !important;
-    gap: 16px !important;
+    gap: 0 !important;
+    padding-top: 0 !important;
+    min-height: unset !important;
   }
 
+  /* Sidebar (screens filter): horizontal chip scroll */
   .detail-page__sidebar {
     width: 100% !important;
     position: static !important;
     max-height: none !important;
     overflow-y: visible !important;
+    overflow-x: auto !important;
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    gap: 8px !important;
+    padding-bottom: 8px !important;
+    margin-bottom: 16px !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+  }
+
+  .detail-page__sidebar::-webkit-scrollbar {
+    display: none;
   }
 
   .detail-page__subcategories {
@@ -1389,41 +1578,74 @@
     display: none !important;
   }
 
-  /* Grid */
+  /* Screens grid: 2 columns, gap 8px */
   .detail-page__grid {
     grid-template-columns: repeat(2, 1fr) !important;
-    gap: 12px;
+    gap: 8px !important;
   }
 
-  /* Scenarios grid */
+  /* Scenarios grid: 2 columns, gap 8px */
   .detail-page__scenario-section-grid {
     grid-template-columns: repeat(2, 1fr) !important;
-    gap: 12px;
+    gap: 8px !important;
+  }
+
+  /* Scenario section spacing */
+  .detail-page__scenarios-content {
+    gap: 24px !important;
+  }
+
+  .detail-page__scenario-section {
+    margin-bottom: 0 !important;
   }
 
   .detail-page__scenario-section-title {
-    font-size: 22px !important;
+    font-size: 18px !important;
+    font-weight: 700 !important;
   }
 
-  /* Section title */
+  .detail-page__scenario-section-count {
+    font-size: 13px !important;
+  }
+
   .detail-page__section-title {
-    font-size: 24px !important;
+    font-size: 20px !important;
   }
 
-  /* Tree sidebar mobile */
+  /* Tree sidebar: hidden on mobile */
   .detail-page__sidebar--tree {
-    width: 100% !important;
-    position: static !important;
-    max-height: none !important;
-    overflow-y: visible !important;
-    padding: 16px 0 !important;
+    display: none !important;
   }
 
+  /* Remove card border and border-radius on mobile */
+  .detail-page__screen-card {
+    border: none !important;
+    border-radius: 0 !important;
+  }
+
+  .detail-page__phone-screen {
+    border-radius: 0 !important;
+  }
+
+  .detail-page__phone-image {
+    border-radius: 0 !important;
+  }
+
+  .detail-page__scenario-section-grid .detail-page__screen-card {
+    border: none !important;
+    border-radius: 0 !important;
+  }
+
+  .detail-page__scenario-section-grid .detail-page__phone-screen {
+    border-radius: 0 !important;
+  }
 }
 
 @media (max-width: 480px) {
+  /* Keep all Figma values — only scale down tab font slightly */
   .detail-page__nav-tab {
     font-size: 18px !important;
+    padding: 6px 4px !important;
   }
 
   .detail-page__nav-icon .nav-svg-icon {
@@ -1431,32 +1653,14 @@
     height: 18px !important;
   }
 
-  .detail-page__nav {
-    gap: 16px;
-  }
-
-  .detail-page__header-title {
-    font-size: 20px !important;
-  }
-
-  .detail-page__header-main {
-    gap: 14px;
-    margin-bottom: 20px;
-  }
-
-  .detail-page__header-icon {
-    width: 56px;
-    height: 56px;
-  }
-
   .detail-page__grid {
     grid-template-columns: repeat(2, 1fr) !important;
-    gap: 10px;
+    gap: 8px !important;
   }
 
   .detail-page__scenario-section-grid {
     grid-template-columns: repeat(2, 1fr) !important;
-    gap: 10px;
+    gap: 8px !important;
   }
 
   /* Patterns card */
@@ -1492,6 +1696,80 @@
 
   .detail-page__scenario-section-title {
     font-size: 18px !important;
+  }
+}
+
+/* Mobile back button — hidden on desktop */
+.detail-page__mobile-back {
+  display: none;
+}
+
+/* "Выбрать сценарий" button — hidden on desktop, shown on mobile */
+.detail-page__select-scenario-btn {
+  display: none;
+}
+
+/* Screen card app info — hidden on desktop */
+.detail-page__screen-card-app-info {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  /* "Выбрать сценарий" button: full-width, #171717, 16px padding, 16px radius */
+  .detail-page__select-scenario-btn {
+    display: flex !important;
+    width: 100% !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    background-color: #171717 !important;
+    border: none !important;
+    border-radius: 16px !important;
+    padding: 16px !important;
+    color: #fafafa !important;
+    font-size: 16px !important;
+    font-weight: 500 !important;
+    line-height: 20px !important;
+    letter-spacing: -0.32px !important;
+    cursor: pointer !important;
+    margin-bottom: 16px !important;
+    transition: background-color 0.2s ease !important;
+    text-align: left !important;
+    white-space: nowrap !important;
+  }
+
+  .detail-page__select-scenario-btn:hover,
+  .detail-page__select-scenario-btn:active {
+    background-color: #222222 !important;
+  }
+
+  /* App logo + name below each card: gap 5px per Figma */
+  .detail-page__screen-card-app-info {
+    display: flex !important;
+    align-items: center !important;
+    gap: 5px !important;
+    margin-top: 5px !important;
+    overflow: hidden !important;
+  }
+
+  /* App logo: 24px, border-radius 7.2px per Figma */
+  .detail-page__screen-card-app-logo {
+    width: 24px !important;
+    height: 24px !important;
+    border-radius: 7px !important;
+    object-fit: cover !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* App name: 14px medium, #fafafa */
+  .detail-page__screen-card-app-name {
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    line-height: 18px !important;
+    letter-spacing: -0.28px !important;
+    color: #fafafa !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
   }
 }
 

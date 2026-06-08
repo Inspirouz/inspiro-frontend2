@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import type { CardProps } from '@/types';
+import { isVideoUrl } from '@/lib/media';
 
 function getImageBaseUrl(): string {
   const apiUrl = import.meta.env.VITE_API_URL || '';
@@ -18,14 +19,19 @@ function toImageUrl(image: string): string {
   const path = cleaned.startsWith('/') ? cleaned.slice(1) : cleaned;
   return `${getImageBaseUrl()}${path}`;
 }
+
+const PlayIcon = () => (
+  <svg className="card__play-icon" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="18" cy="18" r="18" fill="rgba(0,0,0,0.55)"/>
+    <path d="M14 11.5L26 18L14 24.5V11.5Z" fill="white"/>
+  </svg>
+);
+
 const Card = ({ item, onClick, variant = 'default' }: CardProps) => {
   const isPattern = variant === 'pattern';
-  // Prefer images array, then img1, then logo
-  const images =
-    item.images && item.images.length > 0
-      ? item.images
-      : [];
+  const images = item.images && item.images.length > 0 ? item.images : [];
   const [currentIndex, setCurrentIndex] = useState(0);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (onClick && (e.key === 'Enter' || e.key === ' ')) {
@@ -46,16 +52,34 @@ const Card = ({ item, onClick, variant = 'default' }: CardProps) => {
     setCurrentIndex((prev) => (prev < images.length - 1 ? prev + 1 : 0));
   };
 
+  const handleMouseEnter = () => {
+    if (videoRef.current) {
+      videoRef.current.play().catch(() => {});
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (videoRef.current) {
+      videoRef.current.pause();
+      videoRef.current.currentTime = 0;
+    }
+  };
+
+  const currentUrl = toImageUrl(images[currentIndex] || '');
+  const isVideo = isVideoUrl(currentUrl);
+
   return (
     <article
       className={`card ${isPattern ? 'card--pattern' : ''}`}
       onClick={() => onClick?.(item)}
-      role={onClick ? "button" : undefined}
+      role={onClick ? 'button' : undefined}
       tabIndex={onClick ? 0 : undefined}
       onKeyDown={handleKeyDown}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       aria-label={`${item.app_name} - ${item.text_info || 'View details'}`}
     >
-      {/* Header section with logo and app name */}
+      {/* Header */}
       <div className="card__header">
         {item.logo ? (
           <img
@@ -89,33 +113,38 @@ const Card = ({ item, onClick, variant = 'default' }: CardProps) => {
         </div>
       </div>
 
-      {/* Phone screenshot with navigation arrows */}
+      {/* Media */}
       <div className="card__phone-wrapper">
-        {/* Left arrow */}
-        <button
-          className="card__nav card__nav--left"
-          aria-label="Previous"
-          onClick={handlePrevious}
-        >
+        <button className="card__nav card__nav--left" aria-label="Previous" onClick={handlePrevious}>
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
             <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         </button>
 
-        <img
-          className="card__phone-image"
-          src={toImageUrl(images[currentIndex] || '')}
-          alt={`${item.app_name} app screenshot`}
-          loading="lazy"
-          decoding="async"
-        />
+        {isVideo ? (
+          <div className="card__video-wrap">
+            <video
+              ref={videoRef}
+              className="card__phone-image"
+              src={currentUrl}
+              muted
+              loop
+              playsInline
+              preload="metadata"
+            />
+            <PlayIcon />
+          </div>
+        ) : (
+          <img
+            className="card__phone-image"
+            src={currentUrl}
+            alt={`${item.app_name} app screenshot`}
+            loading="lazy"
+            decoding="async"
+          />
+        )}
 
-        {/* Right arrow */}
-        <button
-          className="card__nav card__nav--right"
-          aria-label="Next"
-          onClick={handleNext}
-        >
+        <button className="card__nav card__nav--right" aria-label="Next" onClick={handleNext}>
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
             <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>

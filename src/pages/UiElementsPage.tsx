@@ -1,8 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { useUiElementsTags } from '@/hooks/useUiElementsTags';
 import { useUiElementsWithScreens } from '@/hooks/useUiElementsWithScreens';
+import type { UiScreen } from '@/hooks/useUiElementsWithScreens';
+import { useScreenDetails } from '@/hooks/useProjects';
 import { useSEO } from '@/hooks/useSEO';
+import { SidebarSkeleton, PatternsGridSkeleton } from '@/components/Skeleton';
+import ImagePreviewModal from '@/components/ImagePreviewModal';
 import '@/styles/header-search.css';
 import '@/styles/detail-page.css';
 import '@/styles/ui-elements-page.css';
@@ -15,11 +19,12 @@ const UiElementsPage = () => {
     ogUrl: 'https://inspiro.uz/ui_elements',
   });
 
-  const navigate = useNavigate();
-  const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { tags, loading: tagsLoading } = useUiElementsTags();
   const { groups, loading: groupsLoading } = useUiElementsWithScreens();
   const [activeTag, setActiveTag] = useState<string>('all');
+  const [openGroupScreens, setOpenGroupScreens] = useState<UiScreen[] | null>(null);
+  const [openInitialIdx, setOpenInitialIdx] = useState(0);
   const mainRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -32,17 +37,30 @@ const UiElementsPage = () => {
     }
   }, [activeTag]);
 
-  const allCount = tags.reduce((sum, t) => sum + t.count, 0);
+  const screenIdFromUrl = searchParams.get('screen');
 
-  const visibleGroups =
-    activeTag === 'all' ? groups : groups.filter((g) => g.id === activeTag);
+  const currentScreen = openGroupScreens
+    ? (openGroupScreens.find(s => s.screen_id === screenIdFromUrl) ?? openGroupScreens[openInitialIdx])
+    : null;
+
+  const { details: screenMeta, loading: screenMetaLoading } = useScreenDetails(
+    currentScreen?.project_id,
+    screenIdFromUrl
+  );
+
+  const handleClose = () => {
+    setOpenGroupScreens(null);
+    setSearchParams({});
+  };
+
+  const allCount = tags.reduce((sum, t) => sum + t.count, 0);
+  const visibleGroups = activeTag === 'all' ? groups : groups.filter((g) => g.id === activeTag);
 
   return (
     <div className="ui-elements-page">
-      {/* Left Sidebar */}
       <aside className="ui-elements-page__sidebar">
         {tagsLoading ? (
-          <div className="ui-elements-page__sidebar-loading">Загрузка...</div>
+          <SidebarSkeleton />
         ) : (
           <>
             <button
@@ -66,10 +84,9 @@ const UiElementsPage = () => {
         )}
       </aside>
 
-      {/* Main Content */}
       <main ref={mainRef} className="ui-elements-page__main">
         {groupsLoading ? (
-          <div className="ui-elements-page__loading">Загрузка...</div>
+          <PatternsGridSkeleton />
         ) : visibleGroups.length === 0 ? (
           <div className="ui-elements-page__empty">Malumot mavjud emas</div>
         ) : (
@@ -84,8 +101,12 @@ const UiElementsPage = () => {
                   <div
                     key={idx}
                     className="patterns-card"
-                    style={{ cursor: screen.project_id ? 'pointer' : 'default' }}
-                    onClick={() => screen.project_id && navigate(`/detail/${screen.project_id}${screen.screen_id ? `?screen=${screen.screen_id}` : ''}`, { state: { from: location.pathname } })}
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => {
+                      setOpenGroupScreens(group.screens);
+                      setOpenInitialIdx(idx);
+                      if (screen.screen_id) setSearchParams({ screen: screen.screen_id });
+                    }}
                   >
                     <div className="patterns-card__image-wrapper">
                       <img
@@ -109,6 +130,26 @@ const UiElementsPage = () => {
           ))
         )}
       </main>
+
+      <ImagePreviewModal
+        isOpen={openGroupScreens !== null}
+        onClose={handleClose}
+        images={(openGroupScreens ?? []).map((s, i) => ({
+          id: s.screen_id ?? String(i),
+          screenId: s.screen_id,
+          image: s.path,
+          title: s.project_name,
+        }))}
+        initialIndex={openInitialIdx}
+        appInfo={currentScreen ? {
+          logo: currentScreen.project_logo,
+          name: currentScreen.project_name,
+          description: '',
+          projectId: currentScreen.project_id,
+        } : undefined}
+        screenMeta={screenMeta}
+        screenMetaLoading={screenMetaLoading}
+      />
     </div>
   );
 };

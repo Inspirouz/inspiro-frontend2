@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSEO } from '@/hooks/useSEO';
 import type { SearchType } from '@/components/SearchModal';
+import { SearchSkeleton } from '@/components/Skeleton';
 import '@/styles/search-page.css';
 
 function getImageBaseUrl(): string {
@@ -169,7 +170,7 @@ const SearchPage = () => {
       {/* Results */}
       <div className="search-page__results">
         {loading ? (
-          <div className="search-page__empty">Загрузка...</div>
+          <SearchSkeleton />
         ) : items.length === 0 ? (
           <div className="search-page__empty">Ничего не найдено</div>
         ) : (

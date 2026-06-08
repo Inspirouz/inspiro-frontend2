@@ -1,9 +1,9 @@
-/* Profile Dropdown — Figma: 1575:12090 */
+/* Profile Dropdown — Figma: 1:1066 */
 .profile-dropdown {
   position: fixed;
   z-index: 10001;
   width: max-content;
-  min-width: 340px;
+  min-width: 320px;
   max-width: calc(100vw - 40px);
   background-color: #171717;
   border-radius: 16px;
@@ -52,20 +52,20 @@
 }
 
 .profile-dropdown__label {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 400;
   color: #737373;
-  letter-spacing: -0.32px;
-  line-height: 20px;
+  letter-spacing: -0.28px;
+  line-height: 18px;
   margin: 0;
 }
 
 .profile-dropdown__email {
-  font-size: 24px;
-  font-weight: 700;
+  font-size: 18px;
+  font-weight: 500;
   color: #fafafa;
-  letter-spacing: -0.48px;
-  line-height: 32px;
+  letter-spacing: -0.36px;
+  line-height: 22px;
   margin: 0;
   white-space: nowrap;
 }
@@ -102,20 +102,20 @@
 }
 
 .profile-dropdown__logout-text {
-  font-size: 20px;
+  font-size: 14px;
   font-weight: 400;
   color: #ffffff;
-  letter-spacing: -0.4px;
-  line-height: 1;
+  letter-spacing: -0.28px;
+  line-height: 18px;
   white-space: nowrap;
 }
 
 .profile-dropdown__chevron {
-  width: 16px;
-  height: 16px;
+  width: 24px;
+  height: 24px;
   flex-shrink: 0;
   display: block;
-  opacity: 0.5;
+  opacity: 1;
 }
 
 @media (max-width: 600px) {
@@ -126,7 +126,7 @@
   }
 
   .profile-dropdown__email {
-    font-size: 20px;
+    font-size: 16px;
     white-space: normal;
     word-break: break-all;
   }

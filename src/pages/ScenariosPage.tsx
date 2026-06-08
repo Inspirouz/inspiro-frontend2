@@ -1,18 +1,21 @@
 import { useState, useRef, useMemo } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { useScenariosCategories } from '@/hooks/useScenariosCategories';
 import { useScenariosCategoriesWithScreens } from '@/hooks/useScenariosCategoriesWithScreens';
 import type { ScenariosTreeNode } from '@/hooks/useScenariosCategoriesWithScreens';
+import { useScreenDetails } from '@/hooks/useProjects';
 import { useSEO } from '@/hooks/useSEO';
+import ImagePreviewModal from '@/components/ImagePreviewModal';
 import iconDownload from '@/assets/icon-download.svg';
 import iconLink from '@/assets/icon-link.svg';
+import { SidebarSkeleton, ScenariosContentSkeleton } from '@/components/Skeleton';
 import '@/styles/header-search.css';
 import '@/styles/detail-page.css';
 import '@/styles/ui-elements-page.css';
 import '@/styles/scenarios-page.css';
 
 type AppRow = {
-  categoryId: string; // leaf node ID → used for /scenarios/:id link
+  categoryId: string;
   projectId: string;
   projectName: string;
   projectLogo?: string;
@@ -20,25 +23,47 @@ type AppRow = {
 };
 
 type CategorySection = {
-  label: string;   // e.g. "Авторизация"
-  apps: AppRow[];  // one per app that has this scenario
+  label: string;
+  apps: AppRow[];
 };
+
+type FlatNode = ScenariosTreeNode & { depth: number };
+
+function flattenTreeWithDepth(nodes: ScenariosTreeNode[], depth = 0): FlatNode[] {
+  return nodes.flatMap((n) => [
+    { ...n, depth },
+    ...(n.children ? flattenTreeWithDepth(n.children, depth + 1) : []),
+  ]);
+}
 
 function flattenTree(nodes: ScenariosTreeNode[]): ScenariosTreeNode[] {
   return nodes.flatMap((n) => [n, ...(n.children ? flattenTree(n.children) : [])]);
 }
 
-// nodeId → root ancestor id
-function buildRootMap(nodes: ScenariosTreeNode[], rootId?: string): Map<string, string> {
-  const map = new Map<string, string>();
+// Build label → ancestor path map from the tree
+function buildLabelPathMap(nodes: ScenariosTreeNode[], ancestors: string[] = []): Map<string, string[]> {
+  const map = new Map<string, string[]>();
   for (const node of nodes) {
-    const thisRoot = rootId ?? node.id;
-    map.set(node.id, thisRoot);
-    if (node.children?.length) {
-      for (const [k, v] of buildRootMap(node.children, thisRoot)) map.set(k, v);
+    const path = [...ancestors, node.label];
+    if (node.label && !map.has(node.label)) map.set(node.label, path);
+    if (node.children) {
+      for (const [k, v] of buildLabelPathMap(node.children, path)) {
+        if (!map.has(k)) map.set(k, v);
+      }
     }
   }
   return map;
+}
+
+function findNodeById(nodes: ScenariosTreeNode[], id: string): ScenariosTreeNode | null {
+  for (const n of nodes) {
+    if (n.id === id) return n;
+    if (n.children) {
+      const found = findNodeById(n.children, id);
+      if (found) return found;
+    }
+  }
+  return null;
 }
 
 const ScenariosPage = () => {
@@ -58,31 +83,34 @@ const ScenariosPage = () => {
     loading: groupsLoading,
   } = useScenariosCategoriesWithScreens(null);
 
+  const [searchParams, setSearchParams] = useSearchParams();
   const [activeTag, setActiveTag] = useState<string>('all');
+  const [openApp, setOpenApp] = useState<AppRow | null>(null);
+  const [openInitialIdx, setOpenInitialIdx] = useState(0);
+
+  const screenIdFromUrl = searchParams.get('screen');
+  const { details: screenMeta, loading: screenMetaLoading } = useScreenDetails(
+    openApp?.projectId,
+    screenIdFromUrl
+  );
   const [toastVisible, setToastVisible] = useState(false);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [downloadingKey, setDownloadingKey] = useState<string | null>(null);
 
-  const rootMap = useMemo(() => buildRootMap(groupsTree), [groupsTree]);
-
-  // Build sections: group all leaf nodes by their root-ancestor label
+  // Sections grouped by node's OWN label (so every tree level gets its own section)
   const categorySections = useMemo<CategorySection[]>(() => {
     const allNodes = flattenTree(groupsTree);
-    // Group by label so all apps with the same scenario name end up in one section
     const byLabel = new Map<string, CategorySection>();
 
     for (const node of allNodes) {
       const screens = scenariosByCategoryId[node.id] ?? [];
       if (!screens.length) continue;
 
-      const rootId = rootMap.get(node.id) ?? node.id;
-      const rootNode = allNodes.find((n) => n.id === rootId);
-      const label = rootNode?.label ?? node.label;
+      const label = node.label;
       if (!label) continue;
 
       if (!byLabel.has(label)) byLabel.set(label, { label, apps: [] });
 
-      // Group by project within this leaf node
       const byProject = new Map<string, AppRow>();
       for (const s of screens) {
         const pid = s.projectId ?? '';
@@ -102,32 +130,54 @@ const ScenariosPage = () => {
     }
 
     return [...byLabel.values()];
-  }, [groupsTree, scenariosByCategoryId, rootMap]);
+  }, [groupsTree, scenariosByCategoryId]);
 
-  // Sidebar tags with counts calculated from real screen data (label-matched)
+  // Count per label for fast lookup
+  const sectionCountByLabel = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const s of categorySections) {
+      const n = s.apps.reduce((sum, app) => sum + app.screens.length, 0);
+      map.set(s.label, (map.get(s.label) ?? 0) + n);
+    }
+    return map;
+  }, [categorySections]);
+
+  // All tree nodes flattened, deduplicated by label, sorted alphabetically
+  const flatCategoriesWithDepth = useMemo(() => {
+    const seen = new Set<string>();
+    return flattenTreeWithDepth(categoriesTree)
+      .filter((n) => {
+        if (!n.label || seen.has(n.label)) return false;
+        seen.add(n.label);
+        return true;
+      })
+      .sort((a, b) => a.label.localeCompare(b.label, 'ru'));
+  }, [categoriesTree]);
+
+  // Sidebar tags — all levels, count is only this node's own screens
   const sidebarTags = useMemo(() => {
-    return categoriesTree.map((node) => {
-      // Match by label since IDs may differ between the two API endpoints
-      const section = categorySections.find((s) => s.label === node.label);
-      const count = section
-        ? section.apps.reduce((sum, app) => sum + app.screens.length, 0)
-        : 0;
-      return { id: node.id, label: node.label, count };
-    });
-  }, [categoriesTree, categorySections]);
+    return flatCategoriesWithDepth.map((node) => ({
+      id: node.id,
+      label: node.label,
+      depth: node.depth,
+      count: sectionCountByLabel.get(node.label) ?? 0,
+    }));
+  }, [flatCategoriesWithDepth, sectionCountByLabel]);
+
+  const labelPathMap = useMemo(() => buildLabelPathMap(categoriesTree), [categoriesTree]);
 
   const allCount = useMemo(
     () => categorySections.reduce((sum, s) => sum + s.apps.reduce((a, r) => a + r.screens.length, 0), 0),
     [categorySections]
   );
 
-  // Filter sections by activeTag (matched by label)
+  // Filter sections by active tag — exact label match only
   const visibleSections = useMemo(() => {
     if (activeTag === 'all') return categorySections;
-    const activeLabel = sidebarTags.find((t) => t.id === activeTag)?.label;
-    if (!activeLabel) return [];
-    return categorySections.filter((s) => s.label === activeLabel);
-  }, [categorySections, sidebarTags, activeTag]);
+    const activeNode = findNodeById(categoriesTree, activeTag);
+    if (!activeNode) return [];
+    return categorySections.filter((s) => s.label === activeNode.label);
+  }, [categorySections, categoriesTree, activeTag]);
 
   const showToast = () => {
     setToastVisible(true);
@@ -176,7 +226,7 @@ const ScenariosPage = () => {
       {/* Sidebar */}
       <aside className="ui-elements-page__sidebar">
         {tagsLoading ? (
-          <div className="ui-elements-page__sidebar-loading">Загрузка...</div>
+          <SidebarSkeleton />
         ) : (
           <>
             <button
@@ -203,7 +253,7 @@ const ScenariosPage = () => {
       {/* Main */}
       <main className="ui-elements-page__main">
         {groupsLoading ? (
-          <div className="ui-elements-page__loading">Загрузка...</div>
+          <ScenariosContentSkeleton />
         ) : visibleSections.length === 0 ? (
           <div className="ui-elements-page__empty">Нет данных</div>
         ) : (
@@ -216,7 +266,12 @@ const ScenariosPage = () => {
                     <div className="scenario-app-row__header">
                       <div className="scenario-group__title-block">
                         <div className="scenario-group__title-row">
-                          <span className="scenario-group__category">{section.label}</span>
+                          {(labelPathMap.get(section.label) ?? [section.label]).map((part, i) => (
+                            <span key={i} className="scenario-group__path-part">
+                              {i > 0 && <span className="scenario-group__arrow">→</span>}
+                              <span className="scenario-group__category">{part}</span>
+                            </span>
+                          ))}
                           {app.projectName && (
                             <>
                               <span className="scenario-group__in">в</span>
@@ -265,19 +320,16 @@ const ScenariosPage = () => {
                     </div>
 
                     <div className="scenario-group__screens">
-                      {app.screens.map((screen) => (
+                      {app.screens.map((screen, sIdx) => (
                         <div
                           key={screen.id}
                           className="scenario-screen-card"
-                          onClick={() =>
-                            app.projectId &&
-                            navigate(
-                              `/detail/${app.projectId}${
-                                screen.screenId ? `?screen=${screen.screenId}` : ''
-                              }`,
-                              { state: { from: location.pathname } }
-                            )
-                          }
+                          onClick={() => {
+                            setOpenApp(app);
+                            setOpenInitialIdx(sIdx);
+                            const sid = screen.screenId;
+                            if (sid != null) setSearchParams({ screen: String(sid) });
+                          }}
                         >
                           <img
                             src={screen.image}
@@ -299,6 +351,26 @@ const ScenariosPage = () => {
       <div className={`scenario-toast${toastVisible ? ' visible' : ''}`}>
         Ссылка скопирована
       </div>
+
+      <ImagePreviewModal
+        isOpen={openApp !== null}
+        onClose={() => { setOpenApp(null); setSearchParams({}); }}
+        images={(openApp?.screens ?? []).map((s, i) => ({
+          id: s.screenId ?? s.id ?? i,
+          screenId: s.screenId,
+          image: s.image,
+          title: openApp?.projectName ?? '',
+        }))}
+        initialIndex={openInitialIdx}
+        appInfo={openApp ? {
+          logo: openApp.projectLogo ?? '',
+          name: openApp.projectName,
+          description: '',
+          projectId: openApp.projectId,
+        } : undefined}
+        screenMeta={screenMeta}
+        screenMetaLoading={screenMetaLoading}
+      />
     </div>
   );
 };

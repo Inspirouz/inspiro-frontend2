@@ -1,0 +1,219 @@
+@keyframes sk-shimmer {
+  0%   { background-position: -600px 0; }
+  100% { background-position:  600px 0; }
+}
+
+.sk {
+  background: linear-gradient(90deg, #1e1e1e 25%, #2d2d2d 50%, #1e1e1e 75%);
+  background-size: 1200px 100%;
+  animation: sk-shimmer 1.5s ease-in-out infinite;
+}
+
+/* ─────────────────────────────────────────────────────
+   HomePage — .card (bg #1C1C1E, br 24, aspect 500/680)
+───────────────────────────────────────────────────── */
+.sk-card {
+  background: #1C1C1E;
+  border-radius: 24px;
+  padding: 24px;
+  aspect-ratio: 500 / 680;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.sk-card__header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding: 0 50px;
+  flex-shrink: 0;
+}
+.sk-card__info     { flex: 1; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.sk-card__logo     { width: 64px; height: 64px; border-radius: 16px; flex-shrink: 0; }
+.sk-card__title    { height: 24px; width: 65%; border-radius: 5px; }
+.sk-card__sub      { height: 16px; width: 45%; border-radius: 5px; }
+.sk-card__image    { flex: 1; border-radius: 14px; margin: 0 50px; }
+
+/* ─────────────────────────────────────────────────────
+   Sidebar — .detail-page__subcategory (br 8, h ~46px)
+───────────────────────────────────────────────────── */
+.sk-sidebar        { display: flex; flex-direction: column; gap: 12px; }
+.sk-sidebar__item  { height: 46px; border-radius: 8px; }
+
+/* ─────────────────────────────────────────────────────
+   Patterns / UI Elements grid
+   Grid: repeat(5,1fr) gap 20px  •  card: br 24, border #404040, aspect 9/19.5
+   Footer: logo 40x40 br5  •  name 20px font
+───────────────────────────────────────────────────── */
+.sk-patterns-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px;
+}
+.sk-pattern-card { display: flex; flex-direction: column; }
+.sk-pattern-card__image-wrapper {
+  border-radius: 24px;
+  border: 1px solid #404040;
+  aspect-ratio: 9 / 19.5;
+  overflow: hidden;
+}
+.sk-pattern-card__app-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+.sk-pattern-card__logo { width: 40px; height: 40px; border-radius: 5px; flex-shrink: 0; }
+.sk-pattern-card__name { height: 20px; width: 58%; border-radius: 4px; }
+
+.sk-group         { margin-bottom: 48px; }
+.sk-group__header { margin-bottom: 20px; }
+.sk-group__title  { height: 28px; width: 200px; border-radius: 6px; margin-bottom: 4px; }
+.sk-group__count  { height: 14px; width: 90px;  border-radius: 5px; margin-top: 4px; }
+
+/* ─────────────────────────────────────────────────────
+   DetailPage header
+   Icon: 120×120 br32  •  title: 40px/lh52  •  desc: 18px/lh22
+   Meta: flex gap40 — each item col gap8 (label 16px, value 24px)
+   Nav: gap24 — tab 36px font / lh48 + padding 8px 16px ≈ h64
+───────────────────────────────────────────────────── */
+.sk-detail-main {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+.sk-detail-icon  { width: 120px; height: 120px; border-radius: 32px; flex-shrink: 0; }
+.sk-detail-info  { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+.sk-detail-title { height: 52px; width: 42%; border-radius: 8px; }
+.sk-detail-desc  { height: 22px; width: 65%; border-radius: 5px; }
+
+.sk-detail-meta  { display: flex; gap: 40px; flex-wrap: wrap; margin-bottom: 32px; }
+.sk-detail-meta-item { display: flex; flex-direction: column; gap: 8px; }
+.sk-detail-meta-label { height: 20px; width: 80px; border-radius: 5px; }
+.sk-detail-meta-value { height: 32px; width: 60px; border-radius: 6px; }
+
+.sk-tabs         { display: flex; gap: 24px; margin-bottom: 24px; padding-top: 15px; }
+.sk-tab          { height: 64px; width: 130px; border-radius: 8px; }
+
+/* DetailPage screen grid — repeat(6,1fr) gap20  •  card br24 border #404040 aspect 9/19.5 */
+.sk-screen-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 20px;
+}
+.sk-screen-card {
+  border: 1px solid #404040;
+  border-radius: 24px;
+  aspect-ratio: 9 / 19.5;
+  overflow: hidden;
+  background: #111;
+}
+
+/* ─────────────────────────────────────────────────────
+   ScenariosPage — .scenario-app-row / .scenario-screen-card
+   Header: logo 40x40 br10  •  title 28px  •  count 14px  •  btns 52x52 circular #262626
+   Screens: flex row gap16  •  card 240×520 br20 border #404040
+───────────────────────────────────────────────────── */
+.sk-scenario-section      { margin-bottom: 48px; }
+.sk-scenario-app-row      { margin-bottom: 28px; }
+.sk-scenario-row__header  {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+.sk-scenario-row__left    { display: flex; flex-direction: column; gap: 4px; }
+.sk-scenario-title-row    { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.sk-scenario-logo         { width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0; }
+.sk-scenario-title        { height: 28px; width: 240px; border-radius: 6px; }
+.sk-scenario-count        { height: 14px; width: 80px;  border-radius: 5px; margin-left: 48px; }
+.sk-scenario-actions      { display: flex; gap: 8px; flex-shrink: 0; }
+.sk-scenario-btn          { width: 52px; height: 52px; border-radius: 50%; background: #262626; }
+
+.sk-scenario-screens { display: flex; gap: 16px; overflow: hidden; padding-bottom: 4px; }
+.sk-scenario-screen  {
+  width: 240px;
+  min-width: 240px;
+  height: 520px;
+  border: 1px solid #404040;
+  border-radius: 20px;
+  flex-shrink: 0;
+  background: #111;
+}
+
+/* ─────────────────────────────────────────────────────
+   SearchPage — .search-page__item (gap4, padding 12 10, br14)
+   Icon: 48×48 br12 bg#242424  •  name 16px  •  cat 13px
+───────────────────────────────────────────────────── */
+.sk-search-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 10px;
+  border-radius: 14px;
+}
+.sk-search-icon { width: 48px; height: 48px; border-radius: 12px; flex-shrink: 0; }
+.sk-search-info { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+.sk-search-name { height: 16px; border-radius: 5px; margin-bottom: 2px; }
+.sk-search-cat  { height: 13px; border-radius: 4px; }
+
+/* ─────────────────────────────────────────────────────
+   Responsive
+───────────────────────────────────────────────────── */
+@media (max-width: 1400px) {
+  .sk-patterns-grid { grid-template-columns: repeat(4, 1fr); }
+}
+@media (max-width: 1200px) {
+  .sk-screen-grid { grid-template-columns: repeat(5, 1fr); }
+}
+@media (max-width: 1024px) {
+  .sk-patterns-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 1000px) {
+  .sk-screen-grid { grid-template-columns: repeat(4, 1fr); }
+}
+@media (max-width: 800px) {
+  .sk-screen-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 768px) {
+  /* Card */
+  .sk-card__header { padding: 0 20px; }
+  .sk-card__image  { margin: 0 20px; }
+  .sk-card__logo   { width: 48px; height: 48px; }
+  /* Detail header */
+  .sk-detail-icon  { width: 60px; height: 60px; border-radius: 12px; }
+  .sk-detail-title { height: 30px; width: 55%; }
+  .sk-detail-meta  { gap: 8px; }
+  .sk-detail-meta-item { flex: 1; align-items: center; }
+  .sk-tabs { gap: 12px; }
+  .sk-tab  { height: 44px; flex: 1; }
+  /* Screen grid */
+  .sk-screen-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .sk-screen-card { border-radius: 0; border: none; }
+  /* Patterns */
+  .sk-patterns-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  /* Sidebar → horizontal row */
+  .sk-sidebar {
+    flex-direction: row;
+    overflow-x: auto;
+    scrollbar-width: none;
+    gap: 8px;
+  }
+  .sk-sidebar__item {
+    height: 40px;
+    border-radius: 100px;
+    flex-shrink: 0;
+    width: 90px !important;
+  }
+  /* Scenario screens */
+  .sk-scenario-screen { width: 180px; min-width: 180px; height: 390px; }
+}
+@media (max-width: 480px) {
+  .sk-card__header { padding: 0 12px; }
+  .sk-card__image  { margin: 0 12px; }
+  .sk-patterns-grid { gap: 10px; }
+  .sk-scenario-screen { width: 140px; min-width: 140px; height: 303px; }
+}

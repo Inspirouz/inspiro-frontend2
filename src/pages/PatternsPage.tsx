@@ -1,7 +1,11 @@
 import { useState, useEffect, useRef } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { usePatternsWithScreens } from "@/hooks/usePatternsWithScreens";
+import type { PatternScreen } from "@/hooks/usePatternsWithScreens";
+import { useScreenDetails } from "@/hooks/useProjects";
 import { useSEO } from "@/hooks/useSEO";
+import { SidebarSkeleton, PatternsGridSkeleton } from '@/components/Skeleton';
+import ImagePreviewModal from '@/components/ImagePreviewModal';
 import '@/styles/header-search.css';
 import '@/styles/detail-page.css';
 import '@/styles/ui-elements-page.css';
@@ -14,35 +18,48 @@ const PatternsPage = () => {
     ogUrl: 'https://inspiro.uz/patterns',
   });
 
-  const navigate = useNavigate();
-  const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { groups, loading: groupsLoading } = usePatternsWithScreens();
   const [activeTag, setActiveTag] = useState<string>('all');
+  const [openGroupScreens, setOpenGroupScreens] = useState<PatternScreen[] | null>(null);
+  const [openInitialIdx, setOpenInitialIdx] = useState(0);
   const mainRef = useRef<HTMLElement>(null);
 
-  // Reset scroll when filter changes so user sees the filtered result
   useEffect(() => {
     const el = mainRef.current;
     if (!el) return;
     const rect = el.getBoundingClientRect();
-    const scrollTop = window.scrollY + rect.top - 140; // 140 = header + nav height
+    const scrollTop = window.scrollY + rect.top - 140;
     if (window.scrollY > scrollTop) {
       window.scrollTo({ top: Math.max(0, scrollTop), behavior: 'smooth' });
     }
   }, [activeTag]);
 
+  const screenIdFromUrl = searchParams.get('screen');
+
+  const currentScreen = openGroupScreens
+    ? (openGroupScreens.find(s => s.screen_id === screenIdFromUrl) ?? openGroupScreens[openInitialIdx])
+    : null;
+
+  const { details: screenMeta, loading: screenMetaLoading } = useScreenDetails(
+    currentScreen?.project_id,
+    screenIdFromUrl
+  );
+
+  const handleClose = () => {
+    setOpenGroupScreens(null);
+    setSearchParams({});
+  };
+
   const tags = groups.map((g) => ({ id: g.id, label: g.label, count: g.screens.length }));
   const allCount = tags.reduce((sum, t) => sum + t.count, 0);
-
-  const visibleGroups =
-    activeTag === 'all' ? groups : groups.filter((g) => g.id === activeTag);
+  const visibleGroups = activeTag === 'all' ? groups : groups.filter((g) => g.id === activeTag);
 
   return (
     <div className="ui-elements-page">
-      {/* Left Sidebar */}
       <aside className="ui-elements-page__sidebar">
         {groupsLoading ? (
-          <div className="ui-elements-page__sidebar-loading">Загрузка...</div>
+          <SidebarSkeleton />
         ) : (
           <>
             <button
@@ -66,10 +83,9 @@ const PatternsPage = () => {
         )}
       </aside>
 
-      {/* Main Content */}
       <main ref={mainRef} className="ui-elements-page__main">
         {groupsLoading ? (
-          <div className="ui-elements-page__loading">Загрузка...</div>
+          <PatternsGridSkeleton />
         ) : visibleGroups.length === 0 ? (
           <div className="ui-elements-page__empty">Malumot mavjud emas</div>
         ) : (
@@ -84,8 +100,12 @@ const PatternsPage = () => {
                   <div
                     key={idx}
                     className="patterns-card"
-                    style={{ cursor: screen.project_id ? 'pointer' : 'default' }}
-                    onClick={() => screen.project_id && navigate(`/detail/${screen.project_id}${screen.screen_id ? `?screen=${screen.screen_id}` : ''}`, { state: { from: location.pathname } })}
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => {
+                      setOpenGroupScreens(group.screens);
+                      setOpenInitialIdx(idx);
+                      if (screen.screen_id) setSearchParams({ screen: screen.screen_id });
+                    }}
                   >
                     <div className="patterns-card__image-wrapper">
                       <img
@@ -109,6 +129,26 @@ const PatternsPage = () => {
           ))
         )}
       </main>
+
+      <ImagePreviewModal
+        isOpen={openGroupScreens !== null}
+        onClose={handleClose}
+        images={(openGroupScreens ?? []).map((s, i) => ({
+          id: s.screen_id ?? String(i),
+          screenId: s.screen_id,
+          image: s.path,
+          title: s.project_name,
+        }))}
+        initialIndex={openInitialIdx}
+        appInfo={currentScreen ? {
+          logo: currentScreen.project_logo,
+          name: currentScreen.project_name,
+          description: '',
+          projectId: currentScreen.project_id,
+        } : undefined}
+        screenMeta={screenMeta}
+        screenMetaLoading={screenMetaLoading}
+      />
     </div>
   );
 };

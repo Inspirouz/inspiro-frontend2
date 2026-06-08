@@ -46,6 +46,19 @@
   flex-wrap: wrap;
 }
 
+.scenario-group__path-part {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.scenario-group__arrow {
+  font-size: 28px;
+  font-weight: 400;
+  color: #737373;
+  line-height: 1.2;
+}
+
 .scenario-group__category {
   font-size: 28px;
   font-weight: 700;

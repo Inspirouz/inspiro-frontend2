@@ -78,9 +78,24 @@ const TagDetailPage = () => {
     }));
   }
 
+  const backPath = tagType === 'patterns' ? '/patterns' : tagType === 'ui-elements' ? '/ui_elements' : '/scenarios';
+
   return (
     <div className="ui-elements-page" style={{ paddingTop: 24 }}>
       <main className="ui-elements-page__main" style={{ width: '100%' }}>
+        <button
+          onClick={() => navigate(backPath)}
+          style={{
+            display: 'inline-flex', alignItems: 'center', gap: 8,
+            background: 'none', border: 'none', color: '#7c7c7c',
+            fontSize: 16, cursor: 'pointer', marginBottom: 24, padding: '4px 0',
+          }}
+        >
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M13 15L8 10L13 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          Назад
+        </button>
         {loading ? (
           <div className="ui-elements-page__loading">Загрузка...</div>
         ) : (

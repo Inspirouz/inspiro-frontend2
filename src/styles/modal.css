@@ -21,10 +21,10 @@
 .modal-content {
   width: max-content;
   /*height: 600px;*/
-  padding: 30px;
-  border-radius: 30px;
+  padding: 40px;
+  border-radius: 32px;
   border: 1px solid #242424;
-  background-color: #111111;
+  background-color: #171717;
   transform: scale(0.5);
   transition: 0.4s all;
   z-index: 10000;
@@ -34,7 +34,7 @@
   transform: scale(1);
 }
 .list_modal__info {
-  background-color: #111111;
+  background-color: #171717;
   color: #fff;
 }
 

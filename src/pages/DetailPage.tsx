@@ -7,7 +7,24 @@ import { useScenariosCategoriesWithScreens } from '@/hooks/useScenariosCategorie
 import { useSEO } from '@/hooks/useSEO';
 import ImagePreviewModal from '@/components/ImagePreviewModal';
 import { NavIcons } from '@/components/icons';
+import { DetailPageSkeleton, ScenariosContentSkeleton } from '@/components/Skeleton';
 import '@/styles/detail-page.css';
+import { isVideoUrl } from '@/lib/media';
+
+function AutoPlayVideo({ src, className }: { src: string; className?: string }) {
+  const ref = useRef<HTMLVideoElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry) entry.isIntersecting ? el.play().catch(() => {}) : el.pause(); },
+      { threshold: 0.3 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+  return <video ref={ref} src={src} className={className} muted loop playsInline preload="none" />;
+}
 
 type TabType = 'screens' | 'scenarios' | 'videos';
 
@@ -164,7 +181,7 @@ const DetailPage = () => {
   const flatTreeStructure = flattenTree(treeStructure);
 
   const tabs = [
-    { id: 'scenarios' as TabType, label: 'Сценарии', count: allScenarios.length },
+    { id: 'scenarios' as TabType, label: 'Сценарии', count: flatTreeStructure.length },
     { id: 'screens' as TabType, label: 'Экраны', count: screens.length },
     // { id: 'videos' as TabType, label: 'Видео', count: null, comingSoon: true, disabled: true },
   ];
@@ -226,6 +243,27 @@ const DetailPage = () => {
     screenIdFromUrl
   );
 
+  // Handle navigation back from ScenarioTreePage — scroll to selected section
+  const sectionFromUrl = searchParams.get('section');
+  useEffect(() => {
+    if (!sectionFromUrl || scenariosLoading) return;
+    setActiveTab('scenarios');
+    const timeout = setTimeout(() => {
+      const el = sectionRefs.current[sectionFromUrl];
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        const node = flatTreeStructure.find((i) => i.sectionId === sectionFromUrl);
+        if (node) setActiveTreeItem(node.id);
+      }
+      setSearchParams((prev) => {
+        const next = new URLSearchParams(prev);
+        next.delete('section');
+        return next;
+      }, { replace: true });
+    }, 600);
+    return () => clearTimeout(timeout);
+  }, [sectionFromUrl, scenariosLoading]);
+
   useEffect(() => {
     if (!screenIdFromUrl) return;
     if (screensLoading) return;
@@ -262,11 +300,7 @@ const DetailPage = () => {
   };
 
   if (projectLoading && !item) {
-    return (
-      <div className="detail-page">
-        <div className="detail-page__not-found">Загрузка...</div>
-      </div>
-    );
+    return <DetailPageSkeleton />;
   }
 
   if (!item || projectError) {
@@ -286,6 +320,7 @@ const DetailPage = () => {
 
     <div className="detail-page-wrapper">
       <div className="detail-page">
+
       {/* Top Header */}
       <div className="detail-page__header">
         <div className="detail-page__header-main">
@@ -335,8 +370,8 @@ const DetailPage = () => {
             <span className="detail-page__meta-value">
               {item.updated_at
                 ? new Date(item.updated_at).toLocaleDateString('ru-RU', {
-                    day: 'numeric',
-                    month: 'long',
+                    day: '2-digit',
+                    month: '2-digit',
                     year: 'numeric',
                   })
                 : '—'}
@@ -357,8 +392,8 @@ const DetailPage = () => {
               {NavIcons[tab.id]}
             </span>
             {tab.label}
-            {tab.count !== null && (
-              <span className="detail-page__nav-count">({tab.count})</span>
+            {tab.count !== null && tab.count > 0 && (
+              <span className="detail-page__nav-chip"><span>{tab.count.toLocaleString('ru')}</span></span>
             )}
           </button>
         ))}
@@ -367,6 +402,29 @@ const DetailPage = () => {
 
 
       <div className="detail-page__content">
+
+        {/* Screens sidebar — category filter */}
+        {activeTab === 'screens' && visibleSubCategories.length > 0 && (
+          <aside className="detail-page__sidebar">
+            <button
+              className={`detail-page__subcategory ${activeSubCategory === 'all' ? 'active' : ''}`}
+              onClick={() => setActiveSubCategory('all')}
+            >
+              <span>Все</span>
+              <span className="detail-page__subcategory-count">{screens.length}</span>
+            </button>
+            {visibleSubCategories.map((cat) => (
+              <button
+                key={cat.id}
+                className={`detail-page__subcategory ${activeSubCategory === cat.id ? 'active' : ''}`}
+                onClick={() => setActiveSubCategory(cat.id)}
+              >
+                <span>{cat.label}</span>
+                <span className="detail-page__subcategory-count">{cat.count}</span>
+              </button>
+            ))}
+          </aside>
+        )}
 
         {/* Scenarios sidebar — tree navigation */}
         {activeTab === 'scenarios' && treeStructure.length > 0 && (
@@ -384,23 +442,37 @@ const DetailPage = () => {
 
         {/* Main Content */}
         <main className="detail-page__main">
+          {activeTab === 'scenarios' && treeStructure.length > 0 && (
+            <button
+              className="detail-page__select-scenario-btn"
+              onClick={() => navigate(`/detail/${id}/scenarios`)}
+            >
+              <span>Выбрать сценарий</span>
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                <path d="M7 4L13 10L7 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+          )}
+
           {activeTab === 'screens' && (
             <div className="detail-page__grid">
               {filteredScreens.map((screen, index) => {
                 const globalIndex = screens.findIndex((s) => s.id === screen.id);
                 return (
-                <div 
-                  key={screen.id} 
+                <div
+                  key={screen.id}
                   className="detail-page__screen-card"
                   onClick={() => handleImageClick(globalIndex >= 0 ? globalIndex : index)}
                   style={{ cursor: 'pointer' }}
                 >
                   <div className="detail-page__phone-screen">
-                    <img 
-                      src={screen.image} 
-                      alt={screen.title}
-                      className="detail-page__phone-image"
-                    />
+                    {isVideoUrl(screen.image)
+                      ? <AutoPlayVideo src={screen.image} className="detail-page__phone-image" />
+                      : <img src={screen.image} alt={screen.title} className="detail-page__phone-image" />}
+                  </div>
+                  <div className="detail-page__screen-card-app-info">
+                    {item.logo && <img src={item.logo} alt="" className="detail-page__screen-card-app-logo" />}
+                    <span className="detail-page__screen-card-app-name">{item.app_name}</span>
                   </div>
                 </div>
               );})}
@@ -410,7 +482,7 @@ const DetailPage = () => {
           {activeTab === 'scenarios' && (
             <div className="detail-page__scenarios-content">
               {scenariosLoading ? (
-                <div className="detail-page__scenarios-loading">Загрузка...</div>
+                <ScenariosContentSkeleton />
               ) : (
                 flatTreeStructure.map((item) => {
                   const sectionScreens = scenariosByCategoryId[item.id] ?? scenariosByCategoryId[item.sectionId] ?? [];
@@ -443,11 +515,13 @@ const DetailPage = () => {
                               style={{ cursor: 'pointer' }}
                             >
                               <div className="detail-page__phone-screen">
-                                <img
-                                  src={screen.image}
-                                  alt={screen.title}
-                                  className="detail-page__phone-image"
-                                />
+                                {isVideoUrl(screen.image)
+                                  ? <AutoPlayVideo src={screen.image} className="detail-page__phone-image" />
+                                  : <img src={screen.image} alt={screen.title} className="detail-page__phone-image" />}
+                              </div>
+                              <div className="detail-page__screen-card-app-info">
+                                {projectFromApi?.logo && <img src={projectFromApi.logo} alt="" className="detail-page__screen-card-app-logo" />}
+                                <span className="detail-page__screen-card-app-name">{projectFromApi?.app_name}</span>
                               </div>
                             </div>
                           );

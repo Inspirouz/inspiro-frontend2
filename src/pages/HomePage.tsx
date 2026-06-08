@@ -10,9 +10,9 @@ const HomePage = () => {
   
   // SEO optimization
   useSEO({
-    title: 'Inspiro - UI/UX Patterns va Design Elements',
-    description: 'Zamonaviy UI/UX dizayn patternlar, scenario va elementlar to\'plami. Dizayn ilhomlari va best practices.',
-    keywords: 'UI design, UX design, design patterns, UI elements, UX scenarios, design inspiration',
+    title: 'Inspiro — UI/UX паттерны, сценарии и элементы дизайна',
+    description: 'Коллекция UI/UX паттернов, сценариев и элементов дизайна. Вдохновение и лучшие практики для дизайнеров.',
+    keywords: 'UI дизайн, UX дизайн, паттерны дизайна, UI элементы, UX сценарии, вдохновение для дизайна',
     ogUrl: 'https://inspiro.uz/',
   });
   const containerRef = useRef<HTMLUListElement>(null);

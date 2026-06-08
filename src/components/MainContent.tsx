@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import Card from "@/components/Card";
 import { useProjects } from "@/hooks/useProjects";
+import { HomePageSkeleton } from '@/components/Skeleton';
 import type { ContentItem } from '@/types';
 import '@/styles/header-search.css';
 
@@ -17,11 +18,7 @@ const MainContent = ({ category }: MainContentProps) => {
   };
 
   if (loading) {
-    return (
-      <main className="main-content-view" role="main" aria-label="Main content">
-        <div className="main-content-view__loading">Загрузка...</div>
-      </main>
-    );
+    return <HomePageSkeleton />;
   }
 
   if (error) {

@@ -152,6 +152,27 @@
   transform: scale(0.87);
 }
 
+/* Video wrapper */
+.card__video-wrap {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.card__play-icon {
+  position: absolute;
+  width: 48px;
+  height: 48px;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.card:hover .card__play-icon {
+  opacity: 0;
+}
+
 /* Pattern variant */
 .card--pattern {
   padding: 20px;

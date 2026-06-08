@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate, useLocation } from "react-router-dom";
 import MainLogo from "@/assets/MainLogo.svg";
 import logIcon from "@/assets/logIcon.svg";
 import emailIcon from "@/assets/email.svg";
@@ -9,15 +9,34 @@ import Reg from "@/components/Reg";
 import ProfileDropdown from "@/components/ProfileDropdown";
 import SearchModal from "@/components/SearchModal";
 import { useAuth } from "@/contexts/AuthContext";
+import { NAV_ITEMS } from "@/constants";
+import { NavIcons } from "@/components/icons";
+import { useNavCounts } from "@/hooks/useNavCounts";
+
+function fmt(n: number | null): string | null {
+  if (!n) return null;
+  return n.toLocaleString('ru');
+}
 
 const CONTACTS = [
-  { label: "Email", href: "mailto:sashasashatsoy@gmail.com", icon: emailIcon },
+  { label: "Email", href: "mailto:inspirouz@gmail.com", icon: emailIcon },
   { label: "LinkedIn", href: "https://www.linkedin.com/in/aleksandr-tsoy-82b061276/", icon: linkedinIcon },
 ];
 
 const Header = () => {
   const { isAuthorized } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const isDetailPage = /^\/detail\//.test(location.pathname);
+  const isSubscriptionPage = location.pathname === '/subscription';
+  const showNav = !isSubscriptionPage && !isDetailPage;
+  const counts = useNavCounts();
+  const countMap: Record<string, string | null> = {
+    '/': fmt(counts.apps),
+    '/patterns': fmt(counts.patterns),
+    '/scenarios': fmt(counts.scenarios),
+    '/ui_elements': fmt(counts.uiElements),
+  };
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
@@ -75,9 +94,52 @@ const Header = () => {
           />
         </Link>
 
-        <button className="header-input" onClick={handleSearchClick}>
-          Поиск...
-        </button>
+        {/* Back button — only on detail pages, mobile only */}
+        {isDetailPage && (
+          <button
+            className="mobile-back-btn"
+            onClick={() => navigate('/')}
+            aria-label="На главную"
+          >
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M10 13L5 8L10 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
+        )}
+
+        <div className="header-center">
+          <button className="header-input" onClick={handleSearchClick}>
+            <svg className="header-input__icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.8"/>
+              <path d="M16.5 16.5L21 21" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+            </svg>
+            <span className="header-input__placeholder">Поиск приложений, паттернов, сценариев, UI элементов...</span>
+          </button>
+
+          {showNav && (
+            <ul className="header-nav">
+              {NAV_ITEMS.map((item) => {
+                const chip = countMap[item.path];
+                return (
+                  <li key={item.path} className="nav-item">
+                    <NavLink
+                      className={({ isActive }) => `nav_links ${isActive ? 'active' : ''}`}
+                      to={item.path}
+                      end={item.path === '/'}
+                      aria-label={`Navigate to ${item.label}`}
+                    >
+                      {item.icon && NavIcons[item.icon] && (
+                        <span className="nav-icon">{NavIcons[item.icon]}</span>
+                      )}
+                      <span className="nav-label">{item.label}</span>
+                      {chip && <span className="nav-chip">{chip}</span>}
+                    </NavLink>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </div>
 
         {/* Hamburger — visible only on mobile via CSS */}
         <button
