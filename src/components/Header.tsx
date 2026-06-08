@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { Typewriter } from "@/components/Typewriter";
 import { Link, NavLink, useNavigate, useLocation } from "react-router-dom";
 import MainLogo from "@/assets/MainLogo.svg";
 import logIcon from "@/assets/logIcon.svg";
@@ -113,7 +114,17 @@ const Header = () => {
               <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.8"/>
               <path d="M16.5 16.5L21 21" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
             </svg>
-            <span className="header-input__placeholder">Поиск приложений, паттернов, сценариев, UI элементов...</span>
+            <span className="header-input__placeholder">
+              Поиск&nbsp;<Typewriter
+                text={["приложений", "сценариев", "паттернов", "UI элементов"]}
+                speed={80}
+                deleteSpeed={40}
+                delay={1800}
+                loop
+                cursor="|"
+                className="header-input__typewriter"
+              />
+            </span>
           </button>
 
           {showNav && (

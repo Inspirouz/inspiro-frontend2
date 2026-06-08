@@ -79,7 +79,7 @@ html {
   height: 60px;
   padding: 0 24px;
   font-size: 18px;
-  color: #737373;
+  color: #999999;
   font-weight: 400;
   cursor: pointer;
   transition: border-color 0.2s, background-color 0.2s;
@@ -101,7 +101,7 @@ html {
 }
 
 .header-input__icon {
-  color: #737373;
+  color: #999999;
   flex-shrink: 0;
   display: block;
   width: 24px;
@@ -110,12 +110,17 @@ html {
 
 .header-input__placeholder {
   font-size: 18px;
-  color: #737373;
+  color: #999999;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   letter-spacing: -0.36px;
-  line-height: 1;
+  line-height: 18px;
+  margin-top: 3px;
+}
+
+.header-input__typewriter {
+  color: #999999;
 }
 .MainLogo {
   height: 64px;
