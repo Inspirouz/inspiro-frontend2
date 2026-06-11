@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { cachedFetch } from '@/lib/apiCache';
 
 export type PatternScreen = {
   path: string;
@@ -37,11 +38,9 @@ export function usePatternsWithScreens() {
   useEffect(() => {
     const apiUrl = import.meta.env.VITE_API_URL;
     setLoading(true);
-    fetch(`${apiUrl}/screens-categories/with-screens`)
-      .then((res) =>
-        res.json().then((json) => {
+    cachedFetch(`${apiUrl}/screens-categories/with-screens`)
+      .then((json) => {
           const ok =
-            res.ok ||
             json?.success === true ||
             (json?.status_code >= 200 && json?.status_code < 300);
           const data = json?.data;
@@ -69,7 +68,6 @@ export function usePatternsWithScreens() {
             .filter((g): g is PatternGroup => g != null);
           setGroups(mapped);
         })
-      )
       .catch(() => setGroups([]))
       .finally(() => setLoading(false));
   }, []);

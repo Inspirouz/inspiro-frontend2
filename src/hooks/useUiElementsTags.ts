@@ -1,3 +1,4 @@
+import { cachedFetch } from '@/lib/apiCache';
 import { useState, useEffect } from 'react';
 
 export type UiElementTagItem = {
@@ -39,11 +40,9 @@ export function useUiElementsTags() {
   useEffect(() => {
     const apiUrl = import.meta.env.VITE_API_URL;
     setLoading(true);
-    fetch(`${apiUrl}/tags/ui-elements/with-count`)
-      .then((res) =>
-        res.json().then((json) => {
+    cachedFetch(`${apiUrl}/tags/ui-elements/with-count`)
+      .then((json) => {
           const ok =
-            res.ok ||
             json?.success === true ||
             (json?.status_code >= 200 && json?.status_code < 300);
           const data = json?.data;
@@ -54,7 +53,6 @@ export function useUiElementsTags() {
               : []
           );
         })
-      )
       .catch(() => setTags([]))
       .finally(() => setLoading(false));
   }, []);

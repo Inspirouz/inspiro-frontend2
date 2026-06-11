@@ -1,27 +1,20 @@
-import { lazy, Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { Layout } from '@/pages';
 import ErrorBoundary from '@/components/ErrorBoundary';
-import PageLoader from '@/components/PageLoader';
+import HomePage from '@/pages/HomePage';
+import PatternsPage from '@/pages/PatternsPage';
+import ScenariosPage from '@/pages/ScenariosPage';
+import UiElementsPage from '@/pages/UiElementsPage';
+import DetailPage from '@/pages/DetailPage';
+import SearchPage from '@/pages/SearchPage';
+import TagDetailPage from '@/pages/TagDetailPage';
+import ScenarioTreePage from '@/pages/ScenarioTreePage';
 // import ProtectedRoute from '@/components/ProtectedRoute';
-
-// Code splitting - Lazy loading pages for better performance
-const HomePage = lazy(() => import('@/pages/HomePage'));
-const PatternsPage = lazy(() => import('@/pages/PatternsPage'));
-const ScenariosPage = lazy(() => import('@/pages/ScenariosPage'));
-const UiElementsPage = lazy(() => import('@/pages/UiElementsPage'));
-// Hozircha subscription page o'chiq
-// const SubscriptionPage = lazy(() => import('@/pages/SubscriptionPage'));
-const DetailPage = lazy(() => import('@/pages/DetailPage'));
-const SearchPage = lazy(() => import('@/pages/SearchPage'));
-const TagDetailPage = lazy(() => import('@/pages/TagDetailPage'));
-const ScenarioTreePage = lazy(() => import('@/pages/ScenarioTreePage'));
 
 const App = () => {
   return (
     <div className="container">
       <ErrorBoundary>
-        <Suspense fallback={<PageLoader />}>
           <Routes>
             <Route path="/" element={<Layout />}>
               <Route index element={<HomePage />} />
@@ -46,7 +39,6 @@ const App = () => {
               */}
             </Route>
           </Routes>
-        </Suspense>
       </ErrorBoundary>
     </div>
   );

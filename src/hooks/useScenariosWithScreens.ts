@@ -1,3 +1,4 @@
+import { cachedFetch } from '@/lib/apiCache';
 import { useState, useEffect } from 'react';
 
 export type ScenarioScreen = {
@@ -40,11 +41,9 @@ export function useScenariosWithScreens() {
   useEffect(() => {
     const apiUrl = import.meta.env.VITE_API_URL;
     setLoading(true);
-    fetch(`${apiUrl}/tags/senary-categories/with-screens`)
-      .then((res) =>
-        res.json().then((json) => {
+    cachedFetch(`${apiUrl}/tags/senary-categories/with-screens`)
+      .then((json) => {
           const ok =
-            res.ok ||
             json?.success === true ||
             (json?.status_code >= 200 && json?.status_code < 300);
           const data = json?.data;
@@ -71,7 +70,6 @@ export function useScenariosWithScreens() {
             .filter((g): g is ScenarioGroup => g != null);
           setGroups(mapped);
         })
-      )
       .catch(() => setGroups([]))
       .finally(() => setLoading(false));
   }, []);

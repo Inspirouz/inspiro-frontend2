@@ -1,3 +1,4 @@
+import { cachedFetch } from '@/lib/apiCache';
 import { useState, useEffect, useCallback } from 'react';
 
 export type ScreenCategoryItem = { id: string; label: string; count: number };
@@ -27,8 +28,7 @@ export function useScreensCategories(projectId?: string | null) {
     try {
       const params = new URLSearchParams();
       if (projectId) params.set('project_id', projectId);
-      const res = await fetch(`${apiUrl}/screens-categories${params.toString() ? `?${params}` : ''}`);
-      const json = await res.json().catch(() => ({}));
+      const json = await cachedFetch(`${apiUrl}/screens-categories${params.toString() ? `?${params}` : ''}`).catch(() => ({}));
       const data = json?.data ?? json;
       const list = Array.isArray(data) ? data : Array.isArray(data?.items) ? data.items : [];
       const ok = json?.success === true || (json?.status_code >= 200 && json?.status_code < 300);

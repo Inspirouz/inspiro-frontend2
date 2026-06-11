@@ -23,9 +23,13 @@ export default defineConfig({
     host: 'localhost'
   },  
 preview:{
-allowedHosts:['inspiro.uz'],
-port:4002
-
+  allowedHosts: true,
+  port:4002,
+  headers: {
+    // no-store: Safari ignores no-cache (no ETag sent by vite preview) and serves stale JS.
+    // no-store prevents caching entirely — browser always fetches fresh.
+    'Cache-Control': 'no-store',
+  },
 },
   build: {
     // Code splitting optimization

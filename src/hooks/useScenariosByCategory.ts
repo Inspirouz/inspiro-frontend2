@@ -1,3 +1,4 @@
+import { cachedFetch } from '@/lib/apiCache';
 import { useState, useEffect } from 'react';
 import type { ContentItem } from '@/types';
 
@@ -105,9 +106,8 @@ export function useScenariosByCategory(categoryId: string | null) {
     }
     const apiUrl = import.meta.env.VITE_API_URL;
     setLoading(true);
-    fetch(`${apiUrl}/scenarios?category_id=${categoryId}`)
-      .then((res) =>
-        res.json().then((json) => {
+    cachedFetch(`${apiUrl}/scenarios?category_id=${categoryId}`)
+      .then((json) => {
           const data = json?.data ?? json;
           const list = Array.isArray(data)
             ? data
@@ -117,7 +117,6 @@ export function useScenariosByCategory(categoryId: string | null) {
                 ? (data as { results: unknown[] }).results
                 : [];
           const ok =
-            res.ok ||
             json?.success === true ||
             (json?.status_code >= 200 && json?.status_code < 300);
           setScenarios(
@@ -126,7 +125,6 @@ export function useScenariosByCategory(categoryId: string | null) {
               : []
           );
         })
-      )
       .catch(() => setScenarios([]))
       .finally(() => setLoading(false));
   }, [categoryId]);

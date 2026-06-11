@@ -1,3 +1,4 @@
+import { cachedFetch } from '@/lib/apiCache';
 import { useState, useEffect } from 'react';
 import type { ContentItem } from '@/types';
 
@@ -99,9 +100,8 @@ export function useUiElementsByTag(tagId: string | null) {
     }
     const apiUrl = import.meta.env.VITE_API_URL;
     setLoading(true);
-    fetch(`${apiUrl}/tags/ui_elements/${tagId}`)
-      .then((res) =>
-        res.json().then((json) => {
+    cachedFetch(`${apiUrl}/tags/ui_elements/${tagId}`)
+      .then((json) => {
           const data = json?.data ?? json;
           const list = Array.isArray(data)
             ? data
@@ -111,14 +111,13 @@ export function useUiElementsByTag(tagId: string | null) {
                 ? (data as { results: unknown[] }).results
                 : [];
           const ok =
-            res.ok || json?.success === true || (json?.status_code >= 200 && json?.status_code < 300);
+            json?.success === true || (json?.status_code >= 200 && json?.status_code < 300);
           setElements(
             ok && list.length > 0
               ? list.map((item: RawItem, i: number) => mapToContentItem(item, i))
               : []
           );
         })
-      )
       .catch(() => setElements([]))
       .finally(() => setLoading(false));
   }, [tagId]);

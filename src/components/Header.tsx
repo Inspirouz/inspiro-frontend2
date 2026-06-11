@@ -82,7 +82,7 @@ const Header = () => {
 
   return (
     <>
-      <header className="header-search">
+      <header className={`header-search${isDetailPage ? ' header-search--detail' : ''}`}>
         <Link to="/" aria-label="Go to home page">
           <img
             className="MainLogo"

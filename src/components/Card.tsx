@@ -20,12 +20,6 @@ function toImageUrl(image: string): string {
   return `${getImageBaseUrl()}${path}`;
 }
 
-const PlayIcon = () => (
-  <svg className="card__play-icon" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="18" cy="18" r="18" fill="rgba(0,0,0,0.55)"/>
-    <path d="M14 11.5L26 18L14 24.5V11.5Z" fill="white"/>
-  </svg>
-);
 
 const Card = ({ item, onClick, variant = 'default' }: CardProps) => {
   const isPattern = variant === 'pattern';
@@ -52,31 +46,16 @@ const Card = ({ item, onClick, variant = 'default' }: CardProps) => {
     setCurrentIndex((prev) => (prev < images.length - 1 ? prev + 1 : 0));
   };
 
-  const handleMouseEnter = () => {
-    if (videoRef.current) {
-      videoRef.current.play().catch(() => {});
-    }
-  };
-
-  const handleMouseLeave = () => {
-    if (videoRef.current) {
-      videoRef.current.pause();
-      videoRef.current.currentTime = 0;
-    }
-  };
-
   const currentUrl = toImageUrl(images[currentIndex] || '');
   const isVideo = isVideoUrl(currentUrl);
 
   return (
-    <article
+    <div
       className={`card ${isPattern ? 'card--pattern' : ''}`}
       onClick={() => onClick?.(item)}
-      role={onClick ? 'button' : undefined}
+      role={onClick ? 'button' : 'listitem'}
       tabIndex={onClick ? 0 : undefined}
       onKeyDown={handleKeyDown}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
       aria-label={`${item.app_name} - ${item.text_info || 'View details'}`}
     >
       {/* Header */}
@@ -86,8 +65,7 @@ const Card = ({ item, onClick, variant = 'default' }: CardProps) => {
             className="card__logo"
             src={item.logo}
             alt={`${item.app_name} logo`}
-            loading="lazy"
-            decoding="async"
+            loading="eager"
           />
         ) : (
           <div
@@ -122,25 +100,21 @@ const Card = ({ item, onClick, variant = 'default' }: CardProps) => {
         </button>
 
         {isVideo ? (
-          <div className="card__video-wrap">
-            <video
-              ref={videoRef}
-              className="card__phone-image"
-              src={currentUrl}
-              muted
-              loop
-              playsInline
-              preload="metadata"
-            />
-            <PlayIcon />
-          </div>
+          <video
+            ref={videoRef}
+            className="card__phone-image"
+            src={currentUrl}
+            autoPlay
+            muted
+            loop
+            playsInline
+          />
         ) : (
           <img
             className="card__phone-image"
             src={currentUrl}
             alt={`${item.app_name} app screenshot`}
-            loading="lazy"
-            decoding="async"
+            loading="eager"
           />
         )}
 
@@ -150,7 +124,7 @@ const Card = ({ item, onClick, variant = 'default' }: CardProps) => {
           </svg>
         </button>
       </div>
-    </article>
+    </div>
   );
 };
 

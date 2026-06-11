@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { cachedFetch } from '@/lib/apiCache';
 
 export type NavCounts = {
   apps: number | null;
@@ -9,8 +10,7 @@ export type NavCounts = {
 
 async function fetchCount(url: string, extractor: (json: unknown) => number | null): Promise<number | null> {
   try {
-    const res = await fetch(url);
-    const json = await res.json();
+    const json = await cachedFetch(url);
     return extractor(json);
   } catch {
     return null;

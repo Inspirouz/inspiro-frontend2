@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { cachedFetch } from '@/lib/apiCache';
 
 export type ScenariosTreeNode = {
   id: string;
@@ -100,11 +101,10 @@ export function useScenariosCategories(projectId?: string | null) {
     try {
       const query = projectId ? `?project_id=${encodeURIComponent(projectId)}` : '';
       const url = `${apiUrl}/scenarios-categories${query}`;
-      const res = await fetch(url);
-      const json = await res.json().catch(() => ({}));
+      const json = await cachedFetch(url).catch(() => ({}));
       const data = json?.data ?? json;
       const list: RawItem[] = Array.isArray(data) ? data : Array.isArray(data?.items) ? data.items : [];
-      const ok = res.ok && (json?.success === true || (json?.status_code >= 200 && json?.status_code < 300));
+      const ok = json?.success === true || (json?.status_code >= 200 && json?.status_code < 300);
       if (ok && list.length > 0) {
         const flat = flattenItems(list);
         const tree = buildTree(flat, projectId);

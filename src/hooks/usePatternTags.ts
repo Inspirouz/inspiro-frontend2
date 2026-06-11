@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { cachedFetch } from '@/lib/apiCache';
 
 export type PatternTagItem = {
   id: string;
@@ -34,23 +35,21 @@ export function usePatternTags() {
   useEffect(() => {
     const apiUrl = import.meta.env.VITE_API_URL;
     setLoading(true);
-    fetch(`${apiUrl}/tags/patterns/with-count`)
-      .then((res) =>
-        res.json().then((json) => {
+    cachedFetch(`${apiUrl}/tags/patterns/with-count`)
+      .then((json) => {
           const data = json?.data ?? json;
           const list = Array.isArray(data)
             ? data
             : Array.isArray((data as { items?: unknown[] })?.items)
               ? (data as { items: unknown[] }).items
               : [];
-          const ok = res.ok || json?.success === true || (json?.status_code >= 200 && json?.status_code < 300);
+          const ok = json?.success === true || (json?.status_code >= 200 && json?.status_code < 300);
           const mapped =
             ok && list.length > 0
               ? (list as RawTag[]).map((x) => mapTag(x)).filter((t): t is PatternTagItem => t != null)
               : [];
           setTags(mapped);
         })
-      )
       .catch(() => setTags([]))
       .finally(() => setLoading(false));
   }, []);

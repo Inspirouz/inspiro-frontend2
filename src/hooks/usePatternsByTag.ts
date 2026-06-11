@@ -1,3 +1,4 @@
+import { cachedFetch } from '@/lib/apiCache';
 import { useState, useEffect } from 'react';
 import type { ContentItem } from '@/types';
 
@@ -68,9 +69,8 @@ export function usePatternsByTag(tagId: string | null) {
     
     const query = tagId && tagId !== 'all' ? `?tag_id=${tagId}` : '';
     
-    fetch(`${apiUrl}/tags/patterns/with-screens${query}`)
-      .then((res) =>
-        res.json().then((json) => {
+    cachedFetch(`${apiUrl}/tags/patterns/with-screens${query}`)
+      .then((json) => {
           const data = json?.data ?? json;
           const list: TagWithScreensRaw[] = Array.isArray(data)
             ? data
@@ -79,9 +79,9 @@ export function usePatternsByTag(tagId: string | null) {
               : Array.isArray((data as { results?: unknown[] })?.results)
                 ? (data as { results: unknown[] }).results
                 : [];
-                
-          const ok = res.ok || json?.success === true || (json?.status_code >= 200 && json?.status_code < 300);
-          
+
+          const ok = json?.success === true || (json?.status_code >= 200 && json?.status_code < 300);
+
           if (ok && list.length > 0) {
             const allScreens: ContentItem[] = [];
             list.forEach(tagGroup => {
@@ -96,7 +96,6 @@ export function usePatternsByTag(tagId: string | null) {
             setPatterns([]);
           }
         })
-      )
       .catch(() => setPatterns([]))
       .finally(() => setLoading(false));
   }, [tagId]);

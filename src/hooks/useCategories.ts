@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { cachedFetch } from '@/lib/apiCache';
 import type { CategoryItem } from '@/types';
 import { CATEGORIES as FALLBACK_NAMES } from '@/constants';
 
@@ -11,8 +12,7 @@ export function useCategories() {
 
   useEffect(() => {
     const apiUrl = import.meta.env.VITE_API_URL;
-    fetch(`${apiUrl}/categories`)
-      .then((res) => res.json())
+    cachedFetch(`${apiUrl}/categories`)
       .then((data) => {
         if (data?.success && Array.isArray(data.data)) {
           const list = (data.data as Array<{ id?: string; name?: string; is_active?: boolean }>)

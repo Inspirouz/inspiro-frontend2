@@ -29,18 +29,14 @@ const MainContent = ({ category }: MainContentProps) => {
     );
   }
 
-  console.log(projects);
-  
-
   return (
-    <main className="main-content-view" role="main" aria-label="Main content">
+    <main
+      className="main-content-view"
+      role="main"
+      aria-label="Main content"
+    >
       {projects.map((item) => (
-        <Card
-          key={item.id}
-          item={item}
-          variant="default"
-          onClick={handleCardClick}
-        />
+        <Card key={item.id} item={item} onClick={handleCardClick} />
       ))}
     </main>
   );

@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
+import { cachedFetch } from '@/lib/apiCache';
 
 export function useProjectsCount() {
   const [count, setCount] = useState<number | null>(null);
 
   useEffect(() => {
     const apiUrl = import.meta.env.VITE_API_URL;
-    fetch(`${apiUrl}/projects`)
-      .then((res) => res.json())
+    cachedFetch(`${apiUrl}/projects`)
       .then((json) => {
         const data = json?.data ?? json;
         const total =

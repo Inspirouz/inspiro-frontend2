@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { ContentItem } from '@/types';
+import { cachedFetch } from '@/lib/apiCache';
 
 function getImageBaseUrl(): string {
   const apiUrl = import.meta.env.VITE_API_URL || '';
@@ -99,12 +100,12 @@ export function useProjects(category?: string) {
     try {
       const params = new URLSearchParams();
       if (category) params.set('category_id', category);
-      const res = await fetch(`${apiUrl}/projects${params.toString() ? `?${params.toString()}` : ''}`);
-      const json = await res.json().catch(() => ({}));
+      const url = `${apiUrl}/projects${params.toString() ? `?${params.toString()}` : ''}`;
+      const json = await cachedFetch(url).catch(() => ({}));
       const payload = json?.data ?? json;
       const list = Array.isArray(payload?.items) ? payload.items : [];
       const ok = json?.success === true || (json?.status_code >= 200 && json?.status_code < 300);
-      if (!ok && res.ok === false) {
+      if (!ok) {
         throw new Error(json?.message || 'Ошибка загрузки');
       }
       setProjects(list.map((item: Record<string, unknown>) => mapProjectToContentItem(item)));
@@ -137,8 +138,7 @@ export function useProject(id: string | undefined) {
     const apiUrl = import.meta.env.VITE_API_URL;
     setLoading(true);
     setError(null);
-    fetch(`${apiUrl}/projects/${id}`)
-      .then((res) => res.json())
+    cachedFetch(`${apiUrl}/projects/${id}`)
       .then((json) => {
         const ok = json?.success === true || (json?.status_code >= 200 && json?.status_code < 300);
         const data = json?.data;
@@ -215,8 +215,7 @@ export function useProjectScreens(projectId: string | undefined) {
     }
     const apiUrl = import.meta.env.VITE_API_URL;
     setLoading(true);
-    fetch(`${apiUrl}/projects/${projectId}/screens`)
-      .then((res) => res.json())
+    cachedFetch(`${apiUrl}/projects/${projectId}/screens`)
       .then((json) => {
         const data = json?.data ?? json;
         const list = Array.isArray(data) ? data : Array.isArray(data?.items) ? data.items : [];
@@ -275,8 +274,7 @@ export function useProjectScenarios(projectId: string | undefined) {
     }
     const apiUrl = import.meta.env.VITE_API_URL;
     setLoading(true);
-    fetch(`${apiUrl}/projects/${projectId}/scenarios`)
-      .then((res) => res.json())
+    cachedFetch(`${apiUrl}/projects/${projectId}/scenarios`)
       .then((json) => {
         const data = json?.data ?? json;
         const categories: ApiScenarioCategory[] = Array.isArray(data) ? data : Array.isArray(data?.items) ? data.items : [];
@@ -398,8 +396,7 @@ export function useScreenDetails(
     }
     const apiUrl = import.meta.env.VITE_API_URL;
     setLoading(true);
-    fetch(`${apiUrl}/projects/${projectId}/screens/${screenId}`)
-      .then((res) => res.json())
+    cachedFetch(`${apiUrl}/projects/${projectId}/screens/${screenId}`)
       .then((json) => {
         const data = json?.data ?? json;
         if (!data || typeof data !== 'object') {
@@ -453,8 +450,7 @@ export function useScenarioDetails(
     }
     const apiUrl = import.meta.env.VITE_API_URL;
     setLoading(true);
-    fetch(`${apiUrl}/projects/${projectId}/scenarios/${scenarioId}`)
-      .then((res) => res.json())
+    cachedFetch(`${apiUrl}/projects/${projectId}/scenarios/${scenarioId}`)
       .then((json) => {
         const data = json?.data ?? json;
         if (!data || typeof data !== 'object') {

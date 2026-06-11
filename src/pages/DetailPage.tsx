@@ -229,7 +229,7 @@ const DetailPage = () => {
           }
         }
       },
-      { root: null, rootMargin: '-130px 0px -60% 0px', threshold: [0, 0.1, 0.25, 0.5, 0.75, 1] }
+      { root: null, rootMargin: '-215px 0px -60% 0px', threshold: [0, 0.1, 0.25, 0.5, 0.75, 1] }
     );
     allSectionIds.forEach((sectionId) => {
       const el = sectionRefs.current[sectionId];
@@ -328,54 +328,14 @@ const DetailPage = () => {
             {item.logo ? (
               <img src={item.logo} alt={item.app_name} />
             ) : (
-              <div
-                aria-label={item.app_name}
-                style={{
-                  width: 56,
-                  height: 56,
-                  borderRadius: 12,
-                  background: '#242424',
-                  color: '#FFFFFF',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontWeight: 700,
-                  fontSize: 22,
-                  textTransform: 'uppercase',
-                  userSelect: 'none',
-                }}
-              >
+              <span className="detail-page__header-icon-fallback">
                 {(item.app_name?.trim()?.[0] ?? '?').toUpperCase()}
-              </div>
+              </span>
             )}
           </div>
           <div className="detail-page__header-info">
             <h1 className="detail-page__header-title">{item.app_name}</h1>
-            <p className="detail-page__header-description">{item.description || item.text_info || '—'}</p>
-          </div>
-        </div>
-        <div className="detail-page__header-meta">
-          <div className="detail-page__meta-item">
-            <span className="detail-page__meta-label">Категория</span>
-            <span className="detail-page__meta-value">
-              {item.categories?.map((c) => c.name).filter(Boolean).join(', ') || '—'}
-            </span>
-          </div>
-          <div className="detail-page__meta-item">
-            <span className="detail-page__meta-label">Платформы</span>
-            <span className="detail-page__meta-value">{item.platforms?.join(', ') || '—'}</span>
-          </div>
-          <div className="detail-page__meta-item">
-            <span className="detail-page__meta-label">Последнее обновление</span>
-            <span className="detail-page__meta-value">
-              {item.updated_at
-                ? new Date(item.updated_at).toLocaleDateString('ru-RU', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric',
-                  })
-                : '—'}
-            </span>
+            <p className="detail-page__header-description">{item.description || item.text_info || ''}</p>
           </div>
         </div>
       </div>

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { cachedFetch } from '@/lib/apiCache';
 
 export type UiScreen = {
   path: string;
@@ -41,11 +42,9 @@ export function useUiElementsWithScreens() {
   useEffect(() => {
     const apiUrl = import.meta.env.VITE_API_URL;
     setLoading(true);
-    fetch(`${apiUrl}/tags/ui-elements/with-screens`)
-      .then((res) =>
-        res.json().then((json) => {
+    cachedFetch(`${apiUrl}/tags/ui-elements/with-screens`)
+      .then((json) => {
           const ok =
-            res.ok ||
             json?.success === true ||
             (json?.status_code >= 200 && json?.status_code < 300);
           const data = json?.data;
@@ -73,7 +72,6 @@ export function useUiElementsWithScreens() {
             .filter((g): g is UiElementGroup => g != null);
           setGroups(mapped);
         })
-      )
       .catch(() => setGroups([]))
       .finally(() => setLoading(false));
   }, []);
