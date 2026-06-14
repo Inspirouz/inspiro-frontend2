@@ -48,9 +48,9 @@ html {
   grid-template-columns: 1fr auto 1fr !important;
   align-items: start !important;
   /* height: min-content — Safari macOS bug: fixed+grid+min-content = 100vh instead of content height */
-  /* Fix: explicit height matching .header-spacer value; overflow:hidden clips any edge cases */
+  /* Fix: explicit height matching .header-spacer value */
   height: 176px !important;
-  overflow: hidden !important;
+  overflow: visible !important;
   position: fixed !important;
   top: 0 !important;
   left: 0 !important;
@@ -157,6 +157,24 @@ html {
 .header-input__typewriter {
   color: #999999;
 }
+
+.header-input__shortcut {
+  margin-left: auto;
+  flex-shrink: 0;
+  font-size: 16px;
+  font-family: inherit;
+  color: #666666;
+  letter-spacing: 0;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .header-input__shortcut {
+    display: none;
+  }
+}
+
 .MainLogo {
   height: 64px;
   cursor: pointer;

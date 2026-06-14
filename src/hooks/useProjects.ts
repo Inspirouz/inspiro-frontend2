@@ -167,6 +167,12 @@ export function useProject(id: string | undefined) {
   return { project, loading, error };
 }
 
+export type PreloadedTags = {
+  scenarios?: (string | { id?: string; name?: string; type?: string })[];
+  uiElements?: (string | { id?: string; name?: string; type?: string })[];
+  patterns?: (string | { id?: string; name?: string; type?: string })[];
+};
+
 export type ScreenItem = {
   /** Unique image id (for modal and keys) */
   id: string | number;
@@ -174,12 +180,16 @@ export type ScreenItem = {
   screenId: string | number;
   title: string;
   image: string;
+  tags?: PreloadedTags;
 };
 
 type ApiScreen = {
   id?: string;
-  screensCategory?: { name?: string };
+  screensCategory?: { id?: string; name?: string };
   images?: Array<string | { id?: string; path?: string; file_name?: string }>;
+  senarys?: unknown[];
+  ui_elements?: unknown[];
+  patterns?: unknown[];
 };
 
 function flattenScreensFromApi(list: ApiScreen[]): ScreenItem[] {
@@ -187,6 +197,19 @@ function flattenScreensFromApi(list: ApiScreen[]): ScreenItem[] {
   for (const screen of list) {
     const categoryName = (screen.screensCategory?.name ?? screen.id ?? '') as string;
     const images = screen.images ?? [];
+    const scenarios = normalizeTagEntries(Array.isArray(screen.senarys) ? screen.senarys : undefined);
+    const uiElements = normalizeTagEntries(Array.isArray(screen.ui_elements) ? screen.ui_elements : undefined);
+    // patterns: resolve from patterns array + add screensCategory as fallback
+    const rawPatterns = normalizeTagEntries(Array.isArray(screen.patterns) ? screen.patterns : undefined) ?? [];
+    const cat = screen.screensCategory;
+    if (cat?.id && cat?.name && !rawPatterns.some((p) => typeof p !== 'string' && p.id === cat.id)) {
+      rawPatterns.push({ id: cat.id, name: cat.name });
+    }
+    const tags: PreloadedTags = {
+      ...(scenarios?.length ? { scenarios } : {}),
+      ...(uiElements?.length ? { uiElements } : {}),
+      ...(rawPatterns.length ? { patterns: rawPatterns } : {}),
+    };
     for (const img of images) {
       const path =
         typeof img === 'string' ? img : ((img.path ?? img.file_name ?? '') as string);
@@ -196,6 +219,7 @@ function flattenScreensFromApi(list: ApiScreen[]): ScreenItem[] {
           screenId: (screen.id as string) ?? `${screen.id ?? 'screen'}-${result.length}`,
           title: categoryName,
           image: toImageUrl(path),
+          tags,
         });
       }
     }
@@ -238,6 +262,7 @@ export type ScenarioItem = ScreenItem & {
   projectId?: string;
   projectName?: string;
   projectLogo?: string;
+  tags?: PreloadedTags;
 };
 
 type ApiScenarioCategory = {
@@ -340,7 +365,7 @@ type TagLike = { id?: unknown; name?: unknown; type?: unknown };
  * Handles items shaped like `{ tag: { id, name } }` (e.g. senarys/scenarios from /projects/:id/scenarios/:scenarioId)
  * and falls back to top-level `id`/`name` when no nested `tag` is present.
  */
-function normalizeTagEntries(raw: unknown): (string | { id?: string; name?: string; type?: string })[] | undefined {
+export function normalizeTagEntries(raw: unknown): (string | { id?: string; name?: string; type?: string })[] | undefined {
   if (!Array.isArray(raw)) return undefined;
   const out: (string | { id?: string; name?: string; type?: string })[] = [];
   for (const item of raw) {

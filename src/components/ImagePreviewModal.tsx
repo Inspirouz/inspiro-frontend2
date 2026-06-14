@@ -1,14 +1,16 @@
 import { useState, useEffect, useRef } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
+import MainLogo from '@/assets/MainLogo.svg';
 import '@/styles/image-preview-modal.css';
 import iconDownload from '@/assets/icon-download.svg';
 import iconLink from '@/assets/icon-link.svg';
 import { isVideoUrl } from '@/lib/media';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/Tooltip';
 
 interface ImagePreviewModalProps {
   isOpen: boolean;
   onClose: () => void;
-  images: Array<{ id: number | string; screenId?: number | string; image: string; title: string; categoryId?: string }>;
+  images: Array<{ id: number | string; screenId?: number | string; image: string; title: string; categoryId?: string; tags?: { scenarios?: (string | { id?: string; name?: string; type?: string })[]; uiElements?: (string | { id?: string; name?: string; type?: string })[]; patterns?: (string | { id?: string; name?: string; type?: string })[] } }>;
   initialIndex?: number;
   appInfo?: {
     logo: string;
@@ -31,6 +33,7 @@ interface ImagePreviewModalProps {
     patterns?: (string | { id?: string; name?: string; type?: string })[];
   } | null;
   screenMetaLoading?: boolean;
+  paywallLimit?: number;
 }
 
 async function convertToPng(blob: Blob): Promise<Blob> {
@@ -69,31 +72,43 @@ const ImagePreviewModal = ({
   appInfo,
   screenMeta,
   screenMetaLoading = false,
+  paywallLimit,
 }: ImagePreviewModalProps) => {
   const [, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
+  const [showPaywall, setShowPaywall] = useState(false);
   const [copied, setCopied] = useState(false);
   const [slideDir, setSlideDir] = useState<'next' | 'prev'>('next');
   const touchStartX = useRef(0);
 
   useEffect(() => {
-    if (isOpen) setCurrentIndex(initialIndex);
+    if (isOpen) { setCurrentIndex(initialIndex); setShowPaywall(false); }
   }, [isOpen, initialIndex]);
+
+  const openLogin = () => window.dispatchEvent(new Event('openLoginModal'));
+
+  const tryGoNext = () => {
+    if (paywallLimit != null && currentIndex + 1 >= paywallLimit) {
+      setShowPaywall(true);
+      return;
+    }
+    goTo(currentIndex < images.length - 1 ? currentIndex + 1 : 0, 'next');
+  };
 
   useEffect(() => {
     if (!isOpen) return;
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.target as HTMLElement).tagName === 'INPUT') return;
-      if (e.key === 'ArrowLeft') goPrev();
-      else if (e.key === 'ArrowRight') goNext();
+      if (e.key === 'ArrowLeft') { setShowPaywall(false); goPrev(); }
+      else if (e.key === 'ArrowRight') tryGoNext();
       else if (e.key === 'Escape') onClose();
       else if (e.code === 'KeyC') handleCopyLink();
       else if (e.code === 'KeyS') handleDownload();
     };
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, currentIndex, images, onClose]);
+  }, [isOpen, currentIndex, images, onClose, paywallLimit]);
 
   const goTo = (idx: number, dir: 'next' | 'prev' = 'next') => {
     setSlideDir(dir);
@@ -102,8 +117,8 @@ const ImagePreviewModal = ({
     const screenId = screen?.screenId ?? screen?.id;
     if (screenId != null) setSearchParams({ screen: String(screenId) });
   };
-  const goPrev = () => goTo(currentIndex > 0 ? currentIndex - 1 : images.length - 1, 'prev');
-  const goNext = () => goTo(currentIndex < images.length - 1 ? currentIndex + 1 : 0, 'next');
+  const goPrev = () => { setShowPaywall(false); goTo(currentIndex > 0 ? currentIndex - 1 : images.length - 1, 'prev'); };
+  const goNext = tryGoNext;
 
   const handleShare = async () => {
     const url = window.location.href;
@@ -146,12 +161,49 @@ const ImagePreviewModal = ({
   const currentImage = images[currentIndex];
   if (!currentImage) return null;
 
+  // Use pre-loaded tags from image data when screenMeta hook hasn't resolved yet
+  const preloadedTags = currentImage.tags;
+  const effectiveScenarios = screenMeta?.scenarios ?? preloadedTags?.scenarios;
+  const effectiveUiElements = screenMeta?.uiElements ?? preloadedTags?.uiElements;
+  const effectivePatterns = screenMeta?.patterns ?? preloadedTags?.patterns;
+
   const hasMetaContent =
     screenMeta?.uploadDate ||
     screenMeta?.resolution ||
-    (screenMeta?.scenarios?.length ?? 0) > 0 ||
-    (screenMeta?.uiElements?.length ?? 0) > 0 ||
-    (screenMeta?.patterns?.length ?? 0) > 0;
+    (effectiveScenarios?.length ?? 0) > 0 ||
+    (effectiveUiElements?.length ?? 0) > 0 ||
+    (effectivePatterns?.length ?? 0) > 0;
+
+  if (showPaywall) {
+    return (
+      <div className="ipm" onClick={onClose}>
+        <div className="ipm__top-right" onClick={e => e.stopPropagation()}>
+          <button className="ipm__close" onClick={onClose} aria-label="Закрыть">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
+        </div>
+        <button className="ipm__arrow ipm__arrow--left" onClick={e => { e.stopPropagation(); goPrev(); }} aria-label="Previous">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+        </button>
+        <div className="ipm__body ipm__body--paywall" onClick={e => e.stopPropagation()}>
+          <div className="ipm__paywall">
+            <div className="ipm__paywall-logo-wrap">
+              <img src={MainLogo} alt="Inspiro" className="ipm__paywall-logo" />
+            </div>
+            <div className="ipm__paywall-text">
+              <h2 className="ipm__paywall-title">Хотите смотреть дальше?</h2>
+              <p className="ipm__paywall-subtitle">Войдите или создайте аккаунт, чтобы продолжить</p>
+            </div>
+            <button className="ipm__paywall-btn" onClick={openLogin}>
+              Авторизоваться
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="ipm" onClick={onClose}>
@@ -188,6 +240,7 @@ const ImagePreviewModal = ({
         <div
           key={currentIndex}
           className={`ipm__image-wrap ipm__image-wrap--${slideDir}`}
+          onContextMenu={e => e.preventDefault()}
           onTouchStart={e => { touchStartX.current = e.touches[0].clientX; }}
           onTouchEnd={e => {
             const diff = touchStartX.current - e.changedTouches[0].clientX;
@@ -206,7 +259,12 @@ const ImagePreviewModal = ({
               preload="metadata"
             />
           ) : (
-            <img src={currentImage.image} alt={currentImage.title} className="ipm__image" />
+            <img
+              src={currentImage.image}
+              alt={currentImage.title}
+              className="ipm__image"
+              draggable={false}
+            />
           )}
           <span className="ipm__pagination">{currentIndex + 1} из {images.length}</span>
         </div>
@@ -230,7 +288,7 @@ const ImagePreviewModal = ({
                 )}
                 <div className="ipm__card-app-info">
                   <p className="ipm__card-app-name">{appInfo.name}</p>
-                  <p className="ipm__card-app-desc">{appInfo.description}</p>
+                  {appInfo.description && <p className="ipm__card-app-desc">{appInfo.description}</p>}
                 </div>
               </div>
             )}
@@ -260,35 +318,35 @@ const ImagePreviewModal = ({
             {/* Divider */}
             {hasMetaContent && <hr className="ipm__card-divider" />}
 
-            {/* Tags */}
+            {/* Tags — prefer screenMeta, fall back to pre-loaded tags from image data */}
             <div className="ipm__card-tags">
-              {screenMeta?.scenarios && screenMeta.scenarios.length > 0 && (
+              {effectiveScenarios && effectiveScenarios.length > 0 && (
                 <div className="ipm__card-section">
                   <h3 className="ipm__card-section-title">Сценарии</h3>
                   <div className="ipm__tags">
-                    {screenMeta.scenarios.map((t, i) => {
+                    {effectiveScenarios.map((t, i) => {
                       const label = toTagLabel(t);
                       return label ? <span key={toTagKey(t, i)} className="ipm__tag">{label}</span> : null;
                     })}
                   </div>
                 </div>
               )}
-              {screenMeta?.uiElements && screenMeta.uiElements.length > 0 && (
+              {effectiveUiElements && effectiveUiElements.length > 0 && (
                 <div className="ipm__card-section">
                   <h3 className="ipm__card-section-title">UI Элементы</h3>
                   <div className="ipm__tags">
-                    {screenMeta.uiElements.map((t, i) => {
+                    {effectiveUiElements.map((t, i) => {
                       const label = toTagLabel(t);
                       return label ? <span key={toTagKey(t, i)} className="ipm__tag">{label}</span> : null;
                     })}
                   </div>
                 </div>
               )}
-              {screenMeta?.patterns && screenMeta.patterns.length > 0 && (
+              {effectivePatterns && effectivePatterns.length > 0 && (
                 <div className="ipm__card-section">
                   <h3 className="ipm__card-section-title">Паттерны</h3>
                   <div className="ipm__tags">
-                    {screenMeta.patterns.map((t, i) => {
+                    {effectivePatterns.map((t, i) => {
                       const label = toTagLabel(t);
                       return label ? <span key={toTagKey(t, i)} className="ipm__tag">{label}</span> : null;
                     })}
@@ -302,35 +360,49 @@ const ImagePreviewModal = ({
       </div>
 
       {/* Bottom actions */}
-      <div className="ipm__actions" onClick={e => e.stopPropagation()}>
-        <div className="ipm__btn-wrap">
-          <div className="ipm__tooltip"><span className="ipm__tooltip-text">Нажмите</span><span className="ipm__tooltip-key">C</span></div>
-          <button className="ipm__action-btn ipm__action-btn--secondary" onClick={handleCopyLink}>
-            {copied ? (
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <path d="M5 12l5 5L19 7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            ) : (
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <path transform="translate(2 8)" d="M14 4.9V9.1C14 12.6 12.6 14 9.1 14H4.9C1.4 14 0 12.6 0 9.1V4.9C0 1.4 1.4 0 4.9 0H9.1C12.6 0 14 1.4 14 4.9Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                <path transform="translate(8 2)" d="M14 4.9V9.1C14 12.6 12.6 14 9.1 14H8V10.9C8 7.4 6.6 6 3.1 6H0V4.9C0 1.4 1.4 0 4.9 0H9.1C12.6 0 14 1.4 14 4.9Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            )}
-            {copied ? 'Скопировано' : 'Скопировать'}
-          </button>
+      <TooltipProvider delayDuration={300}>
+        <div className="ipm__actions" onClick={e => e.stopPropagation()}>
+          <div className="ipm__btn-wrap">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button className="ipm__action-btn ipm__action-btn--secondary" onClick={handleCopyLink}>
+                  {copied ? (
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                      <path d="M5 12l5 5L19 7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  ) : (
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                      <path transform="translate(2 8)" d="M14 4.9V9.1C14 12.6 12.6 14 9.1 14H4.9C1.4 14 0 12.6 0 9.1V4.9C0 1.4 1.4 0 4.9 0H9.1C12.6 0 14 1.4 14 4.9Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path transform="translate(8 2)" d="M14 4.9V9.1C14 12.6 12.6 14 9.1 14H8V10.9C8 7.4 6.6 6 3.1 6H0V4.9C0 1.4 1.4 0 4.9 0H9.1C12.6 0 14 1.4 14 4.9Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  )}
+                  {copied ? 'Скопировано' : 'Скопировать'}
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="top" showArrow>
+                Нажмите <kbd style={{ background: 'rgba(0,0,0,0.08)', border: '1px solid rgba(0,0,0,0.12)', borderRadius: 4, padding: '1px 5px', fontSize: 12 }}>C</kbd>
+              </TooltipContent>
+            </Tooltip>
+          </div>
+          <div className="ipm__btn-wrap">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button className="ipm__action-btn ipm__action-btn--primary" onClick={handleDownload}>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path transform="translate(2.48 8.9)" d="M13.96 0C17.56 0.31 19.03 2.16 19.03 6.21V6.34C19.03 10.81 17.24 12.6 12.77 12.6H6.26C1.79 12.6 0 10.81 0 6.34V6.21C0 2.19 1.45 0.34 4.99 0.01" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                    <path transform="translate(12 2)" d="M0 0V12.88" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                    <path transform="translate(8.65 12.65)" d="M6.7 0L3.35 3.35L0 0" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  Скачать
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="top" showArrow>
+                Нажмите <kbd style={{ background: 'rgba(0,0,0,0.08)', border: '1px solid rgba(0,0,0,0.12)', borderRadius: 4, padding: '1px 5px', fontSize: 12 }}>S</kbd>
+              </TooltipContent>
+            </Tooltip>
+          </div>
         </div>
-        <div className="ipm__btn-wrap">
-          <div className="ipm__tooltip"><span className="ipm__tooltip-text">Нажмите</span><span className="ipm__tooltip-key">S</span></div>
-          <button className="ipm__action-btn ipm__action-btn--primary" onClick={handleDownload}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <path transform="translate(2.48 8.9)" d="M13.96 0C17.56 0.31 19.03 2.16 19.03 6.21V6.34C19.03 10.81 17.24 12.6 12.77 12.6H6.26C1.79 12.6 0 10.81 0 6.34V6.21C0 2.19 1.45 0.34 4.99 0.01" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-              <path transform="translate(12 2)" d="M0 0V12.88" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-              <path transform="translate(8.65 12.65)" d="M6.7 0L3.35 3.35L0 0" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-            Скачать
-          </button>
-        </div>
-      </div>
+      </TooltipProvider>
 
     </div>
   );

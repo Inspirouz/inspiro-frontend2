@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation, Link } from "react-router-dom";
 import Header from "@/components/Header";
 import ScrollToTopButton from "@/components/ScrollToTopButton";
 
@@ -24,12 +24,19 @@ const Layout = () => {
     return <Outlet />;
   }
 
+  const isLegalPage = location.pathname === '/privacy' || location.pathname === '/terms';
+
   return (
     <>
-      <Header />
-      <div className={`header-spacer${isDetailPage ? ' header-spacer--detail' : ''}`} />
+      {!isLegalPage && <Header />}
+      {!isLegalPage && <div className={`header-spacer${isDetailPage ? ' header-spacer--detail' : ''}`} />}
       <Outlet />
-      <ScrollToTopButton />
+      {!isLegalPage && <ScrollToTopButton />}
+      <footer className="site-footer">
+        <span className="site-footer__copy">© {new Date().getFullYear()} Inspiro</span>
+        <Link to="/privacy" className="site-footer__link">Политика конфиденциальности</Link>
+        <Link to="/terms" className="site-footer__link">Условия использования</Link>
+      </footer>
     </>
   );
 };

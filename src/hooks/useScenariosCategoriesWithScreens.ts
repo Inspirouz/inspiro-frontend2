@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { cachedFetch } from '@/lib/apiCache';
 import type { ScenarioItem } from './useProjects';
+import { normalizeTagEntries } from './useProjects';
 
 export type ScenariosTreeNode = {
   id: string;
@@ -35,6 +36,10 @@ type RawScreen = {
   image?: string;
   images?: Array<string | RawImage>;
   title?: string;
+  senarys?: unknown[];
+  ui_elements?: unknown[];
+  patterns?: unknown[];
+  screensCategory?: { id?: string; name?: string };
 };
 
 type RawProject = { id?: string; name?: string; logo?: string };
@@ -69,6 +74,19 @@ function extractScreens(category: RawCategory, categoryName: string): ScenarioIt
   for (const screen of list) {
     if (!screen || typeof screen !== 'object') continue;
     const screenId = String(screen.id ?? '');
+    // Pre-load tag data from the already-fetched screen entity data
+    const scenarios = normalizeTagEntries(Array.isArray(screen.senarys) ? screen.senarys : undefined);
+    const uiElements = normalizeTagEntries(Array.isArray(screen.ui_elements) ? screen.ui_elements : undefined);
+    const rawPatterns = normalizeTagEntries(Array.isArray(screen.patterns) ? screen.patterns : undefined) ?? [];
+    const cat = screen.screensCategory;
+    if (cat?.id && cat?.name && !rawPatterns.some((p) => typeof p !== 'string' && p.id === cat!.id)) {
+      rawPatterns.push({ id: cat.id, name: cat.name });
+    }
+    const tags = {
+      ...(scenarios?.length ? { scenarios } : {}),
+      ...(uiElements?.length ? { uiElements } : {}),
+      ...(rawPatterns.length ? { patterns: rawPatterns } : {}),
+    };
     const nestedImages = Array.isArray(screen.images) ? screen.images : null;
     if (nestedImages && nestedImages.length > 0) {
       nestedImages.forEach((img, idx) => {
@@ -87,6 +105,7 @@ function extractScreens(category: RawCategory, categoryName: string): ScenarioIt
           title: categoryName,
           image: toImageUrl(path),
           categoryId,
+          tags,
           ...(projectId ? { projectId } : {}),
           ...(projectName ? { projectName } : {}),
           ...(projectLogo ? { projectLogo } : {}),
@@ -102,6 +121,7 @@ function extractScreens(category: RawCategory, categoryName: string): ScenarioIt
       title: screen.title ?? categoryName,
       image: toImageUrl(direct),
       categoryId,
+      tags,
       ...(projectId ? { projectId } : {}),
       ...(projectName ? { projectName } : {}),
       ...(projectLogo ? { projectLogo } : {}),

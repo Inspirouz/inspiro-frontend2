@@ -1,11 +1,13 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { useParams, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { useProject, useProjectScreens, useScreenDetails } from '@/hooks/useProjects';
 import { useScreensCategories } from '@/hooks/useScreensCategories';
 import { useScenariosCategories } from '@/hooks/useScenariosCategories';
 import { useScenariosCategoriesWithScreens } from '@/hooks/useScenariosCategoriesWithScreens';
+import { useAuth } from '@/contexts/AuthContext';
 import { useSEO } from '@/hooks/useSEO';
 import ImagePreviewModal from '@/components/ImagePreviewModal';
+import PaywallGate from '@/components/PaywallGate';
 import { NavIcons } from '@/components/icons';
 import { DetailPageSkeleton, ScenariosContentSkeleton } from '@/components/Skeleton';
 import '@/styles/detail-page.css';
@@ -76,11 +78,15 @@ const TreeNodeComponent = ({
   );
 };
 
+const PAYWALL_LIMIT = 10;
+const PAYWALL_BLUR_COUNT = 3;
+
 const DetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
+  const { isAuthorized } = useAuth();
   const [activeTab, setActiveTab] = useState<TabType>('scenarios');
   const [activeSubCategory, setActiveSubCategory] = useState<string>('all');
 
@@ -187,7 +193,10 @@ const DetailPage = () => {
   ];
 
   /** For modal and click index: scenarios tab uses allScenarios, screens tab uses screens */
-  const screensForModal = activeTab === 'scenarios' ? allScenarios : screens;
+  const screensForModal = useMemo(() => {
+    const all = activeTab === 'scenarios' ? allScenarios : screens;
+    return isAuthorized ? all : all.slice(0, PAYWALL_LIMIT);
+  }, [activeTab, allScenarios, screens, isAuthorized]);
 
   const visibleSubCategories = subCategories
     .filter((c) => c.id !== 'all')
@@ -204,6 +213,55 @@ const DetailPage = () => {
           const selectedCat = visibleSubCategories.find((c) => c.id === activeSubCategory);
           return selectedCat ? screen.title === selectedCat.label : true;
         });
+
+  // Paywall: for unauthorized users blur screens after PAYWALL_LIMIT
+  const { visibleScreens, blurredScreens, screensPaywallNeeded } = useMemo(() => {
+    if (isAuthorized) return { visibleScreens: filteredScreens, blurredScreens: [], screensPaywallNeeded: false };
+    const visible = filteredScreens.slice(0, PAYWALL_LIMIT);
+    const blurred = filteredScreens.slice(PAYWALL_LIMIT, PAYWALL_LIMIT + PAYWALL_BLUR_COUNT);
+    return { visibleScreens: visible, blurredScreens: blurred, screensPaywallNeeded: filteredScreens.length > PAYWALL_LIMIT };
+  }, [filteredScreens, isAuthorized]);
+
+  // Paywall for scenarios tab: count total screens across all sections
+  const { clampedSectionData, scenariosPaywallNeeded } = useMemo(() => {
+    const total = flatTreeStructure.reduce(
+      (s, item) => s + (scenariosByCategoryId[item.id] ?? scenariosByCategoryId[item.sectionId] ?? []).length,
+      0
+    );
+    if (isAuthorized || total <= PAYWALL_LIMIT) return { clampedSectionData: null, scenariosPaywallNeeded: false };
+
+    let remaining = PAYWALL_LIMIT;
+    let blurPlaced = false;
+    const data = new Map<string, { visible: typeof allScenarios; blurred: typeof allScenarios }>();
+    for (const item of flatTreeStructure) {
+      const all = scenariosByCategoryId[item.id] ?? scenariosByCategoryId[item.sectionId] ?? [];
+      if (all.length === 0) continue;
+
+      if (remaining <= 0) {
+        if (!blurPlaced) {
+          // First section entirely beyond limit: show blurred preview
+          data.set(item.id, { visible: [], blurred: all.slice(0, PAYWALL_BLUR_COUNT) });
+          blurPlaced = true;
+        } else {
+          // All subsequent sections: hide completely
+          data.set(item.id, { visible: [], blurred: [] });
+        }
+        continue;
+      }
+
+      // Section partially or fully within limit
+      const visible = all.slice(0, remaining);
+      let blurred: typeof allScenarios = [];
+      if (!blurPlaced && visible.length < all.length) {
+        // This section crosses the limit: show blurred screens after visible
+        blurred = all.slice(remaining, remaining + PAYWALL_BLUR_COUNT);
+        blurPlaced = true;
+      }
+      remaining = Math.max(0, remaining - all.length);
+      data.set(item.id, { visible, blurred });
+    }
+    return { clampedSectionData: data, scenariosPaywallNeeded: true };
+  }, [flatTreeStructure, scenariosByCategoryId, isAuthorized, allScenarios]);
 
   useEffect(() => {
     if (activeTab !== 'scenarios') return;
@@ -316,8 +374,6 @@ const DetailPage = () => {
 
 
   return (
-    <>
-
     <div className="detail-page-wrapper">
       <div className="detail-page">
 
@@ -415,28 +471,33 @@ const DetailPage = () => {
           )}
 
           {activeTab === 'screens' && (
-            <div className="detail-page__grid">
-              {filteredScreens.map((screen, index) => {
-                const globalIndex = screens.findIndex((s) => s.id === screen.id);
-                return (
-                <div
-                  key={screen.id}
-                  className="detail-page__screen-card"
-                  onClick={() => handleImageClick(globalIndex >= 0 ? globalIndex : index)}
-                  style={{ cursor: 'pointer' }}
-                >
-                  <div className="detail-page__phone-screen">
-                    {isVideoUrl(screen.image)
-                      ? <AutoPlayVideo src={screen.image} className="detail-page__phone-image" />
-                      : <img src={screen.image} alt={screen.title} className="detail-page__phone-image" />}
+            <>
+            <div className="paywall-grid-wrap">
+              <div className="detail-page__grid">
+                {visibleScreens.map((screen, index) => {
+                  const globalIndex = screensForModal.findIndex((s) => s.id === screen.id);
+                  return (
+                  <div
+                    key={screen.id}
+                    className="detail-page__screen-card"
+                    onClick={() => handleImageClick(globalIndex >= 0 ? globalIndex : index)}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <div className="detail-page__phone-screen">
+                      {isVideoUrl(screen.image)
+                        ? <AutoPlayVideo src={screen.image} className="detail-page__phone-image" />
+                        : <img src={screen.image} alt={screen.title} className="detail-page__phone-image" />}
+                    </div>
+                    <div className="detail-page__screen-card-app-info">
+                      {item.logo && <img src={item.logo} alt="" className="detail-page__screen-card-app-logo" />}
+                      <span className="detail-page__screen-card-app-name">{item.app_name}</span>
+                    </div>
                   </div>
-                  <div className="detail-page__screen-card-app-info">
-                    {item.logo && <img src={item.logo} alt="" className="detail-page__screen-card-app-logo" />}
-                    <span className="detail-page__screen-card-app-name">{item.app_name}</span>
-                  </div>
-                </div>
-              );})}
+                );})}
+              </div>
             </div>
+            {screensPaywallNeeded && <PaywallGate />}
+            </>
           )}
 
           {activeTab === 'scenarios' && (
@@ -444,9 +505,13 @@ const DetailPage = () => {
               {scenariosLoading ? (
                 <ScenariosContentSkeleton />
               ) : (
-                flatTreeStructure.map((item) => {
-                  const sectionScreens = scenariosByCategoryId[item.id] ?? scenariosByCategoryId[item.sectionId] ?? [];
-                  if (sectionScreens.length === 0) return null;
+                <>
+                {flatTreeStructure.map((item) => {
+                  const allSectionScreens = scenariosByCategoryId[item.id] ?? scenariosByCategoryId[item.sectionId] ?? [];
+                  const clamped = clampedSectionData?.get(item.id);
+                  const sectionScreens = clamped ? clamped.visible : allSectionScreens;
+                  const sectionBlurred = clamped ? clamped.blurred : [];
+                  if (sectionScreens.length === 0 && sectionBlurred.length === 0) return null;
                   return (
                     <div
                       key={item.id}
@@ -460,11 +525,11 @@ const DetailPage = () => {
                         <h3 className="detail-page__scenario-section-title">
                           {[...item.ancestors, item.label].join(' → ')}
                         </h3>
-                        <span className="detail-page__scenario-section-count">{sectionScreens.length} экранов</span>
+                        <span className="detail-page__scenario-section-count">{allSectionScreens.length} экранов</span>
                       </div>
                       <div className="detail-page__scenario-section-grid">
                         {sectionScreens.map((screen) => {
-                          const globalIndex = allScenarios.findIndex(
+                          const globalIndex = screensForModal.findIndex(
                             (s) => String(s.screenId ?? s.id) === String(screen.screenId ?? screen.id)
                           );
                           return (
@@ -489,7 +554,9 @@ const DetailPage = () => {
                       </div>
                     </div>
                   );
-                })
+                })}
+                {scenariosPaywallNeeded && <PaywallGate />}
+                </>
               )}
             </div>
           )}
@@ -524,9 +591,9 @@ const DetailPage = () => {
         onSubCategoryClick={(categoryId) => setActiveSubCategory(categoryId)}
         screenMeta={modalScreenMeta}
         screenMetaLoading={modalScreenMetaLoading}
+        paywallLimit={isAuthorized ? undefined : PAYWALL_LIMIT}
       />
     </div>
-    </>
   );
 };
 

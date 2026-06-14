@@ -72,6 +72,8 @@ const Header = () => {
     return () => { document.body.style.overflow = ''; };
   }, [isMobileMenuOpen]);
 
+  const isMac = typeof navigator !== 'undefined' && /Mac/.test(navigator.platform);
+
   const handleSearchClick = () => {
     if (window.innerWidth <= 768) {
       navigate('/search');
@@ -79,6 +81,19 @@ const Header = () => {
       setIsSearchModalOpen(true);
     }
   };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        if (window.innerWidth > 768) {
+          setIsSearchModalOpen(true);
+        }
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   return (
     <>
@@ -124,6 +139,9 @@ const Header = () => {
                 cursor="|"
                 className="header-input__typewriter"
               />
+            </span>
+            <span className="header-input__shortcut">
+              {isMac ? '⌘' : 'Ctrl'} + K
             </span>
           </button>
 

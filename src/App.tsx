@@ -9,6 +9,8 @@ import DetailPage from '@/pages/DetailPage';
 import SearchPage from '@/pages/SearchPage';
 import TagDetailPage from '@/pages/TagDetailPage';
 import ScenarioTreePage from '@/pages/ScenarioTreePage';
+import PrivacyPage from '@/pages/PrivacyPage';
+import TermsPage from '@/pages/TermsPage';
 // import ProtectedRoute from '@/components/ProtectedRoute';
 
 const App = () => {
@@ -27,6 +29,8 @@ const App = () => {
               <Route path="patterns/:id" element={<TagDetailPage />} />
               <Route path="ui-elements/:id" element={<TagDetailPage />} />
               <Route path="scenarios/:id" element={<TagDetailPage />} />
+              <Route path="privacy" element={<PrivacyPage />} />
+              <Route path="terms" element={<TermsPage />} />
               {/* Hozircha subscription page o'chiq
               <Route
                 path="subscription"

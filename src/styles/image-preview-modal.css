@@ -114,6 +114,9 @@
   border-radius: 24px;
   border: 1px solid #404040;
   display: block;
+  user-select: none;
+  -webkit-user-select: none;
+  pointer-events: none;
 }
 
 .ipm__video {
@@ -347,6 +350,81 @@
 .ipm__action-btn--secondary { background: #262626; color: #fafafa; }
 .ipm__action-btn--primary   { background: #fafafa; color: #000; }
 .ipm__action-btn:hover { opacity: 0.8; }
+
+/* ── In-modal paywall ───────────────────────────────────────────── */
+.ipm__body--paywall {
+  justify-content: center;
+  align-items: center;
+}
+
+.ipm__paywall {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+  padding: 0 24px;
+  pointer-events: auto;
+}
+
+.ipm__paywall-logo-wrap {
+  width: 100px;
+  height: 100px;
+  background: linear-gradient(to bottom, #000, #131313);
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+
+.ipm__paywall-logo {
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+}
+
+.ipm__paywall-text {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ipm__paywall-title {
+  font-size: 40px;
+  font-weight: 700;
+  letter-spacing: -0.8px;
+  color: #fafafa;
+  margin: 0;
+  line-height: 1.2;
+  font-family: "Helvetica Neue", sans-serif;
+}
+
+.ipm__paywall-subtitle {
+  font-size: 16px;
+  color: #737373;
+  margin: 0;
+  font-family: "Helvetica Neue", sans-serif;
+}
+
+.ipm__paywall-btn {
+  margin-top: 8px;
+  background-color: #D9F743;
+  color: #0a0a0a;
+  border: none;
+  border-radius: 16px;
+  padding: 16px 32px;
+  font-size: 16px;
+  font-weight: 500;
+  font-family: "Helvetica Neue", sans-serif;
+  letter-spacing: -0.32px;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+.ipm__paywall-btn:hover {
+  background-color: #2B310D;
+  color: #D9F743;
+}
 
 /* ── Responsive ─────────────────────────────────────────────────── */
 @media (max-width: 1400px) {

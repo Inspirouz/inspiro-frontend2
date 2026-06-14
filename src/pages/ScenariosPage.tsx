@@ -4,8 +4,10 @@ import { useScenariosCategories } from '@/hooks/useScenariosCategories';
 import { useScenariosCategoriesWithScreens } from '@/hooks/useScenariosCategoriesWithScreens';
 import type { ScenariosTreeNode } from '@/hooks/useScenariosCategoriesWithScreens';
 import { useScreenDetails } from '@/hooks/useProjects';
+import { useAuth } from '@/contexts/AuthContext';
 import { useSEO } from '@/hooks/useSEO';
 import ImagePreviewModal from '@/components/ImagePreviewModal';
+import PaywallGate from '@/components/PaywallGate';
 import iconDownload from '@/assets/icon-download.svg';
 import iconLink from '@/assets/icon-link.svg';
 import { SidebarSkeleton, ScenariosContentSkeleton } from '@/components/Skeleton';
@@ -14,12 +16,14 @@ import '@/styles/detail-page.css';
 import '@/styles/ui-elements-page.css';
 import '@/styles/scenarios-page.css';
 
+const PAYWALL_LIMIT = 10;
+
 type AppRow = {
   categoryId: string;
   projectId: string;
   projectName: string;
   projectLogo?: string;
-  screens: Array<{ id: string | number; screenId?: string | number; image: string }>;
+  screens: Array<{ id: string | number; screenId?: string | number; image: string; tags?: import('@/hooks/useProjects').PreloadedTags }>;
 };
 
 type CategorySection = {
@@ -83,6 +87,7 @@ const ScenariosPage = () => {
     loading: groupsLoading,
   } = useScenariosCategoriesWithScreens(null);
 
+  const { isAuthorized } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const [activeTag, setActiveTag] = useState<string>('all');
   const [openApp, setOpenApp] = useState<AppRow | null>(null);
@@ -124,7 +129,7 @@ const ScenariosPage = () => {
             screens: [],
           });
         }
-        byProject.get(key)!.screens.push({ id: s.id, screenId: s.screenId, image: s.image });
+        byProject.get(key)!.screens.push({ id: s.id, screenId: s.screenId, image: s.image, tags: s.tags });
       }
       byLabel.get(label)!.apps.push(...byProject.values());
     }
@@ -178,6 +183,31 @@ const ScenariosPage = () => {
     if (!activeNode) return [];
     return categorySections.filter((s) => s.label === activeNode.label);
   }, [categorySections, categoriesTree, activeTag]);
+
+  // Clamp to PAYWALL_LIMIT total screens for unauthorized users
+  const { clampedSections, showPaywall } = useMemo(() => {
+    if (isAuthorized) return { clampedSections: visibleSections, showPaywall: false };
+    const totalScreens = visibleSections.reduce(
+      (s, sec) => s + sec.apps.reduce((a, app) => a + app.screens.length, 0),
+      0
+    );
+    if (totalScreens <= PAYWALL_LIMIT) return { clampedSections: visibleSections, showPaywall: false };
+
+    let remaining = PAYWALL_LIMIT;
+    const clamped: CategorySection[] = [];
+    for (const section of visibleSections) {
+      if (remaining <= 0) break;
+      const clampedApps: AppRow[] = [];
+      for (const app of section.apps) {
+        if (remaining <= 0) break;
+        const screens = app.screens.slice(0, remaining);
+        remaining -= screens.length;
+        if (screens.length > 0) clampedApps.push({ ...app, screens });
+      }
+      if (clampedApps.length > 0) clamped.push({ ...section, apps: clampedApps });
+    }
+    return { clampedSections: clamped, showPaywall: true };
+  }, [visibleSections, isAuthorized]);
 
   const showToast = () => {
     setToastVisible(true);
@@ -254,10 +284,11 @@ const ScenariosPage = () => {
       <main className="ui-elements-page__main">
         {groupsLoading ? (
           <ScenariosContentSkeleton />
-        ) : visibleSections.length === 0 ? (
+        ) : clampedSections.length === 0 && !showPaywall ? (
           <div className="ui-elements-page__empty">Нет данных</div>
         ) : (
-          visibleSections.map((section) => (
+          <>
+          {clampedSections.map((section) => (
             <section key={section.label} className="scenario-section">
               {section.apps.map((app) => {
                 const isDownloading = downloadingKey === app.categoryId + app.projectId;
@@ -344,7 +375,9 @@ const ScenariosPage = () => {
                 );
               })}
             </section>
-          ))
+          ))}
+          {showPaywall && <PaywallGate />}
+          </>
         )}
       </main>
 
@@ -360,6 +393,7 @@ const ScenariosPage = () => {
           screenId: s.screenId,
           image: s.image,
           title: openApp?.projectName ?? '',
+          tags: s.tags,
         }))}
         initialIndex={openInitialIdx}
         appInfo={openApp ? {
@@ -370,6 +404,7 @@ const ScenariosPage = () => {
         } : undefined}
         screenMeta={screenMeta}
         screenMetaLoading={screenMetaLoading}
+        paywallLimit={isAuthorized ? undefined : PAYWALL_LIMIT}
       />
     </div>
   );
