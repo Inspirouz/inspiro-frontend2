@@ -12,19 +12,35 @@ interface RegProps {
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID as string;
 const API_URL = import.meta.env.VITE_API_URL as string;
 
+function waitForGoogleSDK(timeoutMs = 8000): Promise<void> {
+  if (window.google) return Promise.resolve();
+  return new Promise((resolve, reject) => {
+    const deadline = Date.now() + timeoutMs;
+    const tick = () => {
+      if (window.google) return resolve();
+      if (Date.now() > deadline) return reject(new Error('timeout'));
+      setTimeout(tick, 150);
+    };
+    tick();
+  });
+}
+
 const Reg = ({ onClose }: RegProps) => {
   const { setAuthData } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const handleGoogleLogin = () => {
-    if (!window.google) {
-      setError('Google SDK не загружен. Обновите страницу.');
-      return;
-    }
-
+  const handleGoogleLogin = async () => {
     setError('');
     setLoading(true);
+
+    try {
+      await waitForGoogleSDK();
+    } catch {
+      setLoading(false);
+      setError('Не удалось загрузить Google. Проверьте соединение и попробуйте снова.');
+      return;
+    }
 
     const client = window.google.accounts.oauth2.initTokenClient({
       client_id: GOOGLE_CLIENT_ID,
@@ -76,6 +92,7 @@ const Reg = ({ onClose }: RegProps) => {
     <div className="reg_window">
       <img src={MainLogo} alt="Inspiro" className="reg_window__logo" />
       <h2 className="reg_window__title">Добро пожаловать</h2>
+      <p className="reg_window__desc">Вдохновляйтесь лучшими мобильными приложениями</p>
 
       <button
         type="button"

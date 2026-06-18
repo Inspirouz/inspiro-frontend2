@@ -93,7 +93,7 @@ const ImagePreviewModal = ({
       setShowPaywall(true);
       return;
     }
-    goTo(currentIndex < images.length - 1 ? currentIndex + 1 : 0, 'next');
+    if (currentIndex < images.length - 1) goTo(currentIndex + 1, 'next');
   };
 
   useEffect(() => {
@@ -117,7 +117,7 @@ const ImagePreviewModal = ({
     const screenId = screen?.screenId ?? screen?.id;
     if (screenId != null) setSearchParams({ screen: String(screenId) });
   };
-  const goPrev = () => { setShowPaywall(false); goTo(currentIndex > 0 ? currentIndex - 1 : images.length - 1, 'prev'); };
+  const goPrev = () => { setShowPaywall(false); if (currentIndex > 0) goTo(currentIndex - 1, 'prev'); };
   const goNext = tryGoNext;
 
   const handleShare = async () => {
