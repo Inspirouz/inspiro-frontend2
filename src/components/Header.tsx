@@ -124,26 +124,41 @@ const Header = () => {
         )}
 
         <div className="header-center">
-          <button className="header-input" onClick={handleSearchClick}>
-            <svg className="header-input__icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.8"/>
-              <path d="M16.5 16.5L21 21" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
-            </svg>
-            <span className="header-input__placeholder">
-              Поиск&nbsp;<Typewriter
-                text={["приложений", "сценариев", "паттернов", "UI элементов"]}
-                speed={80}
-                deleteSpeed={40}
-                delay={1800}
-                loop
-                cursor="|"
-                className="header-input__typewriter"
-              />
-            </span>
-            <span className="header-input__shortcut">
-              {isMac ? '⌘' : 'Ctrl'} + K
-            </span>
-          </button>
+          <div className="header-top-row">
+            <button className="header-input" onClick={handleSearchClick}>
+              <svg className="header-input__icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.8"/>
+                <path d="M16.5 16.5L21 21" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+              </svg>
+              <span className="header-input__placeholder">
+                Поиск&nbsp;<Typewriter
+                  text={["приложений", "сценариев", "паттернов", "UI элементов"]}
+                  speed={80}
+                  deleteSpeed={40}
+                  delay={1800}
+                  loop
+                  cursor="|"
+                  className="header-input__typewriter"
+                />
+              </span>
+              <span className="header-input__shortcut">
+                {isMac ? '⌘' : 'Ctrl'} + K
+              </span>
+            </button>
+
+            {/* Hamburger — visible only on mobile via CSS, sits next to search */}
+            <button
+              className="mobile-menu-btn"
+              onClick={() => setIsMobileMenuOpen(true)}
+              aria-label="Открыть меню"
+            >
+              <svg width="18" height="14" viewBox="0 0 18 14" fill="none">
+                <rect width="18" height="2" rx="1" fill="currentColor"/>
+                <rect y="6" width="18" height="2" rx="1" fill="currentColor"/>
+                <rect y="12" width="18" height="2" rx="1" fill="currentColor"/>
+              </svg>
+            </button>
+          </div>
 
           {showNav && (
             <ul className="header-nav">
@@ -169,19 +184,6 @@ const Header = () => {
             </ul>
           )}
         </div>
-
-        {/* Hamburger — visible only on mobile via CSS */}
-        <button
-          className="mobile-menu-btn"
-          onClick={() => setIsMobileMenuOpen(true)}
-          aria-label="Открыть меню"
-        >
-          <svg width="18" height="14" viewBox="0 0 18 14" fill="none">
-            <rect width="18" height="2" rx="1" fill="currentColor"/>
-            <rect y="6" width="18" height="2" rx="1" fill="currentColor"/>
-            <rect y="12" width="18" height="2" rx="1" fill="currentColor"/>
-          </svg>
-        </button>
 
         <div className="Header-block">
           <div className="contact-btn-wrapper" ref={contactRef}>

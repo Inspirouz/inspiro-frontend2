@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { Layout } from '@/pages';
 import ErrorBoundary from '@/components/ErrorBoundary';
@@ -11,13 +12,32 @@ import TagDetailPage from '@/pages/TagDetailPage';
 import ScenarioTreePage from '@/pages/ScenarioTreePage';
 import PrivacyPage from '@/pages/PrivacyPage';
 import TermsPage from '@/pages/TermsPage';
+import MobileUnavailablePage from '@/pages/MobileUnavailablePage';
 // import ProtectedRoute from '@/components/ProtectedRoute';
 
+const MOBILE_QUERY = '(max-width: 768px)';
+
 const App = () => {
+  const [isMobile, setIsMobile] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia(MOBILE_QUERY).matches
+  );
+
+  useEffect(() => {
+    const mql = window.matchMedia(MOBILE_QUERY);
+    const onChange = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mql.addEventListener('change', onChange);
+    return () => mql.removeEventListener('change', onChange);
+  }, []);
+
+  if (isMobile) {
+    return <MobileUnavailablePage />;
+  }
+
   return (
     <div className="container">
       <ErrorBoundary>
           <Routes>
+            <Route path="/mobile-unavailable" element={<MobileUnavailablePage />} />
             <Route path="/" element={<Layout />}>
               <Route index element={<HomePage />} />
               <Route path="patterns" element={<PatternsPage />} />

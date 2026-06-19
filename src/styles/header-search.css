@@ -45,7 +45,7 @@ html {
 .header-search {
   width: 100% !important;
   display: grid !important;
-  grid-template-columns: 1fr auto 1fr !important;
+  grid-template-columns: auto 1fr auto !important;
   align-items: start !important;
   /* height: min-content — Safari macOS bug: fixed+grid+min-content = 100vh instead of content height */
   /* Fix: explicit height matching .header-spacer value */
@@ -69,7 +69,7 @@ html {
 
 /* Detail pages: fixed search width, no nav row */
 .header-search--detail {
-  grid-template-columns: 1fr min(895.6px, calc(100% - 320px)) 1fr !important;
+  grid-template-columns: auto 1fr auto !important;
   height: 104px !important; /* no nav row → matches .header-spacer--detail */
 }
 
@@ -78,16 +78,23 @@ html {
 }
 
 @media (max-width: 768px) {
-  .header-spacer,
+  /* Regular pages: search (44) + gap (8) + tabs (36) + pad (12+12) = 112px */
+  .header-spacer {
+    height: 112px;
+  }
+  /* Detail/subscription pages: no tabs row — search (44) + pad (12+12) = 68px */
   .header-spacer--detail {
-    height: 68px; /* 12px pad + 44px search bar + 12px pad */
+    height: 68px;
   }
 }
 
 @media (max-width: 480px) {
-  .header-spacer,
+  /* search (40) + gap (8) + tabs (32) + pad (10+10) = 100px */
+  .header-spacer {
+    height: 100px;
+  }
   .header-spacer--detail {
-    height: 64px;
+    height: 60px;
   }
 }
 .header-center {
@@ -96,6 +103,14 @@ html {
   align-items: stretch;
   gap: 16px;
   padding: 0 24px;
+  min-width: 0;
+}
+
+.header-top-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
   min-width: 0;
 }
 
@@ -128,6 +143,13 @@ html {
   padding: 0;
   align-items: center;
   flex-wrap: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.header-nav::-webkit-scrollbar {
+  display: none;
 }
 
 .header-input:hover {
@@ -893,6 +915,34 @@ html {
   width: auto;
 }
 
+.mobile-menu-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mobile-menu-nav__link {
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: 500;
+  color: #ffffff;
+  text-decoration: none;
+  background: transparent;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.mobile-menu-nav__link:hover {
+  background: #2a2a2a;
+}
+
+.mobile-menu-nav__link.active {
+  background: #1e2a00;
+  color: #D9F743;
+}
+
 .mobile-menu-contacts {
   display: flex;
   flex-direction: column;
@@ -927,74 +977,110 @@ html {
 
 @media (max-width: 768px) {
   .container {
-    padding: 0 20px;
+    padding: 0 16px;
   }
 
-  /* Show hamburger and back button, hide logo and right buttons */
-  .mobile-menu-btn {
-    display: flex !important;
-  }
-
-  .mobile-back-btn {
-    display: flex !important;
-  }
-
+  /* Hide logo, desktop right block */
   .MainLogo {
     display: none !important;
   }
-
   .Header-block {
     display: none !important;
   }
 
-  /* Center column becomes flex:1 on mobile, tabs hidden */
+  /* Show hamburger and back button */
+  .mobile-menu-btn {
+    display: flex !important;
+    flex-shrink: 0;
+  }
+  .mobile-back-btn {
+    display: flex !important;
+    align-self: flex-start;
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+
+  /* Header: flex row, back btn + header-center side by side */
+  .header-search {
+    display: flex !important;
+    grid-template-columns: unset !important;
+    flex-direction: row !important;
+    align-items: flex-start !important;
+    padding: 12px 16px !important;
+    gap: 10px !important;
+    height: auto !important;
+  }
+
+  /* header-center: top row (search + hamburger) then full-width nav tabs */
   .header-center {
     flex: 1 !important;
+    min-width: 0 !important;
     padding: 0 !important;
-    gap: 0 !important;
+    gap: 8px !important;
   }
 
-  .header-nav {
-    display: none !important;
-  }
-
-  /* Search bar fills the center column */
+  /* Search fills the row, hamburger sits to its right */
   .header-input {
-    width: 100% !important;
+    flex: 1 !important;
+    width: auto !important;
     height: 44px !important;
     font-size: 15px !important;
     padding: 0 16px !important;
   }
 
-  .header-search {
+  /* Nav tabs: horizontal scroll strip */
+  .header-nav {
     display: flex !important;
-    grid-template-columns: unset !important;
-    padding: 12px 16px !important;
-    gap: 10px !important;
-    align-items: center !important;
-    height: 68px !important;
+    gap: 8px !important;
+    overflow-x: auto !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+    flex-wrap: nowrap !important;
+  }
+  .header-nav::-webkit-scrollbar {
+    display: none;
   }
 
-  .main-nav {
-    top: 68px !important;
-    padding: 10px 16px 12px !important;
-  }
-
+  /* Compact nav tab links */
   .nav_links {
-    font-size: 16px;
-    padding: 10px 14px;
-    height: 48px;
-    gap: 6px;
+    font-size: 13px !important;
+    padding: 7px 12px !important;
+    height: 36px !important;
+    gap: 5px !important;
+    border-radius: 999px !important;
   }
-
   .nav-icon svg,
   .nav-icon .nav-svg-icon {
-    width: 22px;
-    height: 22px;
+    width: 18px !important;
+    height: 18px !important;
+  }
+  .nav-chip {
+    font-size: 11px !important;
+    padding: 3px 6px !important;
+  }
+
+  /* Category filter */
+  .category-scroll-btn {
+    display: none !important;
+  }
+  .category-filter-wrapper::before,
+  .category-filter-wrapper::after {
+    display: none !important;
+  }
+  .category-list {
+    padding-right: 0;
+    -webkit-overflow-scrolling: touch;
+  }
+  .category-filter-section {
+    padding-top: 16px;
   }
 
   .link-ul {
     gap: 8px;
+  }
+  .main-nav {
+    top: 120px !important;
+    padding: 10px 16px 12px !important;
   }
 }
 
@@ -1003,35 +1089,33 @@ html {
     padding: 0 14px;
   }
 
-  .header-input {
-    height: 44px !important;
-    font-size: 14px !important;
-    padding-left: 44px !important;
-    background-position: 15px center !important;
-  }
-
   .header-search {
     padding: 10px 14px !important;
-    gap: 10px !important;
-    height: 64px !important;
+    gap: 8px !important;
   }
 
-  .main-nav {
-    top: 60px !important;
-    padding: 8px 14px 10px !important;
+  .header-input {
+    height: 40px !important;
+    font-size: 14px !important;
+    padding: 0 14px !important;
   }
 
   .nav_links {
-    font-size: 14px;
-    padding: 8px 12px;
-    height: 42px;
-    gap: 5px;
+    font-size: 12px !important;
+    padding: 6px 10px !important;
+    height: 32px !important;
+    gap: 4px !important;
   }
 
   .nav-icon svg,
   .nav-icon .nav-svg-icon {
-    width: 18px;
-    height: 18px;
+    width: 16px !important;
+    height: 16px !important;
+  }
+
+  .main-nav {
+    top: 106px !important;
+    padding: 8px 14px 10px !important;
   }
 
   .link-ul {
@@ -1048,11 +1132,6 @@ html {
     height: 40px;
     padding: 8px 16px;
     font-size: 14px;
-  }
-
-  .category-scroll-btn {
-    width: 40px;
-    height: 40px;
   }
 
   .main-content-view {

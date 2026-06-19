@@ -994,9 +994,38 @@
     padding: 16px;
   }
 
+  /* Mobile nav tabs: smaller and horizontally scrollable */
+  .detail-page__nav {
+    top: 68px;
+    gap: 8px;
+  }
+
+  .detail-page__nav-tab {
+    font-size: 15px !important;
+    padding: 10px 14px !important;
+    height: 44px !important;
+    border-radius: 999px !important;
+  }
+
+  .detail-page__nav-chip {
+    font-size: 12px !important;
+    padding: 4px 7px !important;
+  }
+
+  .detail-page__nav-icon .nav-svg-icon {
+    width: 20px !important;
+    height: 20px !important;
+  }
+
+  /* Screens grid on mobile */
   .detail-page__grid {
     grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
+    gap: 8px;
+  }
+
+  /* Screens main area: allow scrolling */
+  .detail-page__main {
+    overflow-x: hidden;
   }
 
   .detail-page__header-main {
