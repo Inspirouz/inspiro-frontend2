@@ -5,7 +5,10 @@
   width: 100%;
   min-height: 100vh;
   padding-top: 32px;
-  overflow-x: hidden;
+  /* clip (not hidden) prevents horizontal overflow WITHOUT creating a
+     scroll container — hidden forces overflow-y:auto and breaks the
+     sticky sidebar (it offset by its top:130px even at scroll 0). */
+  overflow-x: clip;
 }
 
 /* Left Sidebar */
