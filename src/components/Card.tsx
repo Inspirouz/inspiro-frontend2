@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import type { CardProps } from '@/types';
 import { isVideoUrl } from '@/lib/media';
 
@@ -26,14 +26,6 @@ const Card = ({ item, onClick, variant = 'default' }: CardProps) => {
   const images = item.images && item.images.length > 0 ? item.images : [];
   const [currentIndex, setCurrentIndex] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
-
-  useEffect(() => {
-    if (images.length <= 1) return;
-    const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev < images.length - 1 ? prev + 1 : 0));
-    }, 3000);
-    return () => clearInterval(timer);
-  }, [images.length]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (onClick && (e.key === 'Enter' || e.key === ' ')) {
