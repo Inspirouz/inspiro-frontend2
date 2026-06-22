@@ -627,7 +627,7 @@
   background: none !important;
   border: none !important;
   color: #d4d4d4 !important;
-  font-size: 16px !important;
+  font-size: 18px !important;
   font-weight: 400;
   line-height: 22px;
   letter-spacing: -0.36px;
@@ -653,7 +653,7 @@
 }
 
 .detail-page__subcategory-count {
-  font-size: 14px;
+  font-size: 16px;
   color: inherit;
   font-weight: 400;
   letter-spacing: -0.6px;
