@@ -274,7 +274,8 @@
 
 /* Sidebar */
 .detail-page__sidebar {
-  width: 260px;
+  /* match catalog sidebar width (patterns/scenarios/ui-elements) */
+  width: clamp(200px, 15.625vw, 300px);
   flex-shrink: 0;
   position: -webkit-sticky;
   position: sticky;
