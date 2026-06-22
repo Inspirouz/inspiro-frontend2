@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { trackSearch } from '@/lib/analytics';
 import '@/styles/search-modal.css';
 
 export type SearchType = 'applications' | 'ui_elements' | 'scenarios' | 'patterns' | 'fonts';
@@ -97,6 +98,7 @@ const SearchModal = ({ onClose }: { onClose?: () => void }) => {
         )
       );
       setItems(merged);
+      trackSearch(q, merged.length);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Ошибка загрузки');
       setItems([]);

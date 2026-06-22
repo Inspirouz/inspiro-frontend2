@@ -13,9 +13,16 @@ import ScenarioTreePage from '@/pages/ScenarioTreePage';
 import PrivacyPage from '@/pages/PrivacyPage';
 import TermsPage from '@/pages/TermsPage';
 import MobileUnavailablePage from '@/pages/MobileUnavailablePage';
+import { usePageViewTracking } from '@/hooks/useAnalytics';
 // import ProtectedRoute from '@/components/ProtectedRoute';
 
 const MOBILE_QUERY = '(max-width: 768px)';
+
+/** Mounted inside the Router; emits a page_view on each route change. */
+const AnalyticsTracker = () => {
+  usePageViewTracking();
+  return null;
+};
 
 const App = () => {
   const [isMobile, setIsMobile] = useState(
@@ -36,6 +43,7 @@ const App = () => {
   return (
     <div className="container">
       <ErrorBoundary>
+          <AnalyticsTracker />
           <Routes>
             <Route path="/mobile-unavailable" element={<MobileUnavailablePage />} />
             <Route path="/" element={<Layout />}>

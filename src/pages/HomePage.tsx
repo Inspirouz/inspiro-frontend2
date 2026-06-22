@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import MainContent from "@/components/MainContent";
 import { useCategories } from "@/hooks/useCategories";
 import { useSEO } from "@/hooks/useSEO";
+import { trackTagClick } from "@/lib/analytics";
 import '@/styles/header-search.css';
 
 const HomePage = () => {
@@ -98,7 +99,10 @@ const HomePage = () => {
                 className={`category-item ${activeCategory === category.id ? 'active' : ''}`}
                 role="listitem"
                 aria-label={`Filter by ${category.name}`}
-                onClick={() => setActiveCategory(category.id)}
+                onClick={() => {
+                  setActiveCategory(category.id);
+                  trackTagClick(category.id, category.name, 'Категория приложений');
+                }}
               >
                 {category.name}
               </li>

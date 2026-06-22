@@ -12,6 +12,7 @@ import { NavIcons } from '@/components/icons';
 import { DetailPageSkeleton, ScenariosContentSkeleton } from '@/components/Skeleton';
 import '@/styles/detail-page.css';
 import { isVideoUrl } from '@/lib/media';
+import { trackPatternView } from '@/lib/analytics';
 
 function AutoPlayVideo({ src, className }: { src: string; className?: string }) {
   const ref = useRef<HTMLVideoElement>(null);
@@ -100,6 +101,15 @@ const DetailPage = () => {
   } = useScenariosCategoriesWithScreens(id ?? null);
   const { screens: screensFromApi, loading: screensLoading } = useProjectScreens(id ?? undefined);
   const item = projectFromApi ??  null;
+
+  // Track a pattern_view once per opened app/pattern (include name once loaded).
+  const trackedPatternRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (!id || trackedPatternRef.current === id) return;
+    if (projectLoading) return; // wait until the project load settles so we can include its name
+    trackedPatternRef.current = id;
+    trackPatternView(id, projectFromApi?.app_name);
+  }, [id, projectLoading, projectFromApi]);
 
   const [activeTreeItem, setActiveTreeItem] = useState<string | null>(null);
   const sectionRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
