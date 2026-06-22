@@ -429,29 +429,6 @@ const DetailPage = () => {
 
       <div className="detail-page__content">
 
-        {/* Screens sidebar — category filter */}
-        {activeTab === 'screens' && visibleSubCategories.length > 0 && (
-          <aside className="detail-page__sidebar">
-            <button
-              className={`detail-page__subcategory ${activeSubCategory === 'all' ? 'active' : ''}`}
-              onClick={() => setActiveSubCategory('all')}
-            >
-              <span>Все</span>
-              <span className="detail-page__subcategory-count">{screens.length}</span>
-            </button>
-            {visibleSubCategories.map((cat) => (
-              <button
-                key={cat.id}
-                className={`detail-page__subcategory ${activeSubCategory === cat.id ? 'active' : ''}`}
-                onClick={() => setActiveSubCategory(cat.id)}
-              >
-                <span>{cat.label}</span>
-                <span className="detail-page__subcategory-count">{cat.count}</span>
-              </button>
-            ))}
-          </aside>
-        )}
-
         {/* Scenarios sidebar — tree navigation */}
         {activeTab === 'scenarios' && treeStructure.length > 0 && (
           <aside className="detail-page__sidebar detail-page__sidebar--tree">
