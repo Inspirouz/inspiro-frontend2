@@ -68,7 +68,23 @@ const TagDetailPage = () => {
     const flat = flattenTree(scenarioTree);
     const node = flat.find((n) => n.id === id);
     title = node?.label ?? '';
-    const items: ScenarioItem[] = scenariosByCategoryId[id ?? ''] ?? [];
+    // Global: screens for this scenario tag across ALL apps — aggregate every
+    // app's scenario category that shares the same name, then dedupe.
+    const matchingIds = title
+      ? flat.filter((n) => n.label === title).map((n) => n.id)
+      : id
+      ? [id]
+      : [];
+    const seen = new Set<string>();
+    const items: ScenarioItem[] = [];
+    for (const cid of matchingIds) {
+      for (const s of scenariosByCategoryId[cid] ?? []) {
+        const key = String(s.screenId ?? s.id ?? s.image ?? '');
+        if (key && seen.has(key)) continue;
+        if (key) seen.add(key);
+        items.push(s);
+      }
+    }
     screens = items.map((s) => ({
       image: s.image,
       screenId: String(s.screenId ?? s.id ?? ''),
@@ -87,31 +103,7 @@ const TagDetailPage = () => {
         ) : (
           <section className="ui-elements-page__group">
             <div className="ui-elements-page__group-header">
-              {tagType === 'scenarios' ? (
-                <h2 className="ui-elements-page__group-title" style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-                  {title || '—'}
-                  {(() => {
-                    const first = screens.find((s) => s.projectId);
-                    if (!first) return null;
-                    return (
-                      <>
-                        <span style={{ fontWeight: 400, color: '#ffffff' }}>в</span>
-                        <span
-                          className="scenario-company-link"
-                          onClick={(e) => { e.stopPropagation(); navigate(`/detail/${first.projectId}`); }}
-                        >
-                          {first.projectLogo && (
-                            <img src={first.projectLogo} alt={first.projectName ?? ''} style={{ width: 32, height: 32, borderRadius: 6, objectFit: 'cover' }} />
-                          )}
-                          {first.projectName}
-                        </span>
-                      </>
-                    );
-                  })()}
-                </h2>
-              ) : (
-                <h2 className="ui-elements-page__group-title">{title || '—'}</h2>
-              )}
+              <h2 className="ui-elements-page__group-title">{title || '—'}</h2>
               <p className="ui-elements-page__group-count">{screens.length} экранов</p>
             </div>
             {screens.length === 0 ? (
@@ -132,18 +124,16 @@ const TagDetailPage = () => {
                         className="patterns-card__image"
                       />
                     </div>
-                    {tagType !== 'scenarios' && (
-                      <div className="patterns-card__app-info">
-                        {screen.projectLogo && (
-                          <img
-                            src={screen.projectLogo}
-                            alt={screen.projectName ?? ''}
-                            className="patterns-card__app-logo"
-                          />
-                        )}
-                        <span className="patterns-card__app-name">{screen.projectName ?? ''}</span>
-                      </div>
-                    )}
+                    <div className="patterns-card__app-info">
+                      {screen.projectLogo && (
+                        <img
+                          src={screen.projectLogo}
+                          alt={screen.projectName ?? ''}
+                          className="patterns-card__app-logo"
+                        />
+                      )}
+                      <span className="patterns-card__app-name">{screen.projectName ?? ''}</span>
+                    </div>
                   </div>
                 ))}
               </div>

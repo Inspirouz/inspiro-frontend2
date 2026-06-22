@@ -257,14 +257,29 @@
   gap: 8px;
 }
 .ipm__tag {
-  padding: 4px 12px;
-  background: #262626;
-  border-radius: 16px;
+  padding: 8px 16px;
+  background: transparent;
+  border: 1px solid #404040;
+  border-radius: 999px;
   font-size: 14px;
   font-weight: 500;
+  font-family: inherit;
   color: #fafafa;
   letter-spacing: -0.28px;
   line-height: 18px;
+  cursor: pointer;
+  transition: background-color 0.18s ease, border-color 0.18s ease;
+}
+.ipm__tag:hover {
+  background: #262626;
+  border-color: #525252;
+}
+.ipm__tag:active {
+  background: #2e2e2e;
+}
+.ipm__tag:focus-visible {
+  outline: 2px solid #525252;
+  outline-offset: 2px;
 }
 
 /* ── Bottom action buttons ───────────────────────────────────────── */

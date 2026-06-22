@@ -76,6 +76,18 @@ const ImagePreviewModal = ({
 }: ImagePreviewModalProps) => {
   const [, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
+
+  // Click a tag → close the preview and open that tag's screens page
+  const handleTagClick = (
+    tag: string | { id?: string; name?: string; type?: string },
+    kind: 'scenarios' | 'ui-elements' | 'patterns',
+  ) => {
+    const id = typeof tag === 'object' ? tag.id : undefined;
+    if (!id) return;
+    onClose();
+    navigate(`/${kind}/${id}`);
+  };
+
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const [showPaywall, setShowPaywall] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -326,7 +338,7 @@ const ImagePreviewModal = ({
                   <div className="ipm__tags">
                     {effectiveScenarios.map((t, i) => {
                       const label = toTagLabel(t);
-                      return label ? <span key={toTagKey(t, i)} className="ipm__tag">{label}</span> : null;
+                      return label ? <button type="button" key={toTagKey(t, i)} className="ipm__tag" onClick={() => handleTagClick(t, 'scenarios')}>{label}</button> : null;
                     })}
                   </div>
                 </div>
@@ -337,7 +349,7 @@ const ImagePreviewModal = ({
                   <div className="ipm__tags">
                     {effectiveUiElements.map((t, i) => {
                       const label = toTagLabel(t);
-                      return label ? <span key={toTagKey(t, i)} className="ipm__tag">{label}</span> : null;
+                      return label ? <button type="button" key={toTagKey(t, i)} className="ipm__tag" onClick={() => handleTagClick(t, 'ui-elements')}>{label}</button> : null;
                     })}
                   </div>
                 </div>
@@ -348,7 +360,7 @@ const ImagePreviewModal = ({
                   <div className="ipm__tags">
                     {effectivePatterns.map((t, i) => {
                       const label = toTagLabel(t);
-                      return label ? <span key={toTagKey(t, i)} className="ipm__tag">{label}</span> : null;
+                      return label ? <button type="button" key={toTagKey(t, i)} className="ipm__tag" onClick={() => handleTagClick(t, 'patterns')}>{label}</button> : null;
                     })}
                   </div>
                 </div>
