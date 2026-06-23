@@ -66,13 +66,28 @@ const SearchModal = ({ onClose }: { onClose?: () => void }) => {
     setLoading(true);
     setError(null);
     try {
-      const params = new URLSearchParams({ type });
+      const params = new URLSearchParams({ type, limit: '1000' });
       if (q.trim()) params.set('q', q.trim());
       const res = await fetch(`${apiUrl}/search?${params.toString()}`);
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data?.message || data?.error || `Ошибка ${res.status}`);
       const list: RawItem[] = Array.isArray(data?.data) ? data.data : [];
-      setItems(list.map((x) => toSearchItem(x, type)));
+      const mapped = list.map((x) => toSearchItem(x, type));
+      const seen = new Set<string>();
+      const deduped = mapped.filter((item) => {
+        const key = `${item.type}-${item.name.trim().toLowerCase()}`;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+      deduped.sort((a, b) => {
+        const aRu = /[а-яё]/i.test(a.name[0]);
+        const bRu = /[а-яё]/i.test(b.name[0]);
+        if (aRu && !bRu) return -1;
+        if (!aRu && bRu) return 1;
+        return a.name.localeCompare(b.name, aRu ? 'ru' : 'en');
+      });
+      setItems(deduped);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Ошибка загрузки');
       setItems([]);
