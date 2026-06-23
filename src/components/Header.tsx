@@ -142,7 +142,9 @@ const Header = () => {
                 />
               </span>
               <span className="header-input__shortcut">
-                {isMac ? '⌘' : 'Ctrl'} + K
+                <span className="header-input__shortcut-key">{isMac ? '⌘' : 'Ctrl'}</span>
+                <span className="header-input__shortcut-plus">+</span>
+                <span className="header-input__shortcut-key">K</span>
               </span>
             </button>
 

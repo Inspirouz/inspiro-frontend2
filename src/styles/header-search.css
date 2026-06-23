@@ -183,12 +183,30 @@ html {
 .header-input__shortcut {
   margin-left: auto;
   flex-shrink: 0;
-  font-size: 16px;
-  font-family: inherit;
-  color: #666666;
-  letter-spacing: 0;
-  line-height: 1;
+  display: flex;
+  align-items: center;
+  gap: 4px;
   white-space: nowrap;
+}
+
+.header-input__shortcut-key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background-color: #171717;
+  border-radius: 8px;
+  color: #737373;
+  font-size: 14px;
+  font-family: inherit;
+  line-height: 1;
+}
+
+.header-input__shortcut-plus {
+  color: #737373;
+  font-size: 14px;
+  line-height: 1;
 }
 
 @media (max-width: 768px) {
